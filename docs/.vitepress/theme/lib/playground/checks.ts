@@ -175,16 +175,21 @@ export async function sessionSnapshot(session: Session): Promise<{
     return { branch: null, commits: [], files: await listWorkdirFiles(fs, dir), dirty: 0, graph: [] }
   }
   const branch = ((await git.currentBranch({ fs: fs as never, dir })) as string | null) ?? null
-  const commits = (await git.log({ fs: fs as never, dir, depth: 30 })).map((c) => ({
-    short: c.oid.slice(0, 7),
-    message: c.commit.message.split('\n')[0]
-  }))
+  let commits: Awaited<ReturnType<typeof git.log>> = []
+  try {
+    commits = await git.log({ fs: fs as never, dir, depth: 30 })
+  } catch {
+    commits = []
+  }
   const files = await listWorkdirFiles(fs, dir)
   const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
   const graph = await commitGraph(fs, dir)
   return {
     branch,
-    commits,
+    commits: commits.map((c) => ({
+      short: c.oid.slice(0, 7),
+      message: c.commit.message.split('\n')[0]
+    })),
     files,
     dirty: rows.filter(([, h, w, s]) => !(h === 1 && w === 1 && s === 1)).length,
     graph

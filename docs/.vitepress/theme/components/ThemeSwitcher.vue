@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 const KEY = 'gitpath-theme'
 const themes = [
@@ -11,6 +11,8 @@ const themes = [
 ]
 
 const current = ref('system')
+const open = ref(false)
+const wrapEl = ref<HTMLElement | null>(null)
 
 function apply(theme: string) {
   const root = document.documentElement
@@ -35,23 +37,65 @@ onMounted(() => {
     .addEventListener('change', () => {
       if (current.value === 'system') apply('system')
     })
+  document.addEventListener('click', onDocumentClick)
+  document.addEventListener('keydown', onKeydown)
 })
 
-function onChange(e: Event) {
-  const value = (e.target as HTMLSelectElement).value
+onBeforeUnmount(() => {
+  document.removeEventListener('click', onDocumentClick)
+  document.removeEventListener('keydown', onKeydown)
+})
+
+function onDocumentClick(e: Event) {
+  if (!open.value) return
+  if (!wrapEl.value || !wrapEl.value.contains(e.target as Node)) {
+    open.value = false
+  }
+}
+
+function onKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape' && open.value) open.value = false
+}
+
+function toggle() {
+  open.value = !open.value
+}
+
+function choose(value: string) {
   current.value = value
   localStorage.setItem(KEY, value)
   apply(value)
+  open.value = false
 }
 </script>
 
 <template>
-  <select
-    class="theme-switcher"
-    :value="current"
-    aria-label="Theme"
-    @change="onChange"
-  >
-    <option v-for="t in themes" :key="t.value" :value="t.value">{{ t.label }}</option>
-  </select>
+  <div ref="wrapEl" class="theme-switcher-wrap">
+    <button
+      type="button"
+      class="theme-switcher"
+      :aria-expanded="open"
+      aria-haspopup="listbox"
+      :aria-label="`Theme: ${current}`"
+      @click="toggle"
+    >
+      <span class="theme-switcher-label">{{ current }}</span>
+      <svg class="theme-switcher-arrow" viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
+        <path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+    <div v-if="open" class="theme-switcher-menu" role="listbox" aria-label="Theme">
+      <button
+        v-for="t in themes"
+        :key="t.value"
+        type="button"
+        role="option"
+        :aria-selected="t.value === current"
+        :class="{ 'is-active': t.value === current }"
+        @click="choose(t.value)"
+      >
+        {{ t.label }}
+      </button>
+    </div>
+  </div>
 </template>

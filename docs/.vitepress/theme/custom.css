@@ -1,17 +1,74 @@
-.theme-switcher {
+.theme-switcher-wrap {
+  position: relative;
   margin-left: 0.75rem;
-  padding: 0.25rem 0.5rem;
+}
+
+.theme-switcher {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  min-width: 6.4rem;
+  padding: 0.25rem 0.6rem;
   border: 1px solid var(--vp-c-border);
   border-radius: 6px;
   background: var(--vp-c-bg-soft);
   color: var(--vp-c-text-1);
   font-size: 0.8rem;
+  line-height: 1.4;
   cursor: pointer;
+}
+
+.theme-switcher:hover {
+  border-color: var(--vp-c-brand-1);
 }
 
 .theme-switcher:focus-visible {
   outline: 2px solid var(--vp-c-brand-1);
   outline-offset: 2px;
+}
+
+.theme-switcher-arrow {
+  color: var(--vp-c-text-3);
+  flex-shrink: 0;
+}
+
+.theme-switcher-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 8rem;
+  padding: 0.3rem;
+  background: var(--vp-c-bg-elv);
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  box-shadow: var(--vp-shadow-3);
+  z-index: 120;
+  display: grid;
+  gap: 0.1rem;
+}
+
+.theme-switcher-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.35rem 0.6rem;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--vp-c-text-1);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.theme-switcher-menu button:hover {
+  background: color-mix(in srgb, var(--vp-c-brand-1) 14%, transparent);
+  color: var(--vp-c-brand-1);
+}
+
+.theme-switcher-menu button.is-active {
+  background: var(--vp-c-brand-1);
+  color: var(--vp-c-bg);
 }
 
 .gitpath-search {
@@ -29,7 +86,7 @@
 
 .gitpath-search .pagefind-ui__search-input {
   width: 14rem;
-  padding: 0.3rem 0.6rem;
+  padding: 0.3rem 0.6rem 0.3rem 2.6rem;
   border-radius: 6px;
   background: var(--vp-c-bg-soft);
   font-size: 0.85rem;

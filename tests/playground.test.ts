@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { Session, runChecks, runGit, type ScenarioName } from '../docs/.vitepress/theme/lib/playground'
+import { Session, runChecks, runGit, sessionSnapshot, type ScenarioName } from '../docs/.vitepress/theme/lib/playground'
 
 async function exec(session: Session, input: string): Promise<string> {
   const result = await runGit(session, input)
@@ -149,6 +149,15 @@ describe('playground command engine', () => {
     await exec(session, 'git commit -m "feat: add file with spaces"')
     const log = await exec(session, 'git log --oneline')
     expect(log).toContain('feat: add file with spaces')
+  })
+
+  it('snapshot survives an unborn HEAD after git init', async () => {
+    const session = await Session.create('init')
+    await exec(session, 'git init')
+    const snap = await sessionSnapshot(session)
+    expect(snap.branch).toBe('main')
+    expect(snap.commits).toEqual([])
+    expect(Array.isArray(snap.graph)).toBe(true)
   })
 })
 

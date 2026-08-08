@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useData } from 'vitepress'
-import { Session } from '../lib/playground/scenarios'
+import { Session, isRepo } from '../lib/playground/scenarios'
 import { runChecks, sessionSnapshot } from '../lib/playground/checks'
 import { runGit } from '../lib/playground/commands'
 import type { ScenarioName } from '../lib/playground/scenarios'
@@ -187,9 +187,11 @@ async function checkNow() {
 onMounted(async () => {
   session = await Session.create(props.scenario)
   await refresh()
-  output.value.push({ text: `$ git status`, kind: 'cmd' })
-  const r = await runGit(session, 'git status')
-  for (const line of r.out) output.value.push({ text: line, kind: outputKind(line) })
+  if (await isRepo(session.fs, session.dir)) {
+    output.value.push({ text: `$ git status`, kind: 'cmd' })
+    const r = await runGit(session, 'git status')
+    for (const line of r.out) output.value.push({ text: line, kind: outputKind(line) })
+  }
 })
 
 onBeforeUnmount(() => {
