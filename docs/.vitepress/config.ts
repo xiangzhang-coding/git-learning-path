@@ -30,6 +30,17 @@ const stageTitles: Record<number, Record<LocaleKey, string>> = {
     es: 'Etapa 1 — Conceptos básicos locales',
     pt: 'Etapa 1 — Noções básicas locais',
     ru: 'Этап 1 — Локальные основы'
+  },
+  2: {
+    root: 'Stage 2 — Branches & Merging',
+    zh: '阶段 2 — 分支与合并',
+    ja: '段階 2 — ブランチとマージ',
+    ko: '단계 2 — 브랜치와 병합',
+    de: 'Stufe 2 — Branches & Merging',
+    fr: 'Étape 2 — Branches et fusions',
+    es: 'Etapa 2 — Ramas y fusión',
+    pt: 'Etapa 2 — Branches e merge',
+    ru: 'Этап 2 — Ветки и слияния'
   }
 }
 
@@ -55,6 +66,17 @@ const stageNavText: Record<number, Record<LocaleKey, string>> = {
     es: 'Etapa 1',
     pt: 'Etapa 1',
     ru: 'Этап 1'
+  },
+  2: {
+    root: 'Stage 2',
+    zh: '阶段 2',
+    ja: '段階 2',
+    ko: '단계 2',
+    de: 'Stufe 2',
+    fr: 'Étape 2',
+    es: 'Etapa 2',
+    pt: 'Etapa 2',
+    ru: 'Этап 2'
   }
 }
 
@@ -175,12 +197,70 @@ const stage1Lessons: Record<LocaleKey, { slug: string; title: string }[]> = {
   ]
 }
 
-const stageLessons: Record<number, Record<LocaleKey, { slug: string; title: string }[]>> = {
-  0: stage0Lessons,
-  1: stage1Lessons
+const stage2Lessons: Record<LocaleKey, { slug: string; title: string }[]> = {
+  root: [
+    { slug: '2-1-branch-switch', title: '2-1 git branch and git switch' },
+    { slug: '2-2-branch-workflow', title: '2-2 Working on branches' },
+    { slug: '2-3-merge', title: '2-3 git merge' },
+    { slug: '2-4-merge-conflict', title: '2-4 Resolving merge conflicts' }
+  ],
+  zh: [
+    { slug: '2-1-branch-switch', title: '2-1 git branch 与 git switch' },
+    { slug: '2-2-branch-workflow', title: '2-2 在分支上工作' },
+    { slug: '2-3-merge', title: '2-3 git merge 合并分支' },
+    { slug: '2-4-merge-conflict', title: '2-4 解决合并冲突' }
+  ],
+  ja: [
+    { slug: '2-1-branch-switch', title: '2-1 git branch と git switch' },
+    { slug: '2-2-branch-workflow', title: '2-2 ブランチ上での作業' },
+    { slug: '2-3-merge', title: '2-3 git merge によるマージ' },
+    { slug: '2-4-merge-conflict', title: '2-4 マージコンフリクトの解決' }
+  ],
+  ko: [
+    { slug: '2-1-branch-switch', title: '2-1 git branch와 git switch' },
+    { slug: '2-2-branch-workflow', title: '2-2 브랜치에서 작업하기' },
+    { slug: '2-3-merge', title: '2-3 git merge 병합' },
+    { slug: '2-4-merge-conflict', title: '2-4 병합 충돌 해결하기' }
+  ],
+  de: [
+    { slug: '2-1-branch-switch', title: '2-1 git branch und git switch' },
+    { slug: '2-2-branch-workflow', title: '2-2 Arbeiten auf Branches' },
+    { slug: '2-3-merge', title: '2-3 git merge' },
+    { slug: '2-4-merge-conflict', title: '2-4 Merge-Konflikte lösen' }
+  ],
+  fr: [
+    { slug: '2-1-branch-switch', title: '2-1 git branch et git switch' },
+    { slug: '2-2-branch-workflow', title: '2-2 Travailler sur des branches' },
+    { slug: '2-3-merge', title: '2-3 git merge' },
+    { slug: '2-4-merge-conflict', title: '2-4 Résoudre les conflits de fusion' }
+  ],
+  es: [
+    { slug: '2-1-branch-switch', title: '2-1 git branch y git switch' },
+    { slug: '2-2-branch-workflow', title: '2-2 Trabajar en ramas' },
+    { slug: '2-3-merge', title: '2-3 git merge' },
+    { slug: '2-4-merge-conflict', title: '2-4 Resolver conflictos de fusión' }
+  ],
+  pt: [
+    { slug: '2-1-branch-switch', title: '2-1 git branch e git switch' },
+    { slug: '2-2-branch-workflow', title: '2-2 Trabalhando em branches' },
+    { slug: '2-3-merge', title: '2-3 git merge' },
+    { slug: '2-4-merge-conflict', title: '2-4 Resolvendo conflitos de merge' }
+  ],
+  ru: [
+    { slug: '2-1-branch-switch', title: '2-1 git branch и git switch' },
+    { slug: '2-2-branch-workflow', title: '2-2 Работа в ветках' },
+    { slug: '2-3-merge', title: '2-3 git merge' },
+    { slug: '2-4-merge-conflict', title: '2-4 Разрешение конфликтов слияния' }
+  ]
 }
 
-const stageOrder = [0, 1]
+const stageLessons: Record<number, Record<LocaleKey, { slug: string; title: string }[]>> = {
+  0: stage0Lessons,
+  1: stage1Lessons,
+  2: stage2Lessons
+}
+
+const stageOrder = [0, 1, 2]
 
 function localePrefix(key: LocaleKey): string {
   return key === 'root' ? '' : `/${key}`
