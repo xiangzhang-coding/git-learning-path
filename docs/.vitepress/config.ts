@@ -1,7 +1,98 @@
 import { defineConfig } from 'vitepress'
+import type { DefaultTheme } from 'vitepress'
 
-const LANGS = ['zh', 'ja', 'ko', 'de', 'fr', 'es', 'pt', 'ru']
+const BASE = '/git-learning-path/'
+const LANGS = ['zh', 'ja', 'ko', 'de', 'fr', 'es', 'pt', 'ru'] as const
 
+type LocaleKey = 'root' | (typeof LANGS)[number]
+
+const LOCALE_KEYS: LocaleKey[] = ['root', ...LANGS]
+
+const stage0Title: Record<LocaleKey, string> = {
+  root: 'Stage 0 — Concepts & Environment',
+  zh: '阶段 0 — 概念与环境',
+  ja: '段階 0 — 概念と環境',
+  ko: '단계 0 — 개념과 환경',
+  de: 'Stufe 0 — Konzepte & Umgebung',
+  fr: 'Étape 0 — Concepts et environnement',
+  es: 'Etapa 0 — Conceptos y entorno',
+  pt: 'Etapa 0 — Conceitos e ambiente',
+  ru: 'Этап 0 — Понятия и окружение'
+}
+
+const glossaryTitle: Record<LocaleKey, string> = {
+  root: 'Glossary',
+  zh: '术语表',
+  ja: '用語集',
+  ko: '용어집',
+  de: 'Glossar',
+  fr: 'Glossaire',
+  es: 'Glosario',
+  pt: 'Glossário',
+  ru: 'Глоссарий'
+}
+
+const lessonTitles: Record<LocaleKey, string[]> = {
+  root: ['0-1 Why version control?', '0-2 The three-areas model', '0-3 config and help'],
+  zh: ['0-1 为什么需要版本控制', '0-2 三个区域模型', '0-3 config 与 help'],
+  ja: ['0-1 なぜバージョン管理が必要か', '0-2 3つのエリアモデル', '0-3 config と help'],
+  ko: ['0-1 왜 버전 관리가 필요한가', '0-2 3영역 모델', '0-3 config와 help'],
+  de: ['0-1 Warum Versionskontrolle?', '0-2 Das Drei-Bereiche-Modell', '0-3 config und help'],
+  fr: ['0-1 Pourquoi le contrôle de version ?', '0-2 Le modèle des trois zones', '0-3 config et help'],
+  es: ['0-1 ¿Por qué el control de versiones?', '0-2 El modelo de tres áreas', '0-3 config y help'],
+  pt: ['0-1 Por que controle de versão?', '0-2 O modelo de três áreas', '0-3 config e help'],
+  ru: ['0-1 Зачем нужен контроль версий?', '0-2 Модель трёх областей', '0-3 config и help']
+}
+
+const lessonSlugs = ['0-1-version-control', '0-2-three-areas', '0-3-config-help']
+
+const stageNavText: Record<LocaleKey, string> = {
+  root: 'Stage 0',
+  zh: '阶段 0',
+  ja: '段階 0',
+  ko: '단계 0',
+  de: 'Stufe 0',
+  fr: 'Étape 0',
+  es: 'Etapa 0',
+  pt: 'Etapa 0',
+  ru: 'Этап 0'
+}
+
+function localePrefix(key: LocaleKey): string {
+  return key === 'root' ? '' : `/${key}`
+}
+
+function buildSidebar(): Record<string, DefaultTheme.SidebarItem[]> {
+  const out: Record<string, DefaultTheme.SidebarItem[]> = {}
+  for (const key of LOCALE_KEYS) {
+    const prefix = localePrefix(key)
+    out[`${prefix}/`] = [
+      {
+        text: stage0Title[key],
+        items: lessonSlugs.map((slug, i) => ({
+          text: lessonTitles[key][i],
+          link: `${prefix}/stage/0/${slug}`
+        }))
+      },
+      { text: glossaryTitle[key], link: `${prefix}/glossary` }
+    ]
+  }
+  return out
+}
+
+function buildNav(): Record<string, DefaultTheme.NavItem[]> {
+  const out: Record<string, DefaultTheme.NavItem[]> = {}
+  for (const key of LOCALE_KEYS) {
+    const prefix = localePrefix(key)
+    out[`${prefix}/`] = [
+      { text: stageNavText[key], link: `${prefix}/stage/0/` },
+      { text: glossaryTitle[key], link: `${prefix}/glossary` }
+    ]
+  }
+  return out
+}
+
+const nav = buildNav()
 const locales = {
   root: {
     label: 'English',
@@ -9,44 +100,28 @@ const locales = {
     title: 'Git Learning Path',
     description:
       'A six-stage course to master common Git and GitHub commands and the principles behind them.',
-    themeConfig: {
-      nav: [
-        { text: 'Stage 0', link: '/stage/0/' }
-      ]
-    }
+    themeConfig: { nav: nav['/'] }
   },
   zh: {
     label: '中文',
     lang: 'zh',
     title: 'Git 学习路径',
     description: '六个阶段系统掌握 Git/GitHub 常用命令及其原理。',
-    themeConfig: {
-      nav: [
-        { text: '阶段 0', link: '/zh/stage/0/' }
-      ]
-    }
+    themeConfig: { nav: nav['/zh/'] }
   },
   ja: {
     label: '日本語',
     lang: 'ja',
     title: 'Git 学習パス',
     description: '6 つの段階で Git/GitHub のよく使うコマンドとその原理を体系的に学ぶ。',
-    themeConfig: {
-      nav: [
-        { text: '段階 0', link: '/ja/stage/0/' }
-      ]
-    }
+    themeConfig: { nav: nav['/ja/'] }
   },
   ko: {
     label: '한국어',
     lang: 'ko',
     title: 'Git 학습 경로',
     description: '여섯 단계로 Git/GitHub 자주 쓰는 명령어와 그 원리를 체계적으로 익힌다.',
-    themeConfig: {
-      nav: [
-        { text: '단계 0', link: '/ko/stage/0/' }
-      ]
-    }
+    themeConfig: { nav: nav['/ko/'] }
   },
   de: {
     label: 'Deutsch',
@@ -54,11 +129,7 @@ const locales = {
     title: 'Git Lernpfad',
     description:
       'In sechs Stufen die gängigen Git/GitHub-Befehle und ihre Prinzipien systematisch lernen.',
-    themeConfig: {
-      nav: [
-        { text: 'Stufe 0', link: '/de/stage/0/' }
-      ]
-    }
+    themeConfig: { nav: nav['/de/'] }
   },
   fr: {
     label: 'Français',
@@ -66,11 +137,7 @@ const locales = {
     title: 'Parcours Git',
     description:
       'Six étapes pour maîtriser les commandes Git/GitHub courantes et les principes qui les sous-tendent.',
-    themeConfig: {
-      nav: [
-        { text: 'Étape 0', link: '/fr/stage/0/' }
-      ]
-    }
+    themeConfig: { nav: nav['/fr/'] }
   },
   es: {
     label: 'Español',
@@ -78,11 +145,7 @@ const locales = {
     title: 'Ruta de aprendizaje de Git',
     description:
       'Seis etapas para dominar los comandos habituales de Git/GitHub y sus principios.',
-    themeConfig: {
-      nav: [
-        { text: 'Etapa 0', link: '/es/stage/0/' }
-      ]
-    }
+    themeConfig: { nav: nav['/es/'] }
   },
   pt: {
     label: 'Português',
@@ -90,11 +153,7 @@ const locales = {
     title: 'Trilha de aprendizado de Git',
     description:
       'Seis etapas para dominar os comandos comuns do Git/GitHub e os princípios por trás deles.',
-    themeConfig: {
-      nav: [
-        { text: 'Etapa 0', link: '/pt/stage/0/' }
-      ]
-    }
+    themeConfig: { nav: nav['/pt/'] }
   },
   ru: {
     label: 'Русский',
@@ -102,38 +161,12 @@ const locales = {
     title: 'Путь изучения Git',
     description:
       'Шесть этапов системного освоения распространённых команд Git/GitHub и их принципов.',
-    themeConfig: {
-      nav: [
-        { text: 'Этап 0', link: '/ru/stage/0/' }
-      ]
-    }
+    themeConfig: { nav: nav['/ru/'] }
   }
 }
 
-const sidebar = {
-  '/': [
-    {
-      text: 'Stage 0 — Concepts & Environment',
-      items: [{ text: '0-1 Why version control?', link: '/stage/0/0-1-version-control' }]
-    }
-  ],
-  '/zh/': [
-    {
-      text: '阶段 0 — 概念与环境',
-      items: [{ text: '0-1 为什么需要版本控制', link: '/zh/stage/0/0-1-version-control' }]
-    }
-  ],
-  '/ja/': [],
-  '/ko/': [],
-  '/de/': [],
-  '/fr/': [],
-  '/es/': [],
-  '/pt/': [],
-  '/ru/': []
-}
-
 const headScript = `(function () {
-  var base = '/git-learning-path/'
+  var base = ${JSON.stringify(BASE)}
   var rootPath = base.replace(/\\/$/, '')
   try {
     var saved = localStorage.getItem('gitpath-theme')
@@ -171,18 +204,20 @@ const headScript = `(function () {
   }
 })()`
 
+const sidebar = buildSidebar()
+
 export default defineConfig({
   lang: 'en',
   title: 'Git Learning Path',
   description:
     'A six-stage course to master common Git and GitHub commands and the principles behind them.',
-  base: '/git-learning-path/',
+  base: BASE,
   cleanUrls: true,
   appearance: false,
   head: [
     ['script', {}, headScript],
-    ['pagefind-config', { 'base-url': '/git-learning-path/' }],
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/git-learning-path/favicon.svg' }]
+    ['pagefind-config', { 'base-url': BASE }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: `${BASE}favicon.svg` }]
   ],
   locales,
   themeConfig: {

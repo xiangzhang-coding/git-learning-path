@@ -11,7 +11,7 @@ hero:
       link: /de/stage/0/
     - theme: alt
       text: Glossar
-      link: /de/stage/0/
+      link: /de/glossary/
 
 features:
   - title: Stufe 0 — Konzepte & Umgebung

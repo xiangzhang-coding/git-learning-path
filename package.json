@@ -7,12 +7,20 @@
   "scripts": {
     "dev": "vitepress dev docs",
     "build": "vitepress build docs && pagefind --site docs/.vitepress/dist",
-    "preview": "vitepress preview docs"
+    "preview": "vitepress preview docs",
+    "typecheck": "vue-tsc --noEmit",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@pagefind/default-ui": "^1.5.2",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^26.2.0",
+    "js-yaml": "^5.2.3",
     "pagefind": "^1.5.2",
-    "vitepress": "^1.6.4"
+    "typescript": "~5.9.0",
+    "vitepress": "^1.6.4",
+    "vitest": "^4.1.10",
+    "vue-tsc": "^3.3.9"
   },
   "dependencies": {
     "isomorphic-git": "^1.40.5"

@@ -11,7 +11,7 @@ hero:
       link: /stage/0/
     - theme: alt
       text: Glossary
-      link: /stage/0/
+      link: /glossary/
 
 features:
   - title: Stage 0 — Concepts & Environment

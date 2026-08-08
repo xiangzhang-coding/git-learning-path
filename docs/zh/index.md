@@ -11,7 +11,7 @@ hero:
       link: /zh/stage/0/
     - theme: alt
       text: 术语表
-      link: /zh/stage/0/
+      link: /zh/glossary/
 
 features:
   - title: 阶段 0 — 概念与环境
