@@ -29,6 +29,7 @@ exercises:
         name: main
       - type: mergeDone
         branch: feature
+      - type: noMergeCommit
       - type: fileCommitted
         path: feature.txt
         contentContains: feature work

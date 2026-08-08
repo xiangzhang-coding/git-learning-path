@@ -17,6 +17,7 @@ export type Check =
   | { type: 'branchExists'; name: string }
   | { type: 'mergeDone'; branch?: string }
   | { type: 'mergeCommit' }
+  | { type: 'noMergeCommit' }
 
 export interface CheckResult {
   pass: boolean
@@ -132,6 +133,15 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
         if (!tip) return { pass: false, detail: 'no commits found' }
         if (tip.commit.parent.length !== 2) {
           return { pass: false, detail: 'HEAD is not a merge commit (expected two parents)' }
+        }
+        break
+      }
+      case 'noMergeCommit': {
+        const commits = await git.log({ fs: fs as never, dir, depth: 10 })
+        const tip = commits[0]
+        if (!tip) return { pass: false, detail: 'no commits found' }
+        if (tip.commit.parent.length === 2) {
+          return { pass: false, detail: 'HEAD is a merge commit; fast-forward should not create one' }
         }
         break
       }

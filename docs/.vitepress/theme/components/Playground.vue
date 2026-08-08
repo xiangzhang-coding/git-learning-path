@@ -7,6 +7,7 @@ import { runGit } from '../lib/playground/commands'
 import type { ScenarioName } from '../lib/playground/scenarios'
 import type { Check } from '../lib/playground/checks'
 import type { GraphCommit } from '../lib/playground/graph'
+import { hasConflictMarkers } from '../lib/playground/commands'
 import { labelsFor, langOfLocaleIndex } from '../lib/labels'
 
 const props = defineProps<{
@@ -55,14 +56,10 @@ function laneCells(row: GraphCommit): { char: string; isDot: boolean }[] {
   const cells: { char: string; isDot: boolean }[] = []
   for (let i = 0; i < row.laneCount; i++) {
     const isDot = i === row.lane
-    const connected = row.mergeConnections.some(
-      (c) => i > Math.min(c.from, c.to) && i < Math.max(c.from, c.to)
+    const bridged = row.mergeConnections.some(
+      (c) => i >= Math.min(c.from, c.to) && i <= Math.max(c.from, c.to)
     )
-    const isEndpoint = row.mergeConnections.some((c) => i === c.from || i === c.to)
-    if (isDot) cells.push({ char: '●', isDot: true })
-    else if (connected) cells.push({ char: '─', isDot: false })
-    else if (isEndpoint) cells.push({ char: '─', isDot: false })
-    else cells.push({ char: ' ', isDot: false })
+    cells.push({ char: isDot ? '●' : bridged ? '─' : ' ', isDot })
   }
   return cells
 }
@@ -78,7 +75,7 @@ async function refresh() {
   const conflicted: string[] = []
   for (const f of files.value) {
     const content = await session.fs.readFile(`${session.dir}/${f}`).catch(() => null)
-    if (content && content.toString().includes('<<<<<<<')) conflicted.push(f)
+    if (content && hasConflictMarkers(content.toString())) conflicted.push(f)
   }
   conflictFiles.value = conflicted
 }

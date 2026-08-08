@@ -202,20 +202,9 @@ export async function syncIndex(fs: MemoryFS, dir: string): Promise<void> {
   const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
   for (const [path, h, w, s] of rows) {
     if (h === 1 && w === 0) await git.remove({ fs: fs as never, dir, filepath: path })
+    else if (w === 0 && s !== 0) await git.remove({ fs: fs as never, dir, filepath: path })
     else if (w !== 0 && s !== w) await git.add({ fs: fs as never, dir, filepath: path })
   }
-}
-
-export async function checkoutTree(fs: MemoryFS, dir: string, treeOid: string): Promise<void> {
-  const files = await readTreeFiles(fs, dir, treeOid)
-  const oldFiles = await listWorkdirFiles(fs, dir)
-  for (const old of oldFiles) {
-    if (!files.has(old)) await fs.unlink(`${dir}/${old}`)
-  }
-  for (const [path, content] of files) {
-    await fs.writeFile(`${dir}/${path}`, content)
-  }
-  await syncIndex(fs, dir)
 }
 
 export async function writeTreeFromFiles(

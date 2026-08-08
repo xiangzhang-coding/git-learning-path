@@ -89,6 +89,8 @@ git switch -c <Name>   # erstellen und wechseln (am häufigsten verwendet)
 - `git switch feature`: HEAD bewegt sich zu `feature`, die Dateien im Working tree werden durch den Snapshot dieses Branch ersetzt
 - `git switch -c feature`: erstellt einen neuen Branch und wechselt sofort hinüber, entspricht `git branch feature` + `git switch feature`
 
+**Ältere Schreibweise**: `git checkout <Name>` und `git checkout -b <Name>` sind die alten Befehle mit derselben Wirkung; `git switch` ist der neuere empfohlene Befehl — der Übungsbereich unterstützt beide. `git checkout` hat außerdem eine „Dateien wiederherstellen“-Verwendung, die heute von `git restore` übernommen wird (Stufe 1).
+
 Wenn beim Wechseln noch nicht committete Änderungen im Working tree liegen, lehnt git ab und rät, zuerst zu committen oder zu stashen — denn nach dem Wechsel des Snapshots hätten die Änderungen keinen Platz mehr.
 
 ## HEAD zeigt auf die aktuelle Position

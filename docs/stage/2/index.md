@@ -4,10 +4,10 @@ The principle thread of this stage: **the commit graph and HEAD**. A branch is j
 
 ## Lessons
 
-- 2-1 [git branch and git switch](/stage/2/2-1-branch-switch)：branches are pointers, HEAD is your current position
-- 2-2 [Working on a branch](/stage/2/2-2-branch-workflow)：commits only land on the current branch, history forks into a DAG
-- 2-3 [git merge merges branches](/stage/2/2-3-merge)：fast-forward merges and merge commits
-- 2-4 [Resolving merge conflicts](/stage/2/2-4-merge-conflict)：conflict markers and the resolution workflow
+- 2-1 [git branch and git switch](/stage/2/2-1-branch-switch): branches are pointers, HEAD is your current position
+- 2-2 [Working on a branch](/stage/2/2-2-branch-workflow): commits only land on the current branch, history forks into a DAG
+- 2-3 [git merge merges branches](/stage/2/2-3-merge): fast-forward merges and merge commits
+- 2-4 [Resolving merge conflicts](/stage/2/2-4-merge-conflict): conflict markers and the resolution workflow
 
 ## New commands in this stage
 

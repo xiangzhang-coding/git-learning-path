@@ -85,7 +85,7 @@ export async function commitGraph(fs: MemoryFS, dir: string): Promise<GraphCommi
         }
       }
     } catch {
-      // ignore detached HEAD with no commits
+      void detached
     }
   }
 
@@ -97,7 +97,6 @@ export async function commitGraph(fs: MemoryFS, dir: string): Promise<GraphCommi
   })
 
   const preOrder: string[] = []
-  const preIndex = new Map<string, number>()
   const visited = new Set<string>()
   const dfs = (oid: string): void => {
     if (visited.has(oid)) return
@@ -110,13 +109,14 @@ export async function commitGraph(fs: MemoryFS, dir: string): Promise<GraphCommi
   }
   for (const tip of tipOids) dfs(tip)
 
+  const preIndex = new Map<string, number>()
+  preOrder.forEach((oid, index) => preIndex.set(oid, index))
   const sorted = preOrder
     .map((oid) => commits.get(oid)!)
     .sort((a, b) => {
       if (b.committer.timestamp !== a.committer.timestamp) return b.committer.timestamp - a.committer.timestamp
       return (preIndex.get(a.oid) ?? 0) - (preIndex.get(b.oid) ?? 0)
     })
-  preOrder.forEach((oid, index) => preIndex.set(oid, index))
 
   const lanes: (string | null)[] = []
   const rows: GraphCommit[] = []

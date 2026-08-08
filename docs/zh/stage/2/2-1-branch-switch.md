@@ -89,6 +89,8 @@ git switch -c <名字>   # 创建并切换（最常用）
 - `git switch feature`：HEAD 移到 `feature`，工作区文件替换为该分支指向的快照
 - `git switch -c feature`：创建新分支并立即切换，等价于 `git branch feature` + `git switch feature`
 
+**老式写法**：`git checkout <名字>` 与 `git checkout -b <名字>` 是旧版命令，作用相同；`git switch` 是较新的推荐命令，练手区两者都支持。`git checkout` 还有一个「恢复文件」的用途，如今由 `git restore`（阶段 1 已学）接管。
+
 切换时如果工作区有未提交的改动，git 会拒绝并提示先提交或暂存（stash）——因为换了快照，改动会无处安放。
 
 ## HEAD 指向当前位置

@@ -134,6 +134,35 @@ describe('git merge', () => {
     const mergeCommit = graph.find((c) => c.parents.length === 2)
     expect(mergeCommit).toBeDefined()
   })
+
+  it('merge keeps files untouched by either branch', async () => {
+    const session = await Session.create('merge')
+    await exec(session, 'git merge feature')
+    const content = await session.fs.readFile('/repo/README.md')
+    expect(content.toString()).toBe('# Project\n')
+    const status = await exec(session, 'git status')
+    expect(status).toContain('nothing to commit')
+  })
+
+  it('merging an ancestor reports already up to date', async () => {
+    const session = await Session.create('merge-ff')
+    await exec(session, 'git switch feature')
+    const out = await exec(session, 'git merge main')
+    expect(out).toContain('Already up to date.')
+  })
+
+  it('merge --abort restores the pre-merge state', async () => {
+    const session = await Session.create('conflict')
+    await exec(session, 'git merge feature')
+    const out = await exec(session, 'git merge --abort')
+    expect(out).toBe('')
+    const content = await session.fs.readFile('/repo/hello.txt')
+    expect(content.toString()).toBe('hello main\n')
+    const status = await exec(session, 'git status')
+    expect(status).toContain('nothing to commit')
+    const aborted = await exec(session, 'git merge --abort')
+    expect(aborted).toContain('There is no merge to abort')
+  })
 })
 
 describe('merge conflicts', () => {
@@ -157,6 +186,23 @@ describe('merge conflicts', () => {
     const status = await exec(session, 'git status')
     expect(status).toContain('You have unmerged paths.')
     expect(status).toMatch(/both modified:\s+hello\.txt/)
+  })
+
+  it('status stays unmerged after editing but before add', async () => {
+    const session = await Session.create('conflict')
+    await exec(session, 'git merge feature')
+    await session.fs.writeFile('/repo/hello.txt', 'hello resolved\n')
+    const status = await exec(session, 'git status')
+    expect(status).toContain('You have unmerged paths.')
+    expect(status).toMatch(/both modified:\s+hello\.txt/)
+  })
+
+  it('committing without staging a conflicted file is refused', async () => {
+    const session = await Session.create('conflict')
+    await exec(session, 'git merge feature')
+    await session.fs.writeFile('/repo/hello.txt', 'hello resolved\n')
+    const out = await exec(session, 'git commit -m "try"')
+    expect(out).toContain('fatal: you have not concluded your merge')
   })
 
   it('resolving the conflict and committing concludes the merge', async () => {
