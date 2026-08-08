@@ -6,6 +6,7 @@ import { runChecks, sessionSnapshot } from '../lib/playground/checks'
 import { runGit } from '../lib/playground/commands'
 import type { ScenarioName } from '../lib/playground/scenarios'
 import type { Check } from '../lib/playground/checks'
+import type { GraphCommit } from '../lib/playground/graph'
 import { labelsFor, langOfLocaleIndex } from '../lib/labels'
 
 const props = defineProps<{
@@ -30,7 +31,7 @@ const branch = ref<string | null>(null)
 const commitCount = ref(0)
 const dirtyCount = ref(0)
 const files = ref<string[]>([])
-const commits = ref<{ short: string; message: string }[]>([])
+const graph = ref<GraphCommit[]>([])
 const checking = ref(false)
 const checkResult = ref<'pass' | 'fail' | null>(null)
 const checkDetail = ref('')
@@ -40,7 +41,27 @@ const QUICK: Record<ScenarioName, string[]> = {
   init: ['git status', 'git add .', 'git log --oneline', 'git diff'],
   'add-commit': ['git status', 'git add .', 'git log --oneline', 'git diff'],
   history: ['git status', 'git log --oneline', 'git diff', 'git diff --staged'],
-  local: ['git status', 'git add .', 'git log --oneline', 'git restore hello.txt']
+  local: ['git status', 'git add .', 'git log --oneline', 'git restore hello.txt'],
+  branching: ['git branch', 'git log --oneline', 'git switch -c feature', 'git switch main'],
+  'merge-ff': ['git status', 'git branch', 'git log --oneline', 'git merge feature'],
+  merge: ['git status', 'git branch', 'git log --oneline', 'git merge feature'],
+  conflict: ['git status', 'git branch', 'git log --oneline', 'git merge feature']
+}
+
+function laneCells(row: GraphCommit): { char: string; isDot: boolean }[] {
+  const cells: { char: string; isDot: boolean }[] = []
+  for (let i = 0; i < row.laneCount; i++) {
+    const isDot = i === row.lane
+    const connected = row.mergeConnections.some(
+      (c) => i > Math.min(c.from, c.to) && i < Math.max(c.from, c.to)
+    )
+    const isEndpoint = row.mergeConnections.some((c) => i === c.from || i === c.to)
+    if (isDot) cells.push({ char: '●', isDot: true })
+    else if (connected) cells.push({ char: '─', isDot: false })
+    else if (isEndpoint) cells.push({ char: '─', isDot: false })
+    else cells.push({ char: ' ', isDot: false })
+  }
+  return cells
 }
 
 async function refresh() {
@@ -50,7 +71,7 @@ async function refresh() {
   commitCount.value = snap.commits.length
   dirtyCount.value = snap.dirty
   files.value = snap.files
-  commits.value = snap.commits
+  graph.value = snap.graph
 }
 
 function outputKind(text: string): string {
@@ -209,17 +230,30 @@ watch(
       <code v-for="f in files" :key="f">{{ f }}</code>
     </div>
 
-    <div v-if="commits.length" class="playground-history" role="list">
+    <div v-if="graph.length" class="playground-graph" role="list">
       <div
-        v-for="(c, i) in commits"
-        :key="c.short"
-        class="playground-commit"
-        :class="{ head: i === 0 }"
+        v-for="(c, i) in graph"
+        :key="c.oid"
+        class="playground-graph-row"
+        :class="{ head: i === 0 && branch && c.branches.includes(branch) }"
         role="listitem"
       >
-        <span class="playground-commit-dot"></span>
-        <span class="playground-commit-sha">{{ c.short }}</span>
-        <span class="playground-commit-msg">{{ c.message }}</span>
+        <span class="playground-graph-lanes" aria-hidden="true">
+          <span
+            v-for="(cell, k) in laneCells(c)"
+            :key="k"
+            class="playground-graph-cell"
+            :class="cell.isDot ? 'is-dot' : ''"
+          >{{ cell.char }}</span>
+        </span>
+        <span class="playground-graph-sha">{{ c.short }}</span>
+        <span class="playground-graph-msg">{{ c.message }}</span>
+        <span
+          v-for="b in c.branches"
+          :key="b"
+          class="playground-graph-tag"
+          :class="{ 'is-head': branch === b }"
+        >{{ b }}</span>
       </div>
     </div>
   </div>

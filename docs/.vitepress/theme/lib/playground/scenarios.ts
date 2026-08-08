@@ -8,7 +8,56 @@ export const AUTHOR = { name: 'Learner', email: 'learner@example.com' }
 
 export const NOT_A_REPO = 'fatal: not a git repository (or any of the parent directories): .git'
 
-export type ScenarioName = 'init' | 'add-commit' | 'history' | 'local'
+export type ScenarioName = 'init' | 'add-commit' | 'history' | 'local' | 'branching' | 'merge-ff' | 'merge' | 'conflict'
+
+export async function mergeInProgress(fs: MemoryFS, dir: string): Promise<boolean> {
+  return fs
+    .readFile(`${dir}/.git/MERGE_HEAD`)
+    .then(() => true)
+    .catch(() => false)
+}
+
+export async function mergeHeadOid(fs: MemoryFS, dir: string): Promise<string | null> {
+  try {
+    const raw = await fs.readFile(`${dir}/.git/MERGE_HEAD`)
+    return raw.toString().trim() || null
+  } catch {
+    return null
+  }
+}
+
+export async function conflictFiles(fs: MemoryFS, dir: string): Promise<string[]> {
+  try {
+    const raw = await fs.readFile(`${dir}/.git/MERGE_CONFLICTS`)
+    return raw
+      .toString()
+      .split('\n')
+      .filter((p) => p.trim().length)
+  } catch {
+    return []
+  }
+}
+
+export async function mergeMessage(fs: MemoryFS, dir: string): Promise<string | null> {
+  try {
+    const raw = await fs.readFile(`${dir}/.git/MERGE_MSG`)
+    return raw.toString().trim() || null
+  } catch {
+    return null
+  }
+}
+
+export async function startMerge(fs: MemoryFS, dir: string, theirsOid: string, message: string, conflicts: string[]): Promise<void> {
+  await fs.writeFile(`${dir}/.git/MERGE_HEAD`, `${theirsOid}\n`)
+  await fs.writeFile(`${dir}/.git/MERGE_MSG`, `${message}\n`)
+  await fs.writeFile(`${dir}/.git/MERGE_CONFLICTS`, `${conflicts.join('\n')}\n`)
+}
+
+export async function endMerge(fs: MemoryFS, dir: string): Promise<void> {
+  await fs.unlink(`${dir}/.git/MERGE_HEAD`).catch(() => {})
+  await fs.unlink(`${dir}/.git/MERGE_MSG`).catch(() => {})
+  await fs.unlink(`${dir}/.git/MERGE_CONFLICTS`).catch(() => {})
+}
 
 export function isRepo(fs: MemoryFS, dir: string): Promise<boolean> {
   return fs
@@ -96,10 +145,59 @@ export async function buildScenario(fs: MemoryFS, name: ScenarioName): Promise<v
     return
   }
 
+  if (name === 'local') {
+    await write(fs, dir, 'hello.txt', 'hello world\n')
+    await write(fs, dir, 'notes.txt', 'some notes\n')
+    await commitAll(fs, dir, 'chore: add notes')
+    await write(fs, dir, 'hello.txt', 'hello git\n')
+    return
+  }
+
+  if (name === 'branching') {
+    await write(fs, dir, 'README.md', '# Project\n')
+    await commitAll(fs, dir, 'docs: init readme')
+    await write(fs, dir, 'hello.txt', 'hello\n')
+    await commitAll(fs, dir, 'feat: add hello')
+    await write(fs, dir, 'hello.txt', 'hello world\n')
+    await commitAll(fs, dir, 'fix: greet the world')
+    return
+  }
+
+  if (name === 'merge-ff') {
+    await write(fs, dir, 'README.md', '# Project\n')
+    await commitAll(fs, dir, 'docs: init readme')
+    await write(fs, dir, 'hello.txt', 'hello\n')
+    await commitAll(fs, dir, 'feat: add hello')
+    await git.branch({ fs: fs as never, dir, ref: 'feature', checkout: true })
+    await write(fs, dir, 'feature.txt', 'feature work\n')
+    await commitAll(fs, dir, 'feat: feature work')
+    await git.checkout({ fs: fs as never, dir, ref: 'main' })
+    return
+  }
+
+  if (name === 'merge') {
+    await write(fs, dir, 'README.md', '# Project\n')
+    await commitAll(fs, dir, 'docs: init readme')
+    await git.branch({ fs: fs as never, dir, ref: 'feature', checkout: true })
+    await write(fs, dir, 'feature.txt', 'feature work\n')
+    await commitAll(fs, dir, 'feat: feature work')
+    await git.checkout({ fs: fs as never, dir, ref: 'main' })
+    await write(fs, dir, 'main.txt', 'main work\n')
+    await commitAll(fs, dir, 'feat: main work')
+    return
+  }
+
+  await write(fs, dir, 'README.md', '# Project\n')
+  await commitAll(fs, dir, 'docs: init readme')
   await write(fs, dir, 'hello.txt', 'hello world\n')
-  await write(fs, dir, 'notes.txt', 'some notes\n')
-  await commitAll(fs, dir, 'chore: add notes')
-  await write(fs, dir, 'hello.txt', 'hello git\n')
+  await commitAll(fs, dir, 'feat: add hello')
+  await git.branch({ fs: fs as never, dir, ref: 'feature', checkout: true })
+  await write(fs, dir, 'hello.txt', 'hello feature\n')
+  await write(fs, dir, 'notes.txt', 'notes from feature\n')
+  await commitAll(fs, dir, 'feat: feature version')
+  await git.checkout({ fs: fs as never, dir, ref: 'main' })
+  await write(fs, dir, 'hello.txt', 'hello main\n')
+  await commitAll(fs, dir, 'fix: main version')
 }
 
 export class Session {

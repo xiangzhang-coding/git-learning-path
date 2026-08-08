@@ -595,6 +595,65 @@ html[data-theme='retro'] .vp-doc h3 {
   font-size: 0.75rem;
 }
 
+.playground-graph {
+  display: grid;
+  gap: 0;
+  padding: 0.5rem 0.9rem 0.7rem;
+  border-top: 1px solid var(--vp-c-border);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.75rem;
+}
+
+.playground-graph-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.15rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.playground-graph-lanes {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--vp-c-text-3);
+  line-height: 1.1;
+}
+
+.playground-graph-cell.is-dot {
+  color: var(--vp-c-text-2);
+}
+
+.playground-graph-row.head .playground-graph-cell.is-dot {
+  color: var(--vp-c-brand-1);
+  text-shadow: 0 0 6px color-mix(in srgb, var(--vp-c-brand-1) 60%, transparent);
+}
+
+.playground-graph-sha {
+  color: var(--vp-c-text-3);
+  flex-shrink: 0;
+}
+
+.playground-graph-msg {
+  color: var(--vp-c-text-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.playground-graph-tag {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  padding: 0 0.4rem;
+  border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--vp-c-brand-1) 15%, transparent);
+  color: var(--vp-c-brand-1);
+}
+
+.playground-graph-tag.is-head {
+  background: var(--vp-c-brand-1);
+  color: var(--vp-c-bg);
+}
+
 .playground-commit {
   display: flex;
   align-items: center;
