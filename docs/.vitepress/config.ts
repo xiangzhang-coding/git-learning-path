@@ -41,6 +41,17 @@ const stageTitles: Record<number, Record<LocaleKey, string>> = {
     es: 'Etapa 2 — Ramas y fusión',
     pt: 'Etapa 2 — Branches e merge',
     ru: 'Этап 2 — Ветки и слияния'
+  },
+  3: {
+    root: 'Stage 3 — Remote Collaboration',
+    zh: '阶段 3 — 远程协作',
+    ja: '段階 3 — リモート協働',
+    ko: '단계 3 — 원격 협업',
+    de: 'Stufe 3 — Remote-Zusammenarbeit',
+    fr: 'Étape 3 — Collaboration à distance',
+    es: 'Etapa 3 — Colaboración remota',
+    pt: 'Etapa 3 — Colaboração remota',
+    ru: 'Этап 3 — Удалённая работа'
   }
 }
 
@@ -77,6 +88,17 @@ const stageNavText: Record<number, Record<LocaleKey, string>> = {
     es: 'Etapa 2',
     pt: 'Etapa 2',
     ru: 'Этап 2'
+  },
+  3: {
+    root: 'Stage 3',
+    zh: '阶段 3',
+    ja: '段階 3',
+    ko: '단계 3',
+    de: 'Stufe 3',
+    fr: 'Étape 3',
+    es: 'Etapa 3',
+    pt: 'Etapa 3',
+    ru: 'Этап 3'
   }
 }
 
@@ -254,13 +276,71 @@ const stage2Lessons: Record<LocaleKey, { slug: string; title: string }[]> = {
   ]
 }
 
+const stage3Lessons: Record<LocaleKey, { slug: string; title: string }[]> = {
+  root: [
+    { slug: '3-1-remote', title: '3-1 git remote' },
+    { slug: '3-2-clone', title: '3-2 git clone' },
+    { slug: '3-3-push', title: '3-3 git push' },
+    { slug: '3-4-fetch-pull', title: '3-4 git fetch and git pull' }
+  ],
+  zh: [
+    { slug: '3-1-remote', title: '3-1 git remote 远程仓库' },
+    { slug: '3-2-clone', title: '3-2 git clone 克隆仓库' },
+    { slug: '3-3-push', title: '3-3 git push 推送提交' },
+    { slug: '3-4-fetch-pull', title: '3-4 git fetch 与 git pull' }
+  ],
+  ja: [
+    { slug: '3-1-remote', title: '3-1 git remote リモート' },
+    { slug: '3-2-clone', title: '3-2 git clone でクローン' },
+    { slug: '3-3-push', title: '3-3 git push でプッシュ' },
+    { slug: '3-4-fetch-pull', title: '3-4 git fetch と git pull' }
+  ],
+  ko: [
+    { slug: '3-1-remote', title: '3-1 git remote 원격 저장소' },
+    { slug: '3-2-clone', title: '3-2 git clone 복제' },
+    { slug: '3-3-push', title: '3-3 git push 푸시' },
+    { slug: '3-4-fetch-pull', title: '3-4 git fetch와 git pull' }
+  ],
+  de: [
+    { slug: '3-1-remote', title: '3-1 git remote' },
+    { slug: '3-2-clone', title: '3-2 git clone' },
+    { slug: '3-3-push', title: '3-3 git push' },
+    { slug: '3-4-fetch-pull', title: '3-4 git fetch und git pull' }
+  ],
+  fr: [
+    { slug: '3-1-remote', title: '3-1 git remote' },
+    { slug: '3-2-clone', title: '3-2 git clone' },
+    { slug: '3-3-push', title: '3-3 git push' },
+    { slug: '3-4-fetch-pull', title: '3-4 git fetch et git pull' }
+  ],
+  es: [
+    { slug: '3-1-remote', title: '3-1 git remote' },
+    { slug: '3-2-clone', title: '3-2 git clone' },
+    { slug: '3-3-push', title: '3-3 git push' },
+    { slug: '3-4-fetch-pull', title: '3-4 git fetch y git pull' }
+  ],
+  pt: [
+    { slug: '3-1-remote', title: '3-1 git remote' },
+    { slug: '3-2-clone', title: '3-2 git clone' },
+    { slug: '3-3-push', title: '3-3 git push' },
+    { slug: '3-4-fetch-pull', title: '3-4 git fetch e git pull' }
+  ],
+  ru: [
+    { slug: '3-1-remote', title: '3-1 git remote' },
+    { slug: '3-2-clone', title: '3-2 git clone' },
+    { slug: '3-3-push', title: '3-3 git push' },
+    { slug: '3-4-fetch-pull', title: '3-4 git fetch и git pull' }
+  ]
+}
+
 const stageLessons: Record<number, Record<LocaleKey, { slug: string; title: string }[]>> = {
   0: stage0Lessons,
   1: stage1Lessons,
-  2: stage2Lessons
+  2: stage2Lessons,
+  3: stage3Lessons
 }
 
-const stageOrder = [0, 1, 2]
+const stageOrder = [0, 1, 2, 3]
 
 function localePrefix(key: LocaleKey): string {
   return key === 'root' ? '' : `/${key}`
