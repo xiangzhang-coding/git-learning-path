@@ -186,6 +186,15 @@ describe('merge conflicts', () => {
     expect(out).toContain('fatal: you have not concluded your merge')
   })
 
+  it('conflict markers appear exactly once in the conflicted file', async () => {
+    const session = await Session.create('conflict')
+    await exec(session, 'git merge feature')
+    const content = (await session.fs.readFile('/repo/hello.txt')).toString()
+    expect(content.split('<<<<<<< HEAD')).toHaveLength(2)
+    expect(content.split('>>>>>>> feature')).toHaveLength(2)
+    expect(content.split('=======')).toHaveLength(2)
+  })
+
   it('files without overlapping edits merge cleanly during a conflict scenario', async () => {
     const session = await Session.create('conflict')
     await exec(session, 'git merge feature')

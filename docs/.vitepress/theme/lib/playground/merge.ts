@@ -46,28 +46,20 @@ function diffRegions(base: string[], target: string[]): Region[] {
       i++
       j++
     } else if (dp[i + 1][j] >= dp[i][j + 1]) {
-      if (delStart < 0 && insStart < 0) {
-        delStart = i
-        insStart = j
-      }
+      if (delStart < 0) delStart = i
+      if (insStart < 0) insStart = j
       i++
     } else {
-      if (insStart < 0 && delStart < 0) {
-        delStart = -1
-        insStart = j
-      } else if (insStart < 0) {
-        insStart = j
-      }
+      if (insStart < 0) insStart = j
       j++
     }
   }
-  flush(n, m)
   while (i < n) {
-    if (delStart < 0 && insStart < 0) delStart = i
+    if (delStart < 0) delStart = i
     i++
   }
   while (j < m) {
-    if (insStart < 0 && delStart < 0) insStart = j
+    if (insStart < 0) insStart = j
     j++
   }
   flush(n, m)

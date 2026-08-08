@@ -36,6 +36,9 @@ const checking = ref(false)
 const checkResult = ref<'pass' | 'fail' | null>(null)
 const checkDetail = ref('')
 const termEl = ref<HTMLElement | null>(null)
+const selectedFile = ref<string | null>(null)
+const fileDraft = ref('')
+const conflictFiles = ref<string[]>([])
 
 const QUICK: Record<ScenarioName, string[]> = {
   init: ['git status', 'git add .', 'git log --oneline', 'git diff'],
@@ -72,6 +75,39 @@ async function refresh() {
   dirtyCount.value = snap.dirty
   files.value = snap.files
   graph.value = snap.graph
+  const conflicted: string[] = []
+  for (const f of files.value) {
+    const content = await session.fs.readFile(`${session.dir}/${f}`).catch(() => null)
+    if (content && content.toString().includes('<<<<<<<')) conflicted.push(f)
+  }
+  conflictFiles.value = conflicted
+}
+
+async function openFile(path: string) {
+  if (!session) return
+  const content = await session.fs.readFile(`${session.dir}/${path}`).catch(() => '')
+  selectedFile.value = path
+  fileDraft.value = content ? content.toString() : ''
+}
+
+async function saveFile() {
+  if (!session || !selectedFile.value) return
+  await session.fs.writeFile(`${session.dir}/${selectedFile.value}`, fileDraft.value)
+  selectedFile.value = null
+  fileDraft.value = ''
+  await refresh()
+  if (props.checks && checkResult.value !== 'pass') {
+    const res = await runChecks(session, props.checks)
+    checkResult.value = res.pass ? 'pass' : 'fail'
+    checkDetail.value = res.detail
+    emit('checked', res.pass)
+    if (res.pass) emit('complete')
+  }
+}
+
+function cancelFile() {
+  selectedFile.value = null
+  fileDraft.value = ''
 }
 
 function outputKind(text: string): string {
@@ -227,7 +263,30 @@ watch(
 
     <div class="playground-files">
       <span class="playground-files-label">{{ labels.filesLabel }}:</span>
-      <code v-for="f in files" :key="f">{{ f }}</code>
+      <button
+        v-for="f in files"
+        :key="f"
+        type="button"
+        class="playground-file"
+        :class="{ 'is-conflict': conflictFiles.includes(f) }"
+        @click="openFile(f)"
+      >
+        {{ f }}
+      </button>
+    </div>
+
+    <div v-if="selectedFile" class="playground-editor">
+      <div class="playground-editor-head">
+        <code class="playground-editor-name">{{ selectedFile }}</code>
+        <button type="button" class="playground-editor-save" @click="saveFile">{{ labels.save }}</button>
+        <button type="button" class="playground-editor-cancel" @click="cancelFile">{{ labels.cancel }}</button>
+      </div>
+      <textarea
+        v-model="fileDraft"
+        class="playground-editor-area"
+        spellcheck="false"
+        rows="6"
+      ></textarea>
     </div>
 
     <div v-if="graph.length" class="playground-graph" role="list">
