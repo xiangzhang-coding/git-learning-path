@@ -9,7 +9,7 @@ exercises:
       - Los nombres de archivo son demasiado largos
     correct: 1
     explanation: "El defecto central no es el espacio ni los nombres, sino un historial irrecuperable: no puedes volver a una versión pasada ni saber cuál es la más reciente."
-    anchor: "#qué-es-el-control-de-versiones"
+    anchor: "#que-es-el-control-de-versiones"
   - id: 0-1-e2
     question: ¿Cuál NO es una capacidad básica de un sistema de control de versiones (VCS)?
     options:
@@ -18,7 +18,7 @@ exercises:
       - Corregir automáticamente los errores del código
     correct: 2
     explanation: Un VCS registra, compara, revierte y facilita la colaboración; no corrige código. Eso es trabajo de quien escribe el código.
-    anchor: "#qué-es-el-control-de-versiones"
+    anchor: "#que-es-el-control-de-versiones"
   - id: 0-1-e3
     question: ¿Cuál es la diferencia clave entre el control centralizado (p. ej. SVN) y el distribuido (p. ej. Git)?
     options:
@@ -80,8 +80,5 @@ Mueve el deslizador o haz clic en un punto: el contenido de los archivos cambia 
 
 <Exercise />
 
-## Zona de práctica
-
-Esta lección no usa comandos; la zona de práctica llega en la etapa 1.
 
 <LessonProgress />

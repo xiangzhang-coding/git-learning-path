@@ -9,7 +9,7 @@ exercises:
       - Repository
     correct: 0
     explanation: El working tree es donde editas archivos; la staging area es la lista de cambios preparados; el repository guarda el historial commiteado.
-    anchor: "#las-tres-áreas"
+    anchor: "#las-tres-areas"
   - id: 0-2-e2
     question: ¿Qué mueve git add?
     options:
@@ -18,7 +18,7 @@ exercises:
       - Cambios del repository al working tree
     correct: 0
     explanation: git add registra los cambios del working tree en la staging area; es git commit quien escribe el historial (staging area → repository).
-    anchor: "#las-tres-áreas"
+    anchor: "#las-tres-areas"
   - id: 0-2-e3
     question: ¿Qué mueve git commit?
     options:
@@ -27,7 +27,7 @@ exercises:
       - Descarta los cambios
     correct: 1
     explanation: commit agrupa los cambios preparados en un commit guardado en el repository (el directorio .git) — una instantánea en el historial.
-    anchor: "#las-tres-áreas"
+    anchor: "#las-tres-areas"
   - id: 0-2-e4
     question: ¿Cuál es la mayor ventaja de la staging area?
     options:
@@ -36,7 +36,7 @@ exercises:
       - Corrige errores automáticamente
     correct: 1
     explanation: ¿Cambiaste dos funciones sin relación? Añade y commitea primero una, luego la otra — cada commit sigue siendo legible y reversible.
-    anchor: "#por-qué-una-área-extra"
+    anchor: "#por-que-un-area-extra"
 ---
 
 # El modelo de tres áreas

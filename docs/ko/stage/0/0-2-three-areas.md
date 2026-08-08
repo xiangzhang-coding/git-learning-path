@@ -9,7 +9,7 @@ exercises:
       - repository(저장소)
     correct: 0
     explanation: 작업 트리는 파일을 편집하는 곳이고, 스테이징 영역은 커밋할 변경의 목록, 저장소는 커밋된 기록입니다.
-    anchor: "#3영역"
+    anchor: "#_3영역"
   - id: 0-2-e2
     question: git add는 변경을 어디서 어디로 옮기나요?
     options:
@@ -18,7 +18,7 @@ exercises:
       - repository → working tree
     correct: 0
     explanation: git add는 작업 트리의 변경을 스테이징 영역에 등록합니다. 기록에 쓰는 것은 git commit(staging area → repository)입니다.
-    anchor: "#3영역"
+    anchor: "#_3영역"
   - id: 0-2-e3
     question: git commit은 변경을 어디서 어디로 옮기나요?
     options:
@@ -27,7 +27,7 @@ exercises:
       - 변경을 버린다
     correct: 1
     explanation: commit은 스테이징된 변경을 하나의 커밋으로 묶어 저장소(.git 디렉터리)에 저장해 기록 스냅샷을 만듭니다.
-    anchor: "#3영역"
+    anchor: "#_3영역"
   - id: 0-2-e4
     question: 스테이징 영역의 가장 큰 장점은 무엇인가요?
     options:
@@ -36,7 +36,7 @@ exercises:
       - 실수를 자동으로 고쳐준다
     correct: 1
     explanation: 서로 무관한 두 기능을 한 번에 바꿨다면 첫 번째를 add 후 커밋하고, 두 번째를 add 후 커밋하면 됩니다. 각 커밋이 읽기 쉽고 되돌리기 쉽습니다.
-    anchor: "#스테이징-영역이-왜-하나-더-있을까"
+    anchor: "#스테이징-영역이-왜-하나-더-있을까"
 ---
 
 # 3영역 모델

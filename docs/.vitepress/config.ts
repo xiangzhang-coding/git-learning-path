@@ -32,16 +32,52 @@ const glossaryTitle: Record<LocaleKey, string> = {
   ru: 'Глоссарий'
 }
 
-const lessonTitles: Record<LocaleKey, string[]> = {
-  root: ['0-1 Why version control?', '0-2 The three-areas model', '0-3 config and help'],
-  zh: ['0-1 为什么需要版本控制', '0-2 三个区域模型', '0-3 config 与 help'],
-  ja: ['0-1 なぜバージョン管理が必要か', '0-2 3つのエリアモデル', '0-3 config と help'],
-  ko: ['0-1 왜 버전 관리가 필요한가', '0-2 3영역 모델', '0-3 config와 help'],
-  de: ['0-1 Warum Versionskontrolle?', '0-2 Das Drei-Bereiche-Modell', '0-3 config und help'],
-  fr: ['0-1 Pourquoi le contrôle de version ?', '0-2 Le modèle des trois zones', '0-3 config et help'],
-  es: ['0-1 ¿Por qué el control de versiones?', '0-2 El modelo de tres áreas', '0-3 config y help'],
-  pt: ['0-1 Por que controle de versão?', '0-2 O modelo de três áreas', '0-3 config e help'],
-  ru: ['0-1 Зачем нужен контроль версий?', '0-2 Модель трёх областей', '0-3 config и help']
+const stage0Lessons: Record<LocaleKey, { slug: string; title: string }[]> = {
+  root: [
+    { slug: '0-1-version-control', title: '0-1 Why version control?' },
+    { slug: '0-2-three-areas', title: '0-2 The three-areas model' },
+    { slug: '0-3-config-help', title: '0-3 config and help' }
+  ],
+  zh: [
+    { slug: '0-1-version-control', title: '0-1 为什么需要版本控制' },
+    { slug: '0-2-three-areas', title: '0-2 三个区域模型' },
+    { slug: '0-3-config-help', title: '0-3 config 与 help' }
+  ],
+  ja: [
+    { slug: '0-1-version-control', title: '0-1 なぜバージョン管理が必要か' },
+    { slug: '0-2-three-areas', title: '0-2 3つのエリアモデル' },
+    { slug: '0-3-config-help', title: '0-3 config と help' }
+  ],
+  ko: [
+    { slug: '0-1-version-control', title: '0-1 왜 버전 관리가 필요한가' },
+    { slug: '0-2-three-areas', title: '0-2 3영역 모델' },
+    { slug: '0-3-config-help', title: '0-3 config와 help' }
+  ],
+  de: [
+    { slug: '0-1-version-control', title: '0-1 Warum Versionskontrolle?' },
+    { slug: '0-2-three-areas', title: '0-2 Das Drei-Bereiche-Modell' },
+    { slug: '0-3-config-help', title: '0-3 config und help' }
+  ],
+  fr: [
+    { slug: '0-1-version-control', title: '0-1 Pourquoi le contrôle de version ?' },
+    { slug: '0-2-three-areas', title: '0-2 Le modèle des trois zones' },
+    { slug: '0-3-config-help', title: '0-3 config et help' }
+  ],
+  es: [
+    { slug: '0-1-version-control', title: '0-1 ¿Por qué el control de versiones?' },
+    { slug: '0-2-three-areas', title: '0-2 El modelo de tres áreas' },
+    { slug: '0-3-config-help', title: '0-3 config y help' }
+  ],
+  pt: [
+    { slug: '0-1-version-control', title: '0-1 Por que controle de versão?' },
+    { slug: '0-2-three-areas', title: '0-2 O modelo de três áreas' },
+    { slug: '0-3-config-help', title: '0-3 config e help' }
+  ],
+  ru: [
+    { slug: '0-1-version-control', title: '0-1 Зачем нужен контроль версий?' },
+    { slug: '0-2-three-areas', title: '0-2 Модель трёх областей' },
+    { slug: '0-3-config-help', title: '0-3 config и help' }
+  ]
 }
 
 const lessonSlugs = ['0-1-version-control', '0-2-three-areas', '0-3-config-help']
@@ -69,9 +105,9 @@ function buildSidebar(): Record<string, DefaultTheme.SidebarItem[]> {
     out[`${prefix}/`] = [
       {
         text: stage0Title[key],
-        items: lessonSlugs.map((slug, i) => ({
-          text: lessonTitles[key][i],
-          link: `${prefix}/stage/0/${slug}`
+        items: stage0Lessons[key].map((lesson) => ({
+          text: lesson.title,
+          link: `${prefix}/stage/0/${lesson.slug}`
         }))
       },
       { text: glossaryTitle[key], link: `${prefix}/glossary` }
@@ -216,7 +252,6 @@ export default defineConfig({
   appearance: false,
   head: [
     ['script', {}, headScript],
-    ['pagefind-config', { 'base-url': BASE }],
     ['link', { rel: 'icon', type: 'image/svg+xml', href: `${BASE}favicon.svg` }]
   ],
   locales,

@@ -9,7 +9,7 @@ exercises:
       - Les noms de fichiers sont trop longs
     correct: 1
     explanation: Le défaut fondamental n'est ni l'espace ni les noms, mais une histoire non consultable — vous ne pouvez pas revenir à une version passée ni savoir quelle copie est la plus récente.
-    anchor: "#qu-est-ce-que-le-contrôle-de-version"
+    anchor: "#qu-est-ce-que-le-controle-de-version"
   - id: 0-1-e2
     question: Laquelle n'est PAS une capacité de base d'un système de contrôle de version (VCS) ?
     options:
@@ -18,7 +18,7 @@ exercises:
       - Corriger automatiquement les bugs du code
     correct: 2
     explanation: Un VCS enregistre, compare, annule et facilite la collaboration — il ne corrige pas le code. C'est le travail de celle ou celui qui écrit le code.
-    anchor: "#qu-est-ce-que-le-contrôle-de-version"
+    anchor: "#qu-est-ce-que-le-controle-de-version"
   - id: 0-1-e3
     question: Quelle est la différence clé entre le contrôle centralisé (ex. SVN) et distribué (ex. Git) ?
     options:
@@ -27,7 +27,7 @@ exercises:
       - Il n'y a pas de vraie différence
     correct: 0
     explanation: "En centralisé, chaque commit doit partir vers un serveur central — hors ligne, plus de commit. En distribué, chaque clone est un dépôt complet : on committe en local, même hors ligne."
-    anchor: "#centralisé-vs-distribué"
+    anchor: "#centralise-vs-distribue"
   - id: 0-1-e4
     question: Que stocke chaque commit dans Git ?
     options:
@@ -36,7 +36,7 @@ exercises:
       - Uniquement les chemins des fichiers modifiés
     correct: 1
     explanation: Un commit Git stocke un snapshot complet (avec compression et déduplication), pas seulement un diff — c'est pourquoi on parle de versionnement « par snapshots ».
-    anchor: "#centralisé-vs-distribué"
+    anchor: "#centralise-vs-distribue"
 ---
 
 # Pourquoi le contrôle de version ?
@@ -79,9 +79,5 @@ Déplacez le curseur ou cliquez un point : le contenu des fichiers change à cha
 ## Exercices
 
 <Exercise />
-
-## Bac à sable
-
-Cette leçon n'utilise aucune commande ; le bac à sable arrive à l'étape 1.
 
 <LessonProgress />

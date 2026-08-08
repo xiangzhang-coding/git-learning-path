@@ -80,8 +80,4 @@ Drag the slider or click a node and watch the files change with each version —
 
 <Exercise />
 
-## Playground
-
-This lesson involves no commands; the playground arrives in Stage 1.
-
 <LessonProgress />

@@ -80,8 +80,5 @@ Ziehen Sie den Regler oder klicken Sie einen Punkt: Die Dateien ändern sich mit
 
 <Exercise />
 
-## Übungsbereich
-
-Diese Lektion nutzt keine Befehle; der Übungsbereich kommt in Stufe 1.
 
 <LessonProgress />

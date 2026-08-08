@@ -9,7 +9,7 @@ exercises:
       - repository（リポジトリ）
     correct: 0
     explanation: 作業ツリーはファイルを編集する場所。ステージングエリアは次にコミットする変更の一覧、リポジトリはコミット済みの履歴です。
-    anchor: "#3つのエリア"
+    anchor: "#_3つのエリア"
   - id: 0-2-e2
     question: git add は変更をどこからどこへ移しますか？
     options:
@@ -18,7 +18,7 @@ exercises:
       - repository → working tree
     correct: 0
     explanation: git add は作業ツリーの変更をステージングエリアへ登録します。履歴へ書き込むのは git commit（staging area → repository）です。
-    anchor: "#3つのエリア"
+    anchor: "#_3つのエリア"
   - id: 0-2-e3
     question: git commit は変更をどこからどこへ移しますか？
     options:
@@ -27,7 +27,7 @@ exercises:
       - 変更を破棄する
     correct: 1
     explanation: commit はステージングされた変更を 1 つのコミットにまとめ、リポジトリ（.git ディレクトリ）へ保存して履歴のスナップショットにします。
-    anchor: "#3つのエリア"
+    anchor: "#_3つのエリア"
   - id: 0-2-e4
     question: ステージングエリアの最大の利点は何ですか？
     options:
@@ -36,7 +36,7 @@ exercises:
       - 誤りを自動で直してくれる
     correct: 1
     explanation: 無関係な 2 つの変更をしたら、1 つ目を add してコミット、2 つ目を add してコミット、と分けられます。各コミットが読みやすく巻き戻せます。
-    anchor: "#なぜステージングエリアがもう1つあるのか"
+    anchor: "#なぜステージングエリアがもう1つあるのか"
 ---
 
 # 3つのエリアモデル

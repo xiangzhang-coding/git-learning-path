@@ -18,7 +18,7 @@ exercises:
       - local
     correct: 2
     explanation: より具体的なレベルほど優先度が高く、local > global > system の順で上書きされます。local は現在のリポジトリだけを対象にします。
-    anchor: "#3つの設定レベル"
+    anchor: "#_3つの設定レベル"
   - id: 0-3-e3
     question: git commit の使い方の要約をすぐ確認するには？
     options:
@@ -27,7 +27,7 @@ exercises:
       - どちらでもよい
     correct: 2
     explanation: -h は使い方の要約、git help は完全なマニュアルを開きます。どちらも公式の使い方です。
-    anchor: "#知らないコマンドに出会ったら"
+    anchor: "#知らないコマンドに出会ったら"
   - id: 0-3-e4
     question: git config --list が表示するものは？
     options:

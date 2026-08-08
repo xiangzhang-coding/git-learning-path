@@ -9,7 +9,7 @@ exercises:
       - 이 컴퓨터의 모든 사용자
     correct: 1
     explanation: --global은 ~/.gitconfig에 기록되어 현재 사용자의 모든 저장소에 적용됩니다. 플래그가 없으면 현재 저장소(local)에만 적용됩니다.
-    anchor: "#첫-커밋-전-설정"
+    anchor: "#첫-커밋-전-설정"
   - id: 0-3-e2
     question: 세 설정 단계 중 우선순위가 가장 높은 것은?
     options:
@@ -18,7 +18,7 @@ exercises:
       - local
     correct: 2
     explanation: 더 구체적인 단계일수록 우선순위가 높아 local > global > system 순서로 덮어씁니다. local은 현재 저장소에만 해당합니다.
-    anchor: "#세-설정-단계"
+    anchor: "#세-설정-단계"
   - id: 0-3-e3
     question: git commit의 사용법 요약을 빠르게 보려면?
     options:
@@ -27,7 +27,7 @@ exercises:
       - 둘 다 가능하다
     correct: 2
     explanation: -h는 사용법 요약을, git help는 전체 매뉴얼을 엽니다. 둘 다 공식적인 방법입니다.
-    anchor: "#모르는-명령어를-만났을-때"
+    anchor: "#모르는-명령어를-만났을-때"
   - id: 0-3-e4
     question: git config --list가 보여주는 것은 무엇인가요?
     options:
@@ -36,7 +36,7 @@ exercises:
       - 저장소의 파일 목록
     correct: 0
     explanation: --list는 적용 중인 전체 설정(local > global > system을 병합한 결과)을 보여줍니다. 설정 문제를 진단하는 첫 단계입니다.
-    anchor: "#첫-커밋-전-설정"
+    anchor: "#첫-커밋-전-설정"
 ---
 
 # config와 help

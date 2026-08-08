@@ -9,7 +9,7 @@ exercises:
       - Todos os usuários da máquina
     correct: 1
     explanation: --global grava em ~/.gitconfig e vale para todos os repositórios do usuário atual; sem a opção, vale só para o repositório atual (local).
-    anchor: "#configuração-antes-do-primeiro-commit"
+    anchor: "#configuracao-antes-do-primeiro-commit"
   - id: 0-3-e2
     question: Qual dos três níveis de configuração tem prioridade máxima?
     options:
@@ -18,7 +18,7 @@ exercises:
       - local
     correct: 2
     explanation: "Quanto mais específico o nível, maior a prioridade: local > global > system. local pertence só ao repositório atual."
-    anchor: "#três-níveis-de-configuração"
+    anchor: "#tres-niveis-de-configuracao"
   - id: 0-3-e3
     question: Qual comando mostra rapidamente um resumo de uso do git commit?
     options:
@@ -27,7 +27,7 @@ exercises:
       - Ambos funcionam
     correct: 2
     explanation: -h mostra o resumo de uso e git help abre o manual completo — ambos são oficiais, use o que precisar.
-    anchor: "#quando-você-encontra-um-comando-desconhecido"
+    anchor: "#quando-voce-encontra-um-comando-desconhecido"
   - id: 0-3-e4
     question: O que git config --list imprime?
     options:
@@ -36,7 +36,7 @@ exercises:
       - A lista de arquivos do repositório
     correct: 0
     explanation: --list imprime a configuração efetiva (o resultado mesclado de local > global > system) — o primeiro passo para diagnosticar problemas de configuração.
-    anchor: "#configuração-antes-do-primeiro-commit"
+    anchor: "#configuracao-antes-do-primeiro-commit"
 ---
 
 # config e help

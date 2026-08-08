@@ -9,7 +9,7 @@ exercises:
       - Os nomes de arquivo ficam longos demais
     correct: 1
     explanation: O defeito central não é espaço nem nomes, mas um histórico irrecuperável — você não consegue voltar a uma versão passada nem saber qual é a mais recente.
-    anchor: "#o-que-é-controle-de-versão"
+    anchor: "#o-que-e-controle-de-versao"
   - id: 0-1-e2
     question: Qual NÃO é uma capacidade básica de um sistema de controle de versão (VCS)?
     options:
@@ -18,7 +18,7 @@ exercises:
       - Corrigir automaticamente bugs no código
     correct: 2
     explanation: Um VCS registra, compara, reverte e facilita a colaboração; não corrige código. Isso é trabalho de quem escreve o código.
-    anchor: "#o-que-é-controle-de-versão"
+    anchor: "#o-que-e-controle-de-versao"
   - id: 0-1-e3
     question: "Qual é a diferença-chave entre o controle centralizado (ex.: SVN) e o distribuído (ex.: Git)?"
     options:
@@ -27,7 +27,7 @@ exercises:
       - Não há diferença real
     correct: 0
     explanation: No centralizado, cada commit precisa ir para um servidor central — sem rede, sem commits. No distribuído, cada clone é um repositório completo e você commita localmente, até offline.
-    anchor: "#centralizado-vs-distribuído"
+    anchor: "#centralizado-vs-distribuido"
   - id: 0-1-e4
     question: O que cada commit guarda no Git?
     options:
@@ -36,7 +36,7 @@ exercises:
       - Somente os caminhos dos arquivos alterados
     correct: 1
     explanation: Um commit do Git guarda um instantâneo completo (com compressão e deduplicação), não só um diff — por isso é chamado de controle de versão «por instantâneos».
-    anchor: "#centralizado-vs-distribuído"
+    anchor: "#centralizado-vs-distribuido"
 ---
 
 # Por que controle de versão?
@@ -80,8 +80,5 @@ Arraste o controle ou clique num ponto: o conteúdo dos arquivos muda a cada ver
 
 <Exercise />
 
-## Zona de prática
-
-Esta lição não usa comandos; a zona de prática chega na etapa 1.
 
 <LessonProgress />

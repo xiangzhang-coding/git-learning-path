@@ -36,7 +36,7 @@ exercises:
       - Elle corrige les erreurs automatiquement
     correct: 1
     explanation: Vous avez modifié deux fonctionnalités indépendantes ? Ajoutez et committez d'abord la première, puis la seconde — chaque commit reste lisible et annulable.
-    anchor: "#pourquoi-une-zone-supplémentaire"
+    anchor: "#pourquoi-une-zone-supplementaire"
 ---
 
 # Le modèle des trois zones
