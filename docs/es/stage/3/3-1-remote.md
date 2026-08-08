@@ -46,7 +46,7 @@ Hasta ahora, todos tus commits viven solo en **una copia del repositorio en tu m
 
 Un remote (repositorio remoto) es, en esencia, **la dirección de otro repositorio git**. git no tiene ninguna «nube»: cualquier máquina (o directorio) puede hacer de remote. Tu repositorio lo referencia por nombre; el nombre por defecto es **origin** (se asigna automáticamente en el clone).
 
-En la zona de práctica de esta lección, `/origin` es la ubicación de ese repositorio remoto — un repositorio en memoria independiente del `/repo` local.
+En la zona de práctica de esta lección, `/origin` es la ubicación de ese repositorio remoto — un repositorio en memoria independiente del `/repo` local. **No puedes entrar al remoto con `cd`**: solo guarda historia, no tiene un árbol de trabajo (como un repositorio bare de verdad o un repositorio en un servidor). Tú trabajas sobre la copia local e intercambias datos con él mediante comandos git.
 
 ## git remote: ver y añadir
 

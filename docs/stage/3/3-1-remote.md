@@ -46,7 +46,7 @@ So far, all your commits live in **one repository on your machine**. Real projec
 
 A remote is essentially **the address of another git repository**. git itself has no "cloud"; any machine (or directory) can act as a remote. Your repository refers to it by name, and the default name is **origin** (named automatically by clone).
 
-In this lesson's playground, `/origin` is that remote's location — an in-memory repository fully independent from the local `/repo`.
+In this lesson's playground, `/origin` is that remote's location — an in-memory repository fully independent from the local `/repo`. **You cannot `cd` into the remote**: it only holds history, no working tree (like a bare repository or a server-side repo). You work on the local copy and exchange data with it via git commands.
 
 ## git remote: view and add
 

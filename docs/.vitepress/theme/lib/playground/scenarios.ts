@@ -9,6 +9,8 @@ export const AUTHOR = { name: 'Learner', email: 'learner@example.com' }
 
 export const NOT_A_REPO = 'fatal: not a git repository (or any of the parent directories): .git'
 
+export const STAGE3_SCENARIOS = ['remote', 'clone', 'push', 'pull-ff', 'pull'] as const
+
 export type ScenarioName =
   | 'init'
   | 'add-commit'
@@ -147,6 +149,17 @@ export async function headBranchOf(fs: MemoryFS, dir: string): Promise<string | 
   }
 }
 
+export async function resolveAnyRef(fs: MemoryFS, dir: string, ref: string): Promise<string | null> {
+  for (const candidate of [`refs/heads/${ref}`, ref]) {
+    try {
+      return await git.resolveRef({ fs: fs as never, dir, ref: candidate })
+    } catch {
+      continue
+    }
+  }
+  return null
+}
+
 export async function branchOids(fs: MemoryFS, dir: string): Promise<Map<string, string>> {
   const out = new Map<string, string>()
   const branches = await git.listBranches({ fs: fs as never, dir })
@@ -155,7 +168,7 @@ export async function branchOids(fs: MemoryFS, dir: string): Promise<Map<string,
       const oid = await git.resolveRef({ fs: fs as never, dir, ref: `refs/heads/${name}` })
       out.set(name, oid)
     } catch {
-      // unborn branch
+      continue
     }
   }
   return out
@@ -239,7 +252,7 @@ export async function buildScenario(fs: MemoryFS, name: ScenarioName): Promise<v
     await write(fs, dir, 'hello.txt', 'hello\n')
     return
   }
-  if (name === 'remote' || name === 'clone' || name === 'push' || name === 'pull-ff' || name === 'pull') {
+  if ((STAGE3_SCENARIOS as readonly string[]).includes(name)) {
     return
   }
   await git.init({ fs: fs as never, dir, defaultBranch: 'main' })
@@ -330,7 +343,7 @@ export async function buildRemoteScenario(
 ): Promise<void> {
   const dir = '/repo'
   const remoteDir = '/origin'
-  if (name !== 'remote' && name !== 'clone' && name !== 'push' && name !== 'pull-ff' && name !== 'pull') {
+  if (!(STAGE3_SCENARIOS as readonly string[]).includes(name)) {
     return
   }
 

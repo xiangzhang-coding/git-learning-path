@@ -12,10 +12,12 @@ import {
   mergeInProgress,
   mergeMessage,
   readFileFromRef,
+  resolveAnyRef,
   startMerge
 } from './scenarios'
 import { applyMergedFiles, createMergeCommit, readTreeFiles, syncIndex, threeWayMerge, writeTreeFromFiles, updateHeadRef } from './merge'
-import { runCd, runClone, runFetch, runPull, runPush, runRemote } from './remote'
+import { runCd, runClone, runFetch, runPush, runRemote } from './remote'
+import { readTrackingOid } from './scenarios'
 
 export interface CommandResult {
   out: string[]
@@ -26,17 +28,6 @@ type MatrixRow = [string, number, number, number]
 
 function short(sha: string): string {
   return sha.slice(0, 7)
-}
-
-async function resolveAnyRef(fs: MemoryFS, dir: string, ref: string): Promise<string | null> {
-  for (const candidate of [`refs/heads/${ref}`, ref]) {
-    try {
-      return await git.resolveRef({ fs: fs as never, dir, ref: candidate })
-    } catch {
-      // try next
-    }
-  }
-  return null
 }
 
 async function branchName(fs: MemoryFS, dir: string): Promise<string> {
@@ -311,6 +302,24 @@ async function mergeSnapshot(session: Session): Promise<Map<string, string | nul
   return files
 }
 
+async function runPull(session: Session, argv: string[]): Promise<CommandResult> {
+  const args = argv.filter((a) => !a.startsWith('-'))
+  const remoteName = args[0] ?? 'origin'
+  const branch = args[1] ?? ((await git.currentBranch({ fs: session.fs as never, dir: session.dir })) as string | null) ?? 'main'
+  const fetchResult = await runFetch(session, [remoteName])
+  const ref = `refs/remotes/${remoteName}/${branch}`
+  const theirsOid = await resolveAnyRef(session.fs, session.dir, ref)
+  if (!theirsOid) {
+    return { out: [...fetchResult.out, `fatal: couldn't find remote ref ${ref}`], changed: false }
+  }
+  const oursOid = await git.resolveRef({ fs: session.fs as never, dir: session.dir, ref: 'HEAD' })
+  if (oursOid === theirsOid) {
+    return { out: [...fetchResult.out, 'Already up to date.'], changed: false }
+  }
+  const mergeResult = await runMerge(session, [`${remoteName}/${branch}`])
+  return { out: [...fetchResult.out, ...mergeResult.out], changed: fetchResult.changed || mergeResult.changed }
+}
+
 async function runBranch(session: Session, argv: string[]): Promise<CommandResult> {
   if (!(await isRepo(session.fs, session.dir))) {
     return { out: [NOT_A_REPO], changed: false }
@@ -401,17 +410,11 @@ export async function runMerge(session: Session, argv: string[]): Promise<Comman
   if (await mergeInProgress(fs, dir)) {
     return { out: ['fatal: you have not concluded your merge (MERGE_HEAD exists)'], changed: false }
   }
-  let theirsOid: string
-  try {
-    theirsOid = await git.resolveRef({ fs: fs as never, dir, ref: `refs/heads/${target}` })
-  } catch {
-    try {
-      theirsOid = await git.resolveRef({ fs: fs as never, dir, ref: target })
-    } catch {
-      return {
-        out: [`fatal: '${target}' is not a commit and a branch '${target}' cannot be created from it`],
-        changed: false
-      }
+  const theirsOid = await resolveAnyRef(fs, dir, target)
+  if (!theirsOid) {
+    return {
+      out: [`fatal: '${target}' is not a commit and a branch '${target}' cannot be created from it`],
+      changed: false
     }
   }
   const oursOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
@@ -508,7 +511,21 @@ async function runLog(session: Session, argv: string[]): Promise<CommandResult> 
   }
   const refArg = argv.find((a) => !a.startsWith('-'))
   let commits: Awaited<ReturnType<typeof git.log>>
-  if (refArg) {
+  let exclude = new Set<string>()
+  if (refArg && refArg.includes('..')) {
+    const [from, to] = refArg.split('..')
+    const fromOid = from ? await resolveAnyRef(session.fs, session.dir, from) : null
+    const toOid = await resolveAnyRef(session.fs, session.dir, to)
+    if (!toOid) {
+      return { out: [`fatal: ambiguous argument '${refArg}': unknown revision`], changed: false }
+    }
+    commits = await git.log({ fs: session.fs as never, dir: session.dir, depth: 30, ref: toOid })
+    if (fromOid) {
+      const excluded = await git.log({ fs: session.fs as never, dir: session.dir, depth: 30, ref: fromOid })
+      exclude = new Set(excluded.map((c) => c.oid))
+      commits = commits.filter((c) => !exclude.has(c.oid))
+    }
+  } else if (refArg) {
     const oid = await resolveAnyRef(session.fs, session.dir, refArg)
     if (!oid) {
       return { out: [`fatal: ambiguous argument '${refArg}': unknown revision`], changed: false }
@@ -690,8 +707,6 @@ export async function runGit(session: Session, input: string): Promise<CommandRe
         return await runSwitch(session, rest)
       case 'merge':
         return await runMerge(session, rest)
-      case 'cd':
-        return await runCd(session, rest)
       case 'remote':
         return await runRemote(session, rest)
       case 'clone':

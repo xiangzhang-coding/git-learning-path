@@ -20,6 +20,31 @@ export async function commitGraph(fs: MemoryFS, dir: string): Promise<GraphCommi
     branchNames = []
   }
 
+  let remoteRemotes: string[] = []
+  try {
+    const remotes = await git.listRemotes({ fs: fs as never, dir })
+    remoteRemotes = remotes.map((r) => r.remote)
+  } catch {
+    remoteRemotes = []
+  }
+  const trackingBranches = new Map<string, string[]>()
+  for (const remote of remoteRemotes) {
+    let names: string[]
+    try {
+      names = await git.listBranches({ fs: fs as never, dir, remote })
+    } catch {
+      continue
+    }
+    for (const name of names) {
+      try {
+        const oid = await git.resolveRef({ fs: fs as never, dir, ref: `refs/remotes/${remote}/${name}` })
+        trackingBranches.set(oid, [...(trackingBranches.get(oid) ?? []), `${remote}/${name}`])
+      } catch {
+        continue
+      }
+    }
+  }
+
   const commits = new Map<string, Awaited<ReturnType<typeof git.readCommit>>['commit'] & { oid: string; message: string }>()
   const tipBranches = new Map<string, string[]>()
   let detached: string | null = null
@@ -58,6 +83,29 @@ export async function commitGraph(fs: MemoryFS, dir: string): Promise<GraphCommi
           author: entry.commit.author,
           committer: entry.commit.committer
         })
+      }
+    }
+  }
+
+  for (const [oid, labels] of trackingBranches) {
+    tipBranches.set(oid, [...(tipBranches.get(oid) ?? []), ...labels])
+    if (!commits.has(oid)) {
+      try {
+        const history = await git.log({ fs: fs as never, dir, ref: oid, depth: 50 })
+        for (const entry of history) {
+          if (!commits.has(entry.oid)) {
+            commits.set(entry.oid, {
+              oid: entry.oid,
+              message: entry.commit.message.split('\n')[0],
+              parent: entry.commit.parent,
+              tree: entry.commit.tree,
+              author: entry.commit.author,
+              committer: entry.commit.committer
+            })
+          }
+        }
+      } catch {
+        continue
       }
     }
   }

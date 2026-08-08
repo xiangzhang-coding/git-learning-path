@@ -1,6 +1,6 @@
 import * as git from 'isomorphic-git'
 import type { Session } from './scenarios'
-import { isRepo, listWorkdirFiles, mergeInProgress, readBranchOid, readFileFromRef } from './scenarios'
+import { isRepo, listWorkdirFiles, mergeInProgress, readBranchOid, readFileFromRef, resolveAnyRef } from './scenarios'
 import type { GraphCommit } from './graph'
 import { commitGraph } from './graph'
 
@@ -166,16 +166,8 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
 }
 
 async function branchMerged(fs: Session['fs'], dir: string, name: string): Promise<boolean> {
-  let tip: string
-  try {
-    tip = await git.resolveRef({ fs: fs as never, dir, ref: `refs/heads/${name}` })
-  } catch {
-    try {
-      tip = await git.resolveRef({ fs: fs as never, dir, ref: name })
-    } catch {
-      return false
-    }
-  }
+  const tip = await resolveAnyRef(fs, dir, name)
+  if (!tip) return false
   const head = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
   const bases = await git.findMergeBase({ fs: fs as never, dir, oids: [head, tip] })
   return bases[0] === tip

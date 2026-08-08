@@ -96,14 +96,19 @@ describe('git push', () => {
     await exec(session, 'git push')
     const { remoteFs, remoteDir } = session
     await remoteFs.writeFile(`${remoteDir}/remote.txt`, 'remote change\n')
-    const r = await import('../docs/.vitepress/theme/lib/playground')
-    void r
     const git = (await import('isomorphic-git')) as typeof import('isomorphic-git')
     await git.add({ fs: remoteFs as never, dir: remoteDir, filepath: 'remote.txt' })
     await git.commit({ fs: remoteFs as never, dir: remoteDir, author: { name: 'Learner', email: 'learner@example.com' }, message: 'feat: remote change' })
     const out = await exec(session, 'git push')
     expect(out).toContain('non-fast-forward')
     expect(out).toContain('[rejected]')
+  })
+
+  it('reports everything up-to-date when already in sync', async () => {
+    const session = await Session.create('push')
+    await exec(session, 'git push')
+    const out = await exec(session, 'git push')
+    expect(out).toContain('Everything up-to-date')
   })
 
   it('updates the local tracking ref after push', async () => {
@@ -150,6 +155,55 @@ describe('git pull', () => {
     expect(remoteContent.toString()).toContain('remote work')
     const result = await runChecks(session, [{ type: 'mergeDone', branch: 'origin/main' }])
     expect(result.pass).toBe(true)
+  })
+
+  it('pull with overlapping changes produces a resolvable conflict', async () => {
+    const session = await Session.create('pull')
+    const { remoteFs, remoteDir } = session
+    await remoteFs.writeFile(`${remoteDir}/hello.txt`, 'hello from remote\n')
+    const git = (await import('isomorphic-git')) as typeof import('isomorphic-git')
+    await git.add({ fs: remoteFs as never, dir: remoteDir, filepath: 'hello.txt' })
+    await git.commit({ fs: remoteFs as never, dir: remoteDir, author: { name: 'Learner', email: 'learner@example.com' }, message: 'fix: remote hello' })
+    await session.fs.writeFile('/repo/hello.txt', 'hello from local\n')
+    await runGit(session, 'git add hello.txt')
+    await runGit(session, 'git commit -m "fix: local hello"')
+    const out = await exec(session, 'git pull')
+    expect(out).toContain('CONFLICT (content): Merge conflict in hello.txt')
+    const status = await exec(session, 'git status')
+    expect(status).toContain('You have unmerged paths')
+    await session.fs.writeFile('/repo/hello.txt', 'hello resolved\n')
+    await runGit(session, 'git add hello.txt')
+    await runGit(session, 'git commit -m "merge: resolve hello"')
+    const content = await session.fs.readFile('/repo/hello.txt')
+    expect(content.toString()).toBe('hello resolved\n')
+    const result = await runChecks(session, [{ type: 'mergeDone', branch: 'origin/main' }])
+    expect(result.pass).toBe(true)
+  })
+
+  it('git log with a..b range shows only new commits', async () => {
+    const session = await Session.create('pull-ff')
+    await exec(session, 'git fetch')
+    const log = await exec(session, 'git log main..origin/main --oneline')
+    expect(log).toContain('feat: remote work')
+    expect(log).not.toContain('docs: init readme')
+  })
+
+  it('commit graph shows the tracking branch after fetch', async () => {
+    const session = await Session.create('pull-ff')
+    await exec(session, 'git fetch')
+    const { commitGraph } = await import('../docs/.vitepress/theme/lib/playground')
+    const graph = await commitGraph(session.fs, session.dir)
+    const withTracking = graph.find((c) => c.branches.includes('origin/main'))
+    expect(withTracking).toBeDefined()
+    expect(withTracking!.message).toContain('remote work')
+  })
+
+  it('pull origin main merges the named remote', async () => {
+    const session = await Session.create('pull-ff')
+    const out = await exec(session, 'git pull origin main')
+    expect(out).toContain('Fast-forward')
+    const content = await session.fs.readFile('/repo/remote.txt')
+    expect(content.toString()).toContain('remote work')
   })
 })
 

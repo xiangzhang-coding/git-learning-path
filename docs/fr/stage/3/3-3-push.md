@@ -62,6 +62,8 @@ To /origin
 
 push fait essentiellement avancer la branche distante **en fast-forward** jusqu'à la branche locale (le fast-forward vient de l'étape 2, à propos de merge). Une fois la poussée réussie, le tracking branch local `origin/main` avance lui aussi — c'est l'image de « où se trouve le remote », et elle est maintenant alignée avec le remote.
 
+**Upstream (en amont)** : une fois la poussée réussie, la branche locale et la branche distante établissent une relation amont/aval — la branche distante devient l'upstream de la branche locale. Dès lors, `git push` / `git pull` sans argument savent avec quelle branche distante se synchroniser.
+
 ## La poussée non-fast-forward est rejetée
 
 Si **le remote a des commits que le local n'a pas** (par exemple quelqu'un a poussé avant vous, ou le remote a reçu d'autres mises à jour), pousser directement écraserait ces commits — git refuse :

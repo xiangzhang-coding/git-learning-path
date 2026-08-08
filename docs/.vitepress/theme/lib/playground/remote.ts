@@ -28,15 +28,15 @@ async function remoteLocation(session: Session): Promise<{ fs: MemoryFS; dir: st
   return { fs: session.remoteFs, dir: session.remoteDir }
 }
 
-async function resolveAny(fs: MemoryFS, dir: string, ref: string): Promise<string | null> {
-  for (const candidate of [`refs/heads/${ref}`, ref]) {
-    try {
-      return await git.resolveRef({ fs: fs as never, dir, ref: candidate })
-    } catch {
-      // try next
-    }
+async function requireRemote(session: Session): Promise<{ fs: MemoryFS; dir: string } | CommandResult> {
+  if (!(await isRepo(session.fs, session.dir))) {
+    return { out: [NOT_A_REPO], changed: false }
   }
-  return null
+  const remote = await remoteLocation(session)
+  if (!remote) {
+    return { out: ["fatal: '/origin' does not appear to be a git repository"], changed: false }
+  }
+  return remote
 }
 
 export async function runCd(session: Session, argv: string[]): Promise<CommandResult> {
@@ -73,7 +73,7 @@ export async function runRemote(session: Session, argv: string[]): Promise<Comma
   const remotes = await git.listRemotes({ fs: session.fs as never, dir: session.dir })
   if (sub === '-v' || sub === '--verbose') {
     return {
-      out: remotes.flatMap((r) => [`${r.remote}\t${r.url}\t(fetch)`, `${r.remote}\t${r.url}\t(push)`]),
+      out: remotes.flatMap((r) => [`${r.remote}\t${r.url} (fetch)`, `${r.remote}\t${r.url} (push)`]),
       changed: false
     }
   }
@@ -110,13 +110,9 @@ export async function runClone(session: Session, argv: string[]): Promise<Comman
 }
 
 export async function runFetch(session: Session, argv: string[]): Promise<CommandResult> {
-  if (!(await isRepo(session.fs, session.dir))) {
-    return { out: [NOT_A_REPO], changed: false }
-  }
-  const remote = await remoteLocation(session)
-  if (!remote) {
-    return { out: ["fatal: '/origin' does not appear to be a git repository"], changed: false }
-  }
+  const guard = await requireRemote(session)
+  if ('out' in guard) return guard
+  const remote = guard
   const remoteName = argv.find((a) => !a.startsWith('-')) ?? 'origin'
   await copyObjects(remote.fs, remote.dir, session.fs, session.dir)
   const branches = await branchOids(remote.fs, remote.dir)
@@ -134,18 +130,12 @@ export async function runFetch(session: Session, argv: string[]): Promise<Comman
 }
 
 export async function runPush(session: Session, argv: string[]): Promise<CommandResult> {
-  if (!(await isRepo(session.fs, session.dir))) {
-    return { out: [NOT_A_REPO], changed: false }
-  }
-  const remote = await remoteLocation(session)
-  if (!remote) {
-    return { out: ["fatal: '/origin' does not appear to be a git repository"], changed: false }
-  }
-  const remoteName = argv.find((a) => !a.startsWith('-') && a !== 'push') ?? 'origin'
-  const branch =
-    argv.find((a) => !a.startsWith('-') && a !== 'push' && a !== remoteName) ??
-    ((await git.currentBranch({ fs: session.fs as never, dir: session.dir })) as string | null) ??
-    'main'
+  const guard = await requireRemote(session)
+  if ('out' in guard) return guard
+  const remote = guard
+  const args = argv.filter((a) => !a.startsWith('-'))
+  const remoteName = args[0] ?? 'origin'
+  const branch = args[1] ?? ((await git.currentBranch({ fs: session.fs as never, dir: session.dir })) as string | null) ?? 'main'
   const localOid = await readBranchOid(session.fs, session.dir, branch)
   if (!localOid) {
     return { out: [`error: src refspec ${branch} does not match any`], changed: false }
@@ -167,6 +157,9 @@ export async function runPush(session: Session, argv: string[]): Promise<Command
       }
     }
   }
+  if (remoteOid === localOid) {
+    return { out: ['Everything up-to-date'], changed: false }
+  }
   await copyObjects(session.fs, session.dir, remote.fs, remote.dir)
   await writeBranchRef(remote.fs, remote.dir, branch, localOid)
   await writeTrackingRef(session.fs, session.dir, remoteName, branch, localOid)
@@ -174,39 +167,4 @@ export async function runPush(session: Session, argv: string[]): Promise<Command
     ? `   ${short(remoteOid)}..${short(localOid)}  ${branch} -> ${branch}`
     : ` * [new branch]      ${branch} -> ${branch}`
   return { out: [`To ${remote.dir}`, line], changed: true }
-}
-
-export async function runPull(session: Session, argv: string[]): Promise<CommandResult> {
-  if (!(await isRepo(session.fs, session.dir))) {
-    return { out: [NOT_A_REPO], changed: false }
-  }
-  const remote = await remoteLocation(session)
-  if (!remote) {
-    return { out: ["fatal: '/origin' does not appear to be a git repository"], changed: false }
-  }
-  const fetchResult = await runFetch(session, argv)
-  const branch =
-    ((await git.currentBranch({ fs: session.fs as never, dir: session.dir })) as string | null) ?? 'main'
-  const ref = `refs/remotes/origin/${branch}`
-  const theirsOid = await resolveAny(session.fs, session.dir, ref)
-  if (!theirsOid) {
-    return { out: [...fetchResult.out, `fatal: couldn't find remote ref ${ref}`], changed: false }
-  }
-  const oursOid = await git.resolveRef({ fs: session.fs as never, dir: session.dir, ref: 'HEAD' })
-  if (oursOid === theirsOid) {
-    return { out: [...fetchResult.out, 'Already up to date.'], changed: false }
-  }
-  const { runMerge } = await import('./commands')
-  const mergeResult = await runMerge(session, ['origin/' + branch])
-  return { out: [...fetchResult.out, ...mergeResult.out], changed: fetchResult.changed || mergeResult.changed }
-}
-
-export async function resolveRefAnywhere(session: Session, ref: string): Promise<string | null> {
-  return resolveAny(session.fs, session.dir, ref)
-}
-
-export async function remoteHeadOid(session: Session, branch: string): Promise<string | null> {
-  const remote = await remoteLocation(session)
-  if (!remote) return null
-  return readBranchOid(remote.fs, remote.dir, branch)
 }

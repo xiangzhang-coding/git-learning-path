@@ -46,7 +46,7 @@ Bisher liegen alle Ihre Commits in **einem Repository auf Ihrem Rechner**. Echte
 
 Ein remote ist im Kern **die Adresse eines anderen git-Repositorys**. git selbst hat keine „Cloud"; jede Maschine (oder jedes Verzeichnis) kann als remote dienen. Ihr Repository referenziert es über einen Namen, standardmäßig **origin** (nach dem Klonen automatisch vergeben).
 
-Im Übungsbereich dieser Lektion ist `/origin` die Adresse des Remote-Repositorys — ein eigenständiges In-Memory-Repository, unabhängig vom lokalen `/repo`.
+Im Übungsbereich dieser Lektion ist `/origin` die Adresse des Remote-Repositorys — ein eigenständiges In-Memory-Repository, unabhängig vom lokalen `/repo`. **Sie können nicht per `cd` in das Remote wechseln**: Es enthält nur die Historie, keine Arbeitskopie (wie ein echtes Bare-Repository oder ein Repository auf einem Server). Sie arbeiten in der lokalen Kopie und tauschen Daten über git-Befehle mit ihm aus.
 
 ## git remote ansehen und hinzufügen
 

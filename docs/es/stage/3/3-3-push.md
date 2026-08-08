@@ -62,6 +62,8 @@ To /origin
 
 push, en el fondo, **adelanta** la rama remota hasta la posición de la rama local (el concepto de avance rápido viene del merge de la etapa 2). Cuando el push termina, tu rama de seguimiento local `origin/main` también avanza en sincronía — es el espejo de «dónde está el remoto ahora», y coincide con él.
 
+**Upstream (aguas arriba)**: cuando el push termina, tu rama local y la rama remota establecen una relación aguas arriba/aguas abajo — la rama remota es el upstream de tu rama local. Desde entonces, `git push` / `git pull` sin argumentos también saben con qué rama remota sincronizarse.
+
 ## El push non-fast-forward se rechaza
 
 Si **el remoto tiene commits que no tienes en local** (porque otra persona empujó primero, o el repositorio remoto recibió actualizaciones por otro lado), empujar directamente sobrescribiría esos commits — git lo rechaza:

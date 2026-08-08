@@ -46,7 +46,7 @@ Jusqu'ici, tous vos commits se trouvent dans **un seul dépôt, sur votre machin
 
 remote (dépôt distant) est essentiellement **l'adresse d'un autre dépôt git**. git n'a pas de « cloud » en lui-même : n'importe quelle machine (ou n'importe quel dossier) peut jouer le rôle de remote. Votre dépôt y fait référence par un nom, dont la valeur par défaut est **origin** (attribué automatiquement au clone).
 
-Dans la zone d'entraînement de cette leçon, `/origin` est l'emplacement de ce dépôt distant — un dépôt en mémoire indépendant du `/repo` local.
+Dans la zone d'entraînement de cette leçon, `/origin` est l'emplacement de ce dépôt distant — un dépôt en mémoire indépendant du `/repo` local. **Vous ne pouvez pas `cd` dans le dépôt distant** : il ne contient que l'historique, pas de copie de travail (comme un vrai dépôt nu ou un dépôt sur un serveur). Vous travaillez sur la copie locale et échangez des données avec lui via des commandes git.
 
 ## git remote : voir et ajouter
 

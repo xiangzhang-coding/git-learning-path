@@ -62,6 +62,8 @@ To /origin
 
 push bringt den Remote-Branch im Kern **per Fast-forward** auf den Stand des lokalen Branches (der Begriff Fast-forward stammt aus Stufe 2, vom merge). Nach dem push rückt auch der lokale Tracking-Branch `origin/main` vor — er ist die Spiegelung „wo das Remote gerade steht" und stimmt jetzt wieder mit dem Remote überein.
 
+**Upstream**: Nach dem erfolgreichen push entsteht eine Upstream-Beziehung zwischen lokalem und Remote-Branch — der Remote-Branch wird zum Upstream des lokalen Branches. Von da an wissen `git push` / `git pull` auch ohne Argumente, mit welchem Remote-Branch synchronisiert wird.
+
 ## Non-fast-forward-Push wird abgelehnt
 
 Wenn **das Remote Commits hat, die lokal fehlen** (weil jemand anderes zuerst gepusht hat oder das Remote anderweitig aktualisiert wurde), würde ein direkter push diese Commits überschreiben — git lehnt ab:
