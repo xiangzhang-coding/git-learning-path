@@ -1,0 +1,53 @@
+- generic [ref=e3]:
+  - link "Skip to content" [ref=e4] [cursor=pointer]:
+    - /url: "#VPContent"
+  - banner:
+    - generic:
+      - generic:
+        - generic:
+          - link "Git 学习路径" [ref=e6] [cursor=pointer]:
+            - /url: /git-learning-path/zh/
+          - generic [ref=e8]:
+            - navigation "Main Navigation" [ref=e9]:
+              - link "阶段 0" [ref=e11] [cursor=pointer]:
+                - /url: /git-learning-path/zh/stage/0/
+            - button "extra navigation" [ref=e14] [cursor=pointer]
+            - search "Search this site" [ref=e18]:
+              - textbox "Search" [ref=e19]
+              - button "Clear"
+            - combobox "Theme" [ref=e20] [cursor=pointer]:
+              - option "System" [selected]
+              - option "Light"
+              - option "Dark"
+              - option "Terminal"
+              - option "Retro"
+  - generic [ref=e22]:
+    - generic [ref=e25]:
+      - heading "Git 学习路径 系统性掌握 Git 与 GitHub" [level=1] [ref=e26]:
+        - generic [ref=e27]: Git 学习路径
+        - generic [ref=e28]: 系统性掌握 Git 与 GitHub
+      - paragraph [ref=e29]: 六个阶段，从基础到 GitHub 生态——只教你会真正用到的命令，并讲清背后的原理。
+      - generic [ref=e30]:
+        - link "开始学习" [ref=e32] [cursor=pointer]:
+          - /url: /git-learning-path/zh/stage/0/
+        - link "术语表" [ref=e34] [cursor=pointer]:
+          - /url: /git-learning-path/zh/stage/0/
+    - generic [ref=e37]:
+      - article [ref=e40]:
+        - heading "阶段 0 — 概念与环境" [level=2] [ref=e41]
+        - paragraph [ref=e42]: 版本控制为何存在、三个区域模型、config 与 help。
+      - article [ref=e45]:
+        - heading "阶段 1 — 本地基础" [level=2] [ref=e46]
+        - paragraph [ref=e47]: init、status、add、commit、log、diff、restore——快照与 SHA-1。
+      - article [ref=e50]:
+        - heading "阶段 2 — 分支与合并" [level=2] [ref=e51]
+        - paragraph [ref=e52]: branch、switch、merge、冲突解决——提交图与 HEAD。
+      - article [ref=e55]:
+        - heading "阶段 3 — 远程协作" [level=2] [ref=e56]
+        - paragraph [ref=e57]: clone、remote、push、pull、fetch——追踪分支与远程引用。
+      - article [ref=e60]:
+        - heading "阶段 4 — 修复与进阶" [level=2] [ref=e61]
+        - paragraph [ref=e62]: stash、reset、revert、cherry-pick、rebase、tag——引用与 reflog。
+      - article [ref=e65]:
+        - heading "阶段 5 — GitHub 生态" [level=2] [ref=e66]
+        - paragraph [ref=e67]: fork、PR、Issues、Releases、Actions、Pages——协作工作流。

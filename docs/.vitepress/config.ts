@@ -181,7 +181,8 @@ export default defineConfig({
   appearance: false,
   head: [
     ['script', {}, headScript],
-    ['pagefind-config', { 'base-url': '/git-learning-path/' }]
+    ['pagefind-config', { 'base-url': '/git-learning-path/' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/git-learning-path/favicon.svg' }]
   ],
   locales,
   themeConfig: {
