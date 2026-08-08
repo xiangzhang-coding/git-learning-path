@@ -15,6 +15,7 @@ import {
   startMerge
 } from './scenarios'
 import { applyMergedFiles, createMergeCommit, readTreeFiles, syncIndex, threeWayMerge, writeTreeFromFiles, updateHeadRef } from './merge'
+import { runCd, runClone, runFetch, runPull, runPush, runRemote } from './remote'
 
 export interface CommandResult {
   out: string[]
@@ -25,6 +26,17 @@ type MatrixRow = [string, number, number, number]
 
 function short(sha: string): string {
   return sha.slice(0, 7)
+}
+
+async function resolveAnyRef(fs: MemoryFS, dir: string, ref: string): Promise<string | null> {
+  for (const candidate of [`refs/heads/${ref}`, ref]) {
+    try {
+      return await git.resolveRef({ fs: fs as never, dir, ref: candidate })
+    } catch {
+      // try next
+    }
+  }
+  return null
 }
 
 async function branchName(fs: MemoryFS, dir: string): Promise<string> {
@@ -369,7 +381,7 @@ async function runSwitch(session: Session, argv: string[]): Promise<CommandResul
   return { out: [`Switched to branch '${name}'`], changed: true }
 }
 
-async function runMerge(session: Session, argv: string[]): Promise<CommandResult> {
+export async function runMerge(session: Session, argv: string[]): Promise<CommandResult> {
   const { fs, dir } = session
   if (!(await isRepo(fs, dir))) {
     return { out: [NOT_A_REPO], changed: false }
@@ -393,9 +405,13 @@ async function runMerge(session: Session, argv: string[]): Promise<CommandResult
   try {
     theirsOid = await git.resolveRef({ fs: fs as never, dir, ref: `refs/heads/${target}` })
   } catch {
-    return {
-      out: [`fatal: '${target}' is not a commit and a branch '${target}' cannot be created from it`],
-      changed: false
+    try {
+      theirsOid = await git.resolveRef({ fs: fs as never, dir, ref: target })
+    } catch {
+      return {
+        out: [`fatal: '${target}' is not a commit and a branch '${target}' cannot be created from it`],
+        changed: false
+      }
     }
   }
   const oursOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
@@ -490,7 +506,17 @@ async function runLog(session: Session, argv: string[]): Promise<CommandResult> 
   if (!(await isRepo(session.fs, session.dir))) {
     return { out: [NOT_A_REPO], changed: false }
   }
-  const commits = await git.log({ fs: session.fs as never, dir: session.dir, depth: 30 })
+  const refArg = argv.find((a) => !a.startsWith('-'))
+  let commits: Awaited<ReturnType<typeof git.log>>
+  if (refArg) {
+    const oid = await resolveAnyRef(session.fs, session.dir, refArg)
+    if (!oid) {
+      return { out: [`fatal: ambiguous argument '${refArg}': unknown revision`], changed: false }
+    }
+    commits = await git.log({ fs: session.fs as never, dir: session.dir, depth: 30, ref: oid })
+  } else {
+    commits = await git.log({ fs: session.fs as never, dir: session.dir, depth: 30 })
+  }
   if (!commits.length) return { out: ['fatal: your current branch does not have any commits yet'], changed: false }
   const oneline = argv.includes('--oneline')
   return {
@@ -627,6 +653,9 @@ function parseArgs(input: string): string[] {
 export async function runGit(session: Session, input: string): Promise<CommandResult> {
   const argv = parseArgs(input.trim())
   if (!argv.length) return { out: [], changed: false }
+  if (argv[0] === 'cd') {
+    return runCd(session, argv.slice(1))
+  }
   if (argv[0] !== 'git') {
     return { out: [`git: '${argv[0]}' is not a git command. Type 'git help' for a list.`], changed: false }
   }
@@ -661,6 +690,18 @@ export async function runGit(session: Session, input: string): Promise<CommandRe
         return await runSwitch(session, rest)
       case 'merge':
         return await runMerge(session, rest)
+      case 'cd':
+        return await runCd(session, rest)
+      case 'remote':
+        return await runRemote(session, rest)
+      case 'clone':
+        return await runClone(session, rest)
+      case 'fetch':
+        return await runFetch(session, rest)
+      case 'push':
+        return await runPush(session, rest)
+      case 'pull':
+        return await runPull(session, rest)
       case 'help':
         return {
           out: [
@@ -669,7 +710,7 @@ export async function runGit(session: Session, input: string): Promise<CommandRe
             '  git status',
             '  git add <file> | .',
             '  git commit -m "<message>"',
-            '  git log [--oneline]',
+            '  git log [--oneline] [<ref>]',
             '  git diff [--staged]',
             '  git restore <file>',
             '  git rm <file>',
@@ -677,7 +718,13 @@ export async function runGit(session: Session, input: string): Promise<CommandRe
             '  git config <key> [value]',
             '  git branch [<name>]',
             '  git switch [-c] <branch> | git checkout [-b] <branch>',
-            '  git merge <branch> | --abort'
+            '  git merge <branch> | --abort',
+            '  git remote add <name> <url> | git remote -v',
+            '  git clone <url> [<dir>]',
+            '  git fetch [<remote>]',
+            '  git push [<remote>] [<branch>]',
+            '  git pull',
+            '  cd <dir>'
           ],
           changed: false
         }

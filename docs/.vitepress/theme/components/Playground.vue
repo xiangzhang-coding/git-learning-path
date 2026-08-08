@@ -29,6 +29,7 @@ const output = ref<{ text: string; kind: string; cmd?: string }[]>([])
 const history = ref<string[]>([])
 const historyIndex = ref(-1)
 const branch = ref<string | null>(null)
+const path = ref('/repo')
 const commitCount = ref(0)
 const dirtyCount = ref(0)
 const files = ref<string[]>([])
@@ -49,7 +50,12 @@ const QUICK: Record<ScenarioName, string[]> = {
   branching: ['git branch', 'git log --oneline', 'git switch -c feature', 'git switch main'],
   'merge-ff': ['git status', 'git branch', 'git log --oneline', 'git merge feature'],
   merge: ['git status', 'git branch', 'git log --oneline', 'git merge feature'],
-  conflict: ['git status', 'git branch', 'git log --oneline', 'git merge feature']
+  conflict: ['git status', 'git branch', 'git log --oneline', 'git merge feature'],
+  remote: ['git status', 'git log --oneline', 'git remote add origin /origin', 'git remote -v'],
+  clone: ['git clone /origin', 'cd origin', 'git status', 'git log --oneline'],
+  push: ['git status', 'git log --oneline', 'git remote -v', 'git push'],
+  'pull-ff': ['git status', 'git log --oneline', 'git fetch', 'git pull'],
+  pull: ['git status', 'git log --oneline', 'git fetch', 'git pull']
 }
 
 function laneCells(row: GraphCommit): { char: string; isDot: boolean }[] {
@@ -67,6 +73,7 @@ function laneCells(row: GraphCommit): { char: string; isDot: boolean }[] {
 async function refresh() {
   if (!session) return
   const snap = await sessionSnapshot(session)
+  path.value = session.dir
   branch.value = snap.branch
   commitCount.value = snap.commits.length
   dirtyCount.value = snap.dirty
@@ -209,6 +216,7 @@ watch(
 <template>
   <div class="playground">
     <div class="playground-toolbar">
+      <span class="playground-path">{{ path }}</span>
       <span class="playground-branch">main: {{ branch ?? '-' }}</span>
       <span class="playground-stat" :class="{ dirty: dirtyCount > 0 }">
         {{ labels.commitsLabel }} {{ commitCount }} · {{ labels.dirtyLabel }} {{ dirtyCount }}

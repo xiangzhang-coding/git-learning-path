@@ -471,6 +471,13 @@ html[data-theme='retro'] .vp-doc h3 {
   font-weight: 700;
 }
 
+.playground-path {
+  color: var(--vp-c-text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .playground-stat.dirty {
   color: #e5a50a;
 }

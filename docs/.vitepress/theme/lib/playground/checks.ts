@@ -1,6 +1,6 @@
 import * as git from 'isomorphic-git'
 import type { Session } from './scenarios'
-import { isRepo, listWorkdirFiles, mergeInProgress, readFileFromRef } from './scenarios'
+import { isRepo, listWorkdirFiles, mergeInProgress, readBranchOid, readFileFromRef } from './scenarios'
 import type { GraphCommit } from './graph'
 import { commitGraph } from './graph'
 
@@ -18,6 +18,7 @@ export type Check =
   | { type: 'mergeDone'; branch?: string }
   | { type: 'mergeCommit' }
   | { type: 'noMergeCommit' }
+  | { type: 'pushedTo'; branch?: string }
 
 export interface CheckResult {
   pass: boolean
@@ -145,6 +146,20 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
         }
         break
       }
+      case 'pushedTo': {
+        const branch = check.branch ?? ((await git.currentBranch({ fs: fs as never, dir })) as string | null) ?? 'main'
+        let localOid: string
+        try {
+          localOid = await git.resolveRef({ fs: fs as never, dir, ref: `refs/heads/${branch}` })
+        } catch {
+          return { pass: false, detail: `branch "${branch}" has no commits` }
+        }
+        const remoteOid = await readBranchOid(session.remoteFs, session.remoteDir, branch)
+        if (remoteOid !== localOid) {
+          return { pass: false, detail: `remote "${session.remoteDir}" is not at the local ${branch}` }
+        }
+        break
+      }
     }
   }
   return { pass: true, detail: 'ok' }
@@ -155,7 +170,11 @@ async function branchMerged(fs: Session['fs'], dir: string, name: string): Promi
   try {
     tip = await git.resolveRef({ fs: fs as never, dir, ref: `refs/heads/${name}` })
   } catch {
-    return false
+    try {
+      tip = await git.resolveRef({ fs: fs as never, dir, ref: name })
+    } catch {
+      return false
+    }
   }
   const head = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
   const bases = await git.findMergeBase({ fs: fs as never, dir, oids: [head, tip] })
