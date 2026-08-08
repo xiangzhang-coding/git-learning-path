@@ -6,6 +6,8 @@ import { runChecks, sessionSnapshot } from '../lib/playground/checks'
 import { runGit } from '../lib/playground/commands'
 import type { ScenarioName } from '../lib/playground/scenarios'
 import type { Check } from '../lib/playground/checks'
+import type { GraphCommit } from '../lib/playground/graph'
+import { hasConflictMarkers } from '../lib/playground/commands'
 import { labelsFor, langOfLocaleIndex } from '../lib/labels'
 
 const props = defineProps<{
@@ -30,17 +32,36 @@ const branch = ref<string | null>(null)
 const commitCount = ref(0)
 const dirtyCount = ref(0)
 const files = ref<string[]>([])
-const commits = ref<{ short: string; message: string }[]>([])
+const graph = ref<GraphCommit[]>([])
 const checking = ref(false)
 const checkResult = ref<'pass' | 'fail' | null>(null)
 const checkDetail = ref('')
 const termEl = ref<HTMLElement | null>(null)
+const selectedFile = ref<string | null>(null)
+const fileDraft = ref('')
+const conflictFiles = ref<string[]>([])
 
 const QUICK: Record<ScenarioName, string[]> = {
   init: ['git status', 'git add .', 'git log --oneline', 'git diff'],
   'add-commit': ['git status', 'git add .', 'git log --oneline', 'git diff'],
   history: ['git status', 'git log --oneline', 'git diff', 'git diff --staged'],
-  local: ['git status', 'git add .', 'git log --oneline', 'git restore hello.txt']
+  local: ['git status', 'git add .', 'git log --oneline', 'git restore hello.txt'],
+  branching: ['git branch', 'git log --oneline', 'git switch -c feature', 'git switch main'],
+  'merge-ff': ['git status', 'git branch', 'git log --oneline', 'git merge feature'],
+  merge: ['git status', 'git branch', 'git log --oneline', 'git merge feature'],
+  conflict: ['git status', 'git branch', 'git log --oneline', 'git merge feature']
+}
+
+function laneCells(row: GraphCommit): { char: string; isDot: boolean }[] {
+  const cells: { char: string; isDot: boolean }[] = []
+  for (let i = 0; i < row.laneCount; i++) {
+    const isDot = i === row.lane
+    const bridged = row.mergeConnections.some(
+      (c) => i >= Math.min(c.from, c.to) && i <= Math.max(c.from, c.to)
+    )
+    cells.push({ char: isDot ? '●' : bridged ? '─' : ' ', isDot })
+  }
+  return cells
 }
 
 async function refresh() {
@@ -50,7 +71,40 @@ async function refresh() {
   commitCount.value = snap.commits.length
   dirtyCount.value = snap.dirty
   files.value = snap.files
-  commits.value = snap.commits
+  graph.value = snap.graph
+  const conflicted: string[] = []
+  for (const f of files.value) {
+    const content = await session.fs.readFile(`${session.dir}/${f}`).catch(() => null)
+    if (content && hasConflictMarkers(content.toString())) conflicted.push(f)
+  }
+  conflictFiles.value = conflicted
+}
+
+async function openFile(path: string) {
+  if (!session) return
+  const content = await session.fs.readFile(`${session.dir}/${path}`).catch(() => '')
+  selectedFile.value = path
+  fileDraft.value = content ? content.toString() : ''
+}
+
+async function saveFile() {
+  if (!session || !selectedFile.value) return
+  await session.fs.writeFile(`${session.dir}/${selectedFile.value}`, fileDraft.value)
+  selectedFile.value = null
+  fileDraft.value = ''
+  await refresh()
+  if (props.checks && checkResult.value !== 'pass') {
+    const res = await runChecks(session, props.checks)
+    checkResult.value = res.pass ? 'pass' : 'fail'
+    checkDetail.value = res.detail
+    emit('checked', res.pass)
+    if (res.pass) emit('complete')
+  }
+}
+
+function cancelFile() {
+  selectedFile.value = null
+  fileDraft.value = ''
 }
 
 function outputKind(text: string): string {
@@ -206,20 +260,56 @@ watch(
 
     <div class="playground-files">
       <span class="playground-files-label">{{ labels.filesLabel }}:</span>
-      <code v-for="f in files" :key="f">{{ f }}</code>
+      <button
+        v-for="f in files"
+        :key="f"
+        type="button"
+        class="playground-file"
+        :class="{ 'is-conflict': conflictFiles.includes(f) }"
+        @click="openFile(f)"
+      >
+        {{ f }}
+      </button>
     </div>
 
-    <div v-if="commits.length" class="playground-history" role="list">
+    <div v-if="selectedFile" class="playground-editor">
+      <div class="playground-editor-head">
+        <code class="playground-editor-name">{{ selectedFile }}</code>
+        <button type="button" class="playground-editor-save" @click="saveFile">{{ labels.save }}</button>
+        <button type="button" class="playground-editor-cancel" @click="cancelFile">{{ labels.cancel }}</button>
+      </div>
+      <textarea
+        v-model="fileDraft"
+        class="playground-editor-area"
+        spellcheck="false"
+        rows="6"
+      ></textarea>
+    </div>
+
+    <div v-if="graph.length" class="playground-graph" role="list">
       <div
-        v-for="(c, i) in commits"
-        :key="c.short"
-        class="playground-commit"
-        :class="{ head: i === 0 }"
+        v-for="(c, i) in graph"
+        :key="c.oid"
+        class="playground-graph-row"
+        :class="{ head: i === 0 && branch && c.branches.includes(branch) }"
         role="listitem"
       >
-        <span class="playground-commit-dot"></span>
-        <span class="playground-commit-sha">{{ c.short }}</span>
-        <span class="playground-commit-msg">{{ c.message }}</span>
+        <span class="playground-graph-lanes" aria-hidden="true">
+          <span
+            v-for="(cell, k) in laneCells(c)"
+            :key="k"
+            class="playground-graph-cell"
+            :class="cell.isDot ? 'is-dot' : ''"
+          >{{ cell.char }}</span>
+        </span>
+        <span class="playground-graph-sha">{{ c.short }}</span>
+        <span class="playground-graph-msg">{{ c.message }}</span>
+        <span
+          v-for="b in c.branches"
+          :key="b"
+          class="playground-graph-tag"
+          :class="{ 'is-head': branch === b }"
+        >{{ b }}</span>
       </div>
     </div>
   </div>

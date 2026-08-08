@@ -1,6 +1,8 @@
 import * as git from 'isomorphic-git'
 import type { Session } from './scenarios'
-import { isRepo, listWorkdirFiles, readFileFromRef } from './scenarios'
+import { isRepo, listWorkdirFiles, mergeInProgress, readFileFromRef } from './scenarios'
+import type { GraphCommit } from './graph'
+import { commitGraph } from './graph'
 
 export type Check =
   | { type: 'hasCommit'; messageContains?: string }
@@ -12,6 +14,10 @@ export type Check =
   | { type: 'branchIs'; name: string }
   | { type: 'configIs'; key: string; value: string }
   | { type: 'fileExists'; path: string }
+  | { type: 'branchExists'; name: string }
+  | { type: 'mergeDone'; branch?: string }
+  | { type: 'mergeCommit' }
+  | { type: 'noMergeCommit' }
 
 export interface CheckResult {
   pass: boolean
@@ -103,9 +109,57 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
         if (!exists) return { pass: false, detail: `"${check.path}" is missing` }
         break
       }
+      case 'branchExists': {
+        const branches = await git.listBranches({ fs: fs as never, dir })
+        if (!branches.includes(check.name)) return { pass: false, detail: `branch "${check.name}" does not exist` }
+        break
+      }
+      case 'mergeDone': {
+        if (await mergeInProgress(fs, dir)) {
+          return { pass: false, detail: 'a merge is still in progress' }
+        }
+        if (check.branch) {
+          const merged = await branchMerged(fs, dir, check.branch)
+          if (!merged) return { pass: false, detail: `branch "${check.branch}" is not merged into HEAD` }
+        }
+        const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+        const dirty = rows.filter(([, h, w, s]) => !(h === 1 && w === 1 && s === 1))
+        if (dirty.length) return { pass: false, detail: 'working tree is not clean' }
+        break
+      }
+      case 'mergeCommit': {
+        const commits = await git.log({ fs: fs as never, dir, depth: 10 })
+        const tip = commits[0]
+        if (!tip) return { pass: false, detail: 'no commits found' }
+        if (tip.commit.parent.length !== 2) {
+          return { pass: false, detail: 'HEAD is not a merge commit (expected two parents)' }
+        }
+        break
+      }
+      case 'noMergeCommit': {
+        const commits = await git.log({ fs: fs as never, dir, depth: 10 })
+        const tip = commits[0]
+        if (!tip) return { pass: false, detail: 'no commits found' }
+        if (tip.commit.parent.length === 2) {
+          return { pass: false, detail: 'HEAD is a merge commit; fast-forward should not create one' }
+        }
+        break
+      }
     }
   }
   return { pass: true, detail: 'ok' }
+}
+
+async function branchMerged(fs: Session['fs'], dir: string, name: string): Promise<boolean> {
+  let tip: string
+  try {
+    tip = await git.resolveRef({ fs: fs as never, dir, ref: `refs/heads/${name}` })
+  } catch {
+    return false
+  }
+  const head = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+  const bases = await git.findMergeBase({ fs: fs as never, dir, oids: [head, tip] })
+  return bases[0] === tip
 }
 
 export async function sessionSnapshot(session: Session): Promise<{
@@ -113,10 +167,13 @@ export async function sessionSnapshot(session: Session): Promise<{
   commits: { short: string; message: string }[]
   files: string[]
   dirty: number
+  graph: GraphCommit[]
 }> {
   const { fs, dir } = session
   const isGit = await isRepo(fs, dir)
-  if (!isGit) return { branch: null, commits: [], files: await listWorkdirFiles(fs, dir), dirty: 0 }
+  if (!isGit) {
+    return { branch: null, commits: [], files: await listWorkdirFiles(fs, dir), dirty: 0, graph: [] }
+  }
   const branch = ((await git.currentBranch({ fs: fs as never, dir })) as string | null) ?? null
   const commits = (await git.log({ fs: fs as never, dir, depth: 30 })).map((c) => ({
     short: c.oid.slice(0, 7),
@@ -124,5 +181,12 @@ export async function sessionSnapshot(session: Session): Promise<{
   }))
   const files = await listWorkdirFiles(fs, dir)
   const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
-  return { branch, commits, files, dirty: rows.filter(([, h, w, s]) => !(h === 1 && w === 1 && s === 1)).length }
+  const graph = await commitGraph(fs, dir)
+  return {
+    branch,
+    commits,
+    files,
+    dirty: rows.filter(([, h, w, s]) => !(h === 1 && w === 1 && s === 1)).length,
+    graph
+  }
 }

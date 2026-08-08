@@ -22,6 +22,8 @@ export interface Labels {
   taskPassed: string
   taskNotDone: string
   typeCommandLabel: string
+  save: string
+  cancel: string
 }
 
 export const LABELS: Record<string, Labels> = {
@@ -45,6 +47,8 @@ export const LABELS: Record<string, Labels> = {
     taskPassed: 'Task complete ✓',
     taskNotDone: 'Task not complete yet',
     typeCommandLabel: 'Type a git command…',
+    save: 'Save',
+    cancel: 'Cancel',
   },
   zh: {
     correct: '正确',
@@ -66,6 +70,8 @@ export const LABELS: Record<string, Labels> = {
     taskPassed: '任务完成 ✓',
     taskNotDone: '任务尚未完成',
     typeCommandLabel: '输入 git 命令…',
+    save: '保存',
+    cancel: '取消',
   },
   ja: {
     correct: '正解',
@@ -87,6 +93,8 @@ export const LABELS: Record<string, Labels> = {
     taskPassed: 'タスク完了 ✓',
     taskNotDone: 'まだ完了していません',
     typeCommandLabel: 'git コマンドを入力…',
+    save: '保存',
+    cancel: 'キャンセル',
   },
   ko: {
     correct: '정답',
@@ -108,6 +116,8 @@ export const LABELS: Record<string, Labels> = {
     taskPassed: '과제 완료 ✓',
     taskNotDone: '아직 완료되지 않음',
     typeCommandLabel: 'git 명령어 입력…',
+    save: '저장',
+    cancel: '취소',
   },
   de: {
     correct: 'Richtig',
@@ -129,6 +139,8 @@ export const LABELS: Record<string, Labels> = {
     taskPassed: 'Aufgabe erledigt ✓',
     taskNotDone: 'Noch nicht erledigt',
     typeCommandLabel: 'Git-Befehl eingeben…',
+    save: 'Speichern',
+    cancel: 'Abbrechen',
   },
   fr: {
     correct: 'Correct',
@@ -150,6 +162,8 @@ export const LABELS: Record<string, Labels> = {
     taskPassed: 'Tâche terminée ✓',
     taskNotDone: 'Pas encore terminée',
     typeCommandLabel: 'Saisissez une commande git…',
+    save: 'Enregistrer',
+    cancel: 'Annuler',
   },
   es: {
     correct: 'Correcto',
@@ -171,6 +185,8 @@ export const LABELS: Record<string, Labels> = {
     taskPassed: 'Tarea completada ✓',
     taskNotDone: 'Aún no completada',
     typeCommandLabel: 'Escribe un comando git…',
+    save: 'Guardar',
+    cancel: 'Cancelar',
   },
   pt: {
     correct: 'Correto',
@@ -192,6 +208,8 @@ export const LABELS: Record<string, Labels> = {
     taskPassed: 'Tarefa concluída ✓',
     taskNotDone: 'Ainda não concluída',
     typeCommandLabel: 'Digite um comando git…',
+    save: 'Salvar',
+    cancel: 'Cancelar',
   },
   ru: {
     correct: 'Верно',
@@ -213,6 +231,8 @@ export const LABELS: Record<string, Labels> = {
     taskPassed: 'Задание выполнено ✓',
     taskNotDone: 'Задание ещё не выполнено',
     typeCommandLabel: 'Введите команду git…',
+    save: 'Сохранить',
+    cancel: 'Отмена',
   }
 }
 

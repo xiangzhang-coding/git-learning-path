@@ -1,7 +1,20 @@
 import * as git from 'isomorphic-git'
 import type { MemoryFS } from './fs'
 import type { Session } from './scenarios'
-import { AUTHOR, NOT_A_REPO, isRepo, listWorkdirFiles, readFileFromRef } from './scenarios'
+import {
+  AUTHOR,
+  NOT_A_REPO,
+  conflictFiles,
+  endMerge,
+  isRepo,
+  listWorkdirFiles,
+  mergeHeadOid,
+  mergeInProgress,
+  mergeMessage,
+  readFileFromRef,
+  startMerge
+} from './scenarios'
+import { applyMergedFiles, createMergeCommit, readTreeFiles, syncIndex, threeWayMerge, writeTreeFromFiles, updateHeadRef } from './merge'
 
 export interface CommandResult {
   out: string[]
@@ -50,7 +63,7 @@ function statusLabels(row: MatrixRow): string[] {
   return labels
 }
 
-function formatStatus(rows: MatrixRow[], branch: string): string[] {
+function formatStatus(rows: MatrixRow[], branch: string, merging: string[] | null): string[] {
   const staged: string[] = []
   const unstaged: string[] = []
   const untracked: string[] = []
@@ -65,6 +78,21 @@ function formatStatus(rows: MatrixRow[], branch: string): string[] {
     if (labels.includes('deleted')) unstaged.push(`\tdeleted:    ${path}`)
   }
   const out: string[] = [`On branch ${branch}`]
+  if (merging) {
+    if (merging.length) {
+      out.push(
+        'You have unmerged paths.',
+        '\t(fix conflicts and run "git commit")',
+        '\t(use "git merge --abort" to abort the merge)',
+        '',
+        'Unmerged paths:',
+        '\t(use "git add <file>..." to mark resolution)',
+        ...merging.map((p) => `\t\tboth modified:   ${p}`)
+      )
+    } else {
+      out.push('All conflicts fixed but you are still merging.', '\t(use "git commit" to conclude merge)')
+    }
+  }
   if (staged.length) {
     out.push('', 'Changes to be committed:', '\t(use "git restore --staged <file>..." to unstage)')
     out.push(...staged)
@@ -79,6 +107,20 @@ function formatStatus(rows: MatrixRow[], branch: string): string[] {
   }
   if (!staged.length && !unstaged.length && !untracked.length) {
     out.push('nothing to commit, working tree clean')
+  }
+  return out
+}
+
+export function hasConflictMarkers(content: string): boolean {
+  return content.includes('<<<<<<<') || content.includes('>>>>>>>')
+}
+
+async function unresolvedConflicts(fs: MemoryFS, dir: string, listed: string[]): Promise<string[]> {
+  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
+  const out: string[] = []
+  for (const path of listed) {
+    const row = rows.find((r) => r[0] === path)
+    if (!row || row[3] === 0 || row[3] === row[1]) out.push(path)
   }
   return out
 }
@@ -137,7 +179,12 @@ async function runStatus(session: Session): Promise<CommandResult> {
   }
   const rows = await fileStatuses(session.fs, session.dir)
   const branch = await branchName(session.fs, session.dir)
-  return { out: formatStatus(rows, branch), changed: false }
+  let merging: string[] | null = null
+  if (await mergeInProgress(session.fs, session.dir)) {
+    const listed = await conflictFiles(session.fs, session.dir)
+    merging = await unresolvedConflicts(session.fs, session.dir, listed)
+  }
+  return { out: formatStatus(rows, branch, merging), changed: false }
 }
 
 async function runAdd(session: Session, paths: string[]): Promise<CommandResult> {
@@ -173,6 +220,47 @@ async function runCommit(session: Session, argv: string[]): Promise<CommandResul
   }
   const msgIdx = argv.indexOf('-m')
   const message = msgIdx > -1 && argv[msgIdx + 1] ? argv[msgIdx + 1] : null
+
+  if (await mergeInProgress(session.fs, session.dir)) {
+    const listed = await conflictFiles(session.fs, session.dir)
+    const rows = (await git.statusMatrix({ fs: session.fs as never, dir: session.dir })) as MatrixRow[]
+    const unresolved: string[] = []
+    for (const path of listed) {
+      const row = rows.find((r) => r[0] === path)
+      const staged = row ? row[3] !== 0 && row[3] !== row[1] : false
+      if (!staged) {
+        unresolved.push(path)
+        continue
+      }
+      const content = await session.fs.readFile(`${session.dir}/${path}`).catch(() => null)
+      if (content && hasConflictMarkers(content.toString())) unresolved.push(path)
+    }
+    if (unresolved.length) {
+      return {
+        out: [
+          'fatal: you have not concluded your merge (MERGE_HEAD exists).',
+          'Please, commit your changes before you merge.',
+          ...unresolved.map((p) => `\t${p}`)
+        ],
+        changed: false
+      }
+    }
+    const mergeHead = await mergeHeadOid(session.fs, session.dir)
+    if (!mergeHead) {
+      return { out: ['fatal: MERGE_HEAD is missing'], changed: false }
+    }
+    const files = await mergeSnapshot(session)
+    const finalMessage = message ?? (await mergeMessage(session.fs, session.dir)) ?? `Merge commit '${short(mergeHead)}'`
+    const oid = await createMergeCommit(session.fs, session.dir, files, finalMessage, mergeHead)
+    await endMerge(session.fs, session.dir)
+    await syncIndex(session.fs, session.dir)
+    const branch = await branchName(session.fs, session.dir)
+    return {
+      out: [`[${branch} ${short(oid)}] ${finalMessage.split('\n')[0]}`, ` ${files.size} file(s) changed`],
+      changed: true
+    }
+  }
+
   if (!message) {
     return { out: ['fatal: please enter a commit message with -m'], changed: false }
   }
@@ -187,6 +275,215 @@ async function runCommit(session: Session, argv: string[]): Promise<CommandResul
     out: [`[${branch} ${short(sha)}] ${message}`, ` ${staged.length} file(s) changed`],
     changed: true
   }
+}
+
+async function mergeSnapshot(session: Session): Promise<Map<string, string | null>> {
+  const { fs, dir } = session
+  const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+  const headTree = (await git.readCommit({ fs: fs as never, dir, oid: headOid })).commit.tree
+  const files = new Map<string, string | null>(await readTreeFiles(fs, dir, headTree))
+  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
+  for (const [path, h, , s] of rows) {
+    if (s === 0) {
+      if (h === 1) files.set(path, null)
+      continue
+    }
+    if (h === 1 && s === 1) continue
+    if (s === 2) {
+      const content = await fs.readFile(`${dir}/${path}`).catch(() => null)
+      files.set(path, content ? content.toString() : null)
+    } else {
+      files.set(path, null)
+    }
+  }
+  return files
+}
+
+async function runBranch(session: Session, argv: string[]): Promise<CommandResult> {
+  if (!(await isRepo(session.fs, session.dir))) {
+    return { out: [NOT_A_REPO], changed: false }
+  }
+  const name = argv.find((a) => !a.startsWith('-'))
+  if (!name) {
+    const branches = await git.listBranches({ fs: session.fs as never, dir: session.dir })
+    const current = await branchName(session.fs, session.dir)
+    branches.sort()
+    return { out: branches.map((b) => (b === current ? `* ${b}` : `  ${b}`)), changed: false }
+  }
+  const existing = await git
+    .resolveRef({ fs: session.fs as never, dir: session.dir, ref: `refs/heads/${name}` })
+    .then(() => true)
+    .catch(() => false)
+  if (existing) {
+    return { out: [`fatal: a branch named '${name}' already exists`], changed: false }
+  }
+  if (!/^[\w.\-/]+$/.test(name)) {
+    return { out: [`fatal: '${name}' is not a valid branch name`], changed: false }
+  }
+  await git.branch({ fs: session.fs as never, dir: session.dir, ref: name })
+  return { out: [], changed: false }
+}
+
+async function runSwitch(session: Session, argv: string[]): Promise<CommandResult> {
+  if (!(await isRepo(session.fs, session.dir))) {
+    return { out: [NOT_A_REPO], changed: false }
+  }
+  const create = argv.includes('-c') || argv.includes('--create') || argv.includes('-b')
+  const name = argv.filter((a) => !a.startsWith('-') && a !== 'switch' && a !== 'checkout')[0]
+  if (!name) return { out: ['fatal: missing branch name'], changed: false }
+  const rows = (await git.statusMatrix({ fs: session.fs as never, dir: session.dir })) as MatrixRow[]
+  const dirty = rows.filter(([, h, w, s]) => !(h === 1 && w === 1 && s === 1))
+  if (dirty.length) {
+    return {
+      out: [
+        'error: Your local changes to the following files would be overwritten by checkout:',
+        ...dirty.map((row) => '\t' + row[0]),
+        'Please commit your changes or stash them before you switch branches.',
+        'Aborting'
+      ],
+      changed: false
+    }
+  }
+  if (create) {
+    const existing = await git
+      .resolveRef({ fs: session.fs as never, dir: session.dir, ref: `refs/heads/${name}` })
+      .then(() => true)
+      .catch(() => false)
+    if (existing) return { out: [`fatal: a branch named '${name}' already exists`], changed: false }
+    await git.branch({ fs: session.fs as never, dir: session.dir, ref: name, checkout: true })
+    await syncIndex(session.fs, session.dir)
+    return { out: [`Switched to a new branch '${name}'`], changed: true }
+  }
+  try {
+    await git.resolveRef({ fs: session.fs as never, dir: session.dir, ref: `refs/heads/${name}` })
+  } catch {
+    return { out: [`fatal: invalid reference: ${name}`], changed: false }
+  }
+  try {
+    await git.checkout({ fs: session.fs as never, dir: session.dir, ref: name })
+  } catch (e) {
+    const message = e instanceof Error ? e.message.split('\n')[0] : String(e)
+    return { out: [`error: ${message}`], changed: false }
+  }
+  await syncIndex(session.fs, session.dir)
+  return { out: [`Switched to branch '${name}'`], changed: true }
+}
+
+async function runMerge(session: Session, argv: string[]): Promise<CommandResult> {
+  const { fs, dir } = session
+  if (!(await isRepo(fs, dir))) {
+    return { out: [NOT_A_REPO], changed: false }
+  }
+  if (argv.includes('--abort')) {
+    if (!(await mergeInProgress(fs, dir))) {
+      return { out: ['fatal: There is no merge to abort (MERGE_HEAD missing).'], changed: false }
+    }
+    const oursOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+    const oursTree = (await git.readCommit({ fs: fs as never, dir, oid: oursOid })).commit.tree
+    await applyMergedFiles(fs, dir, await readTreeFiles(fs, dir, oursTree))
+    await endMerge(fs, dir)
+    return { out: [], changed: true }
+  }
+  const target = argv.find((a) => !a.startsWith('-'))
+  if (!target) return { out: ['fatal: no branch specified to merge'], changed: false }
+  if (await mergeInProgress(fs, dir)) {
+    return { out: ['fatal: you have not concluded your merge (MERGE_HEAD exists)'], changed: false }
+  }
+  let theirsOid: string
+  try {
+    theirsOid = await git.resolveRef({ fs: fs as never, dir, ref: `refs/heads/${target}` })
+  } catch {
+    return {
+      out: [`fatal: '${target}' is not a commit and a branch '${target}' cannot be created from it`],
+      changed: false
+    }
+  }
+  const oursOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+  if (oursOid === theirsOid) return { out: ['Already up to date.'], changed: false }
+  const bases = await git.findMergeBase({ fs: fs as never, dir, oids: [oursOid, theirsOid] })
+  const base = bases[0]
+  if (!base) return { out: ['fatal: refusing to merge unrelated histories'], changed: false }
+
+  const branch = await branchName(fs, dir)
+
+  if (base === oursOid) {
+    const theirsTree = (await git.readCommit({ fs: fs as never, dir, oid: theirsOid })).commit.tree
+    await applyMergedFiles(fs, dir, await readTreeFiles(fs, dir, theirsTree))
+    await updateHeadRef(session.fs, session.dir, theirsOid)
+    return {
+      out: [`Updating ${short(oursOid)}..${short(theirsOid)}`, 'Fast-forward'],
+      changed: true
+    }
+  }
+
+  if (base === theirsOid) {
+    return { out: ['Already up to date.'], changed: false }
+  }
+
+  const oursTree = (await git.readCommit({ fs: fs as never, dir, oid: oursOid })).commit.tree
+  const merged = new Map<string, string | null>(await readTreeFiles(fs, dir, oursTree))
+  const conflicts: string[] = []
+  const affected = await affectedFiles(fs, dir, base, oursOid, theirsOid)
+  for (const path of affected) {
+    const baseC = await readFileFromRef(fs, dir, base, path)
+    const oursC = await readFileFromRef(fs, dir, oursOid, path)
+    const theirsC = await readFileFromRef(fs, dir, theirsOid, path)
+    if (oursC === theirsC) {
+      merged.set(path, oursC)
+      continue
+    }
+    const result = threeWayMerge(baseC, oursC, theirsC, target)
+    if (result.conflicts) conflicts.push(path)
+    merged.set(path, result.text.length ? result.text.join('\n') + '\n' : null)
+  }
+
+  if (!conflicts.length) {
+    await applyMergedFiles(fs, dir, merged)
+    await createMergeCommit(fs, dir, merged, `Merge branch '${target}'`, theirsOid)
+    return {
+      out: [`Merge made by the 'ort' strategy.`, ` ${affected.length} file(s) changed`],
+      changed: true
+    }
+  }
+
+  for (const [path, content] of merged) {
+    if (content === null) {
+      await fs.unlink(`${dir}/${path}`).catch(() => {})
+    } else {
+      await fs.writeFile(`${dir}/${path}`, content)
+    }
+    if (!conflicts.includes(path)) {
+      await git.add({ fs: fs as never, dir, filepath: path })
+    }
+  }
+  await startMerge(fs, dir, theirsOid, `Merge branch '${target}'`, conflicts)
+  return {
+    out: [
+      ...conflicts.flatMap((p) => [`Auto-merging ${p}`, `CONFLICT (content): Merge conflict in ${p}`]),
+      'Automatic merge failed; fix conflicts and then commit the result.'
+    ],
+    changed: true
+  }
+}
+
+async function affectedFiles(
+  fs: MemoryFS,
+  dir: string,
+  base: string,
+  ours: string,
+  theirs: string
+): Promise<string[]> {
+  const baseFiles = await readTreeFiles(fs, dir, (await git.readCommit({ fs: fs as never, dir, oid: base })).commit.tree)
+  const oursFiles = await readTreeFiles(fs, dir, (await git.readCommit({ fs: fs as never, dir, oid: ours })).commit.tree)
+  const theirsFiles = await readTreeFiles(fs, dir, (await git.readCommit({ fs: fs as never, dir, oid: theirs })).commit.tree)
+  const paths = new Set([...baseFiles.keys(), ...oursFiles.keys(), ...theirsFiles.keys()])
+  const out: string[] = []
+  for (const path of paths) {
+    if (baseFiles.get(path) !== oursFiles.get(path) || baseFiles.get(path) !== theirsFiles.get(path)) {
+      out.push(path)
+    }
+  }
+  return out.sort()
 }
 
 async function runLog(session: Session, argv: string[]): Promise<CommandResult> {
@@ -356,6 +653,14 @@ export async function runGit(session: Session, input: string): Promise<CommandRe
         return await runMv(session, rest)
       case 'config':
         return await runConfig(session, rest)
+      case 'branch':
+        return await runBranch(session, rest)
+      case 'switch':
+        return await runSwitch(session, rest)
+      case 'checkout':
+        return await runSwitch(session, rest)
+      case 'merge':
+        return await runMerge(session, rest)
       case 'help':
         return {
           out: [
@@ -369,7 +674,10 @@ export async function runGit(session: Session, input: string): Promise<CommandRe
             '  git restore <file>',
             '  git rm <file>',
             '  git mv <from> <to>',
-            '  git config <key> [value]'
+            '  git config <key> [value]',
+            '  git branch [<name>]',
+            '  git switch [-c] <branch> | git checkout [-b] <branch>',
+            '  git merge <branch> | --abort'
           ],
           changed: false
         }
