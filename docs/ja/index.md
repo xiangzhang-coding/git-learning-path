@@ -11,7 +11,7 @@ hero:
       link: /ja/stage/0/
     - theme: alt
       text: 用語集
-      link: /ja/stage/0/
+      link: /ja/glossary/
 
 features:
   - title: 段階 0 — 概念と環境

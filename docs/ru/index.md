@@ -11,7 +11,7 @@ hero:
       link: /ru/stage/0/
     - theme: alt
       text: Глоссарий
-      link: /ru/stage/0/
+      link: /ru/glossary/
 
 features:
   - title: Этап 0 — Понятия и окружение

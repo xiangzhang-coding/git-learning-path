@@ -11,7 +11,7 @@ hero:
       link: /es/stage/0/
     - theme: alt
       text: Glosario
-      link: /es/stage/0/
+      link: /es/glossary/
 
 features:
   - title: Etapa 0 — Conceptos y entorno

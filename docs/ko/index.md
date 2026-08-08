@@ -11,7 +11,7 @@ hero:
       link: /ko/stage/0/
     - theme: alt
       text: 용어집
-      link: /ko/stage/0/
+      link: /ko/glossary/
 
 features:
   - title: 단계 0 — 개념과 환경
