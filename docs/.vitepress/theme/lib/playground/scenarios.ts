@@ -1,9 +1,40 @@
 import * as git from 'isomorphic-git'
+import { Buffer } from 'buffer'
 import { MemoryFS } from './fs'
+
+globalThis.Buffer = Buffer
 
 export const AUTHOR = { name: 'Learner', email: 'learner@example.com' }
 
+export const NOT_A_REPO = 'fatal: not a git repository (or any of the parent directories): .git'
+
 export type ScenarioName = 'init' | 'add-commit' | 'history' | 'local'
+
+export function isRepo(fs: MemoryFS, dir: string): Promise<boolean> {
+  return fs
+    .stat(`${dir}/.git`)
+    .then((s) => s.isDirectory())
+    .catch(() => false)
+}
+
+export async function readFileFromRef(
+  fs: MemoryFS,
+  dir: string,
+  ref: string,
+  filepath: string
+): Promise<string | null> {
+  try {
+    const oid = await git.resolveRef({ fs: fs as never, dir, ref })
+    const commit = await git.readCommit({ fs: fs as never, dir, oid })
+    const tree = await git.readTree({ fs: fs as never, dir, oid: commit.commit.tree })
+    const entry = tree.tree.find((e: { path: string }) => e.path === filepath)
+    if (!entry) return null
+    const blob = await git.readBlob({ fs: fs as never, dir, oid: entry.oid })
+    return new TextDecoder().decode(blob.blob)
+  } catch {
+    return null
+  }
+}
 
 async function write(fs: MemoryFS, dir: string, path: string, content: string): Promise<void> {
   await fs.writeFile(`${dir}/${path}`, content)

@@ -68,7 +68,7 @@ git diff --staged    # staging area vs HEAD (добавленные, но не �
 
 <Exercise />
 
-## Тренажёр
+## Зона практики
 
 <Playground scenario="history" />
 

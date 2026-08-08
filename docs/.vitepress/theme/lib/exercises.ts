@@ -1,4 +1,5 @@
 import type { Check } from './playground/checks'
+import type { ScenarioName } from './playground/scenarios'
 
 export interface Exercise {
   id: string
@@ -8,7 +9,7 @@ export interface Exercise {
   type?: 'choice' | 'task'
   options?: string[]
   correct?: number
-  scenario?: 'init' | 'add-commit' | 'history' | 'local'
+  scenario?: ScenarioName
   goal?: string
   checks?: Check[]
 }

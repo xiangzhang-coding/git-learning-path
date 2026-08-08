@@ -93,6 +93,17 @@ describe('playground command engine', () => {
     expect(status).toContain('nothing to commit')
   })
 
+  it('restore --staged only unstages without touching the working tree', async () => {
+    const session = await Session.create('local')
+    await exec(session, 'git add hello.txt')
+    await exec(session, 'git restore --staged hello.txt')
+    const content = await session.fs.readFile('/repo/hello.txt')
+    expect(content.toString()).toBe('hello git\n')
+    const status = await exec(session, 'git status')
+    expect(status).toMatch(/modified:\s+hello\.txt/)
+    expect(status).not.toContain('Changes to be committed:')
+  })
+
   it('rm deletes the file and stages the deletion', async () => {
     const session = await Session.create('local')
     const out = await exec(session, 'git rm notes.txt')

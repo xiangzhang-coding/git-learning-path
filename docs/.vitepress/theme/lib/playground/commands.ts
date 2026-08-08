@@ -1,7 +1,7 @@
 import * as git from 'isomorphic-git'
 import type { MemoryFS } from './fs'
 import type { Session } from './scenarios'
-import { AUTHOR, listWorkdirFiles } from './scenarios'
+import { AUTHOR, NOT_A_REPO, isRepo, listWorkdirFiles, readFileFromRef } from './scenarios'
 
 export interface CommandResult {
   out: string[]
@@ -12,13 +12,6 @@ type MatrixRow = [string, number, number, number]
 
 function short(sha: string): string {
   return sha.slice(0, 7)
-}
-
-function isRepo(fs: MemoryFS, dir: string): Promise<boolean> {
-  return fs
-    .stat(`${dir}/.git`)
-    .then((s) => s.isDirectory())
-    .catch(() => false)
 }
 
 async function branchName(fs: MemoryFS, dir: string): Promise<string> {
@@ -57,7 +50,7 @@ function statusLabels(row: MatrixRow): string[] {
   return labels
 }
 
-function formatStatus(fs: MemoryFS, dir: string, rows: MatrixRow[], branch: string): string[] {
+function formatStatus(rows: MatrixRow[], branch: string): string[] {
   const staged: string[] = []
   const unstaged: string[] = []
   const untracked: string[] = []
@@ -128,21 +121,6 @@ function diffLines(oldContent: string, newContent: string): string[] {
   return out
 }
 
-async function readFileFromRef(fs: MemoryFS, dir: string, ref: string, filepath: string): Promise<string | null> {
-  try {
-    const oid = await git.resolveRef({ fs: fs as never, dir, ref })
-    const commit = await git.readCommit({ fs: fs as never, dir, oid })
-    const treeOid = commit.commit.tree
-    const tree = await git.readTree({ fs: fs as never, dir, oid: treeOid })
-    const entry = tree.tree.find((e: { path: string }) => e.path === filepath)
-    if (!entry) return null
-    const blob = await git.readBlob({ fs: fs as never, dir, oid: entry.oid })
-    return new TextDecoder().decode(blob.blob)
-  } catch {
-    return null
-  }
-}
-
 async function runInit(session: Session, argv: string[]): Promise<CommandResult> {
   if ((await isRepo(session.fs, session.dir)) && argv.length === 0) {
     return { out: [`Reinitialized existing Git repository in ${session.dir}/.git/`], changed: false }
@@ -155,16 +133,16 @@ async function runInit(session: Session, argv: string[]): Promise<CommandResult>
 
 async function runStatus(session: Session): Promise<CommandResult> {
   if (!(await isRepo(session.fs, session.dir))) {
-    return { out: ['fatal: not a git repository (or any of the parent directories): .git'], changed: false }
+    return { out: [NOT_A_REPO], changed: false }
   }
   const rows = await fileStatuses(session.fs, session.dir)
   const branch = await branchName(session.fs, session.dir)
-  return { out: formatStatus(session.fs, session.dir, rows, branch), changed: false }
+  return { out: formatStatus(rows, branch), changed: false }
 }
 
 async function runAdd(session: Session, paths: string[]): Promise<CommandResult> {
   if (!(await isRepo(session.fs, session.dir))) {
-    return { out: ['fatal: not a git repository (or any of the parent directories): .git'], changed: false }
+    return { out: [NOT_A_REPO], changed: false }
   }
   if (!paths.length) return { out: ['Nothing specified, nothing added.'], changed: false }
   let targets: string[]
@@ -191,7 +169,7 @@ async function runAdd(session: Session, paths: string[]): Promise<CommandResult>
 
 async function runCommit(session: Session, argv: string[]): Promise<CommandResult> {
   if (!(await isRepo(session.fs, session.dir))) {
-    return { out: ['fatal: not a git repository (or any of the parent directories): .git'], changed: false }
+    return { out: [NOT_A_REPO], changed: false }
   }
   const msgIdx = argv.indexOf('-m')
   const message = msgIdx > -1 && argv[msgIdx + 1] ? argv[msgIdx + 1] : null
@@ -213,7 +191,7 @@ async function runCommit(session: Session, argv: string[]): Promise<CommandResul
 
 async function runLog(session: Session, argv: string[]): Promise<CommandResult> {
   if (!(await isRepo(session.fs, session.dir))) {
-    return { out: ['fatal: not a git repository (or any of the parent directories): .git'], changed: false }
+    return { out: [NOT_A_REPO], changed: false }
   }
   const commits = await git.log({ fs: session.fs as never, dir: session.dir, depth: 30 })
   if (!commits.length) return { out: ['fatal: your current branch does not have any commits yet'], changed: false }
@@ -237,7 +215,7 @@ async function runLog(session: Session, argv: string[]): Promise<CommandResult> 
 
 async function runDiff(session: Session, argv: string[]): Promise<CommandResult> {
   if (!(await isRepo(session.fs, session.dir))) {
-    return { out: ['fatal: not a git repository (or any of the parent directories): .git'], changed: false }
+    return { out: [NOT_A_REPO], changed: false }
   }
   const staged = argv.includes('--staged') || argv.includes('--cached')
   const rows = (await git.statusMatrix({ fs: session.fs as never, dir: session.dir })) as MatrixRow[]
@@ -257,9 +235,13 @@ async function runDiff(session: Session, argv: string[]): Promise<CommandResult>
     const lines = diffLines(oldContent, newContent)
     const adds = lines.filter((l) => l.startsWith('+')).length
     const dels = lines.filter((l) => l.startsWith('-')).length
-    out.push(`@@ -1,${oldContent.split('\n').length} +1,${newContent.split('\n').length} @@`, ...lines)
-    if (!adds && !dels) out.splice(out.length - lines.length - 3)
-    out.push('')
+    if (adds || dels) {
+      const oldLabel = headContent === null ? '/dev/null' : `a/${path}`
+      const newLabel = workContent === null ? '/dev/null' : `b/${path}`
+      out.push(`diff --git a/${path} b/${path}`, `--- ${oldLabel}`, `+++ ${newLabel}`)
+      out.push(...lines)
+      out.push('')
+    }
   }
   if (!out.length) return { out: [], changed: false }
   return { out, changed: false }
@@ -267,11 +249,16 @@ async function runDiff(session: Session, argv: string[]): Promise<CommandResult>
 
 async function runRestore(session: Session, argv: string[]): Promise<CommandResult> {
   if (!(await isRepo(session.fs, session.dir))) {
-    return { out: ['fatal: not a git repository (or any of the parent directories): .git'], changed: false }
+    return { out: [NOT_A_REPO], changed: false }
   }
+  const stagedOnly = argv.includes('--staged') || argv.includes('--cached')
   const targets = argv.filter((a) => !a.startsWith('-') && a !== 'restore')
   if (!targets.length) return { out: ['fatal: you must specify path(s) to restore'], changed: false }
   for (const target of targets) {
+    if (stagedOnly) {
+      await git.resetIndex({ fs: session.fs as never, dir: session.dir, filepath: target })
+      continue
+    }
     const content = await readFileFromRef(session.fs, session.dir, 'HEAD', target)
     if (content === null) {
       return { out: [`fatal: pathspec '${target}' did not match any file(s) known to git`], changed: false }
@@ -284,7 +271,7 @@ async function runRestore(session: Session, argv: string[]): Promise<CommandResu
 
 async function runRm(session: Session, argv: string[]): Promise<CommandResult> {
   if (!(await isRepo(session.fs, session.dir))) {
-    return { out: ['fatal: not a git repository (or any of the parent directories): .git'], changed: false }
+    return { out: [NOT_A_REPO], changed: false }
   }
   const targets = argv.filter((a) => !a.startsWith('-') && a !== 'rm')
   if (!targets.length) return { out: ['fatal: no pathspec was given'], changed: false }
@@ -299,7 +286,7 @@ async function runRm(session: Session, argv: string[]): Promise<CommandResult> {
 
 async function runMv(session: Session, argv: string[]): Promise<CommandResult> {
   if (!(await isRepo(session.fs, session.dir))) {
-    return { out: ['fatal: not a git repository (or any of the parent directories): .git'], changed: false }
+    return { out: [NOT_A_REPO], changed: false }
   }
   const targets = argv.filter((a) => !a.startsWith('-') && a !== 'mv')
   if (targets.length !== 2) return { out: ['fatal: bad source, source=destination'], changed: false }
@@ -312,7 +299,7 @@ async function runMv(session: Session, argv: string[]): Promise<CommandResult> {
 
 async function runConfig(session: Session, argv: string[]): Promise<CommandResult> {
   if (!(await isRepo(session.fs, session.dir))) {
-    return { out: ['fatal: not a git repository (or any of the parent directories): .git'], changed: false }
+    return { out: [NOT_A_REPO], changed: false }
   }
   const keyIdx = argv.findIndex((a) => /^\w+\.\w+$/.test(a) || /^\w+\.\w+\.\w+$/.test(a))
   if (keyIdx === -1) return { out: ['fatal: missing config key'], changed: false }

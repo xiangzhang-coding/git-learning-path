@@ -83,7 +83,7 @@ git mv <старое имя> <новое имя>
 
 <Exercise />
 
-## Тренажёр
+## Зона практики
 
 <Playground scenario="local" />
 

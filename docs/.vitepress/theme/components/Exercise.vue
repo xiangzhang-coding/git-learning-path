@@ -12,6 +12,7 @@ const exercises = computed(() => (frontmatter.value.exercises ?? []) as Exercise
 const selected = ref<Record<string, number | null>>({})
 const answered = ref<Record<string, boolean>>({})
 const taskPassed = ref<Record<string, boolean>>({})
+const taskChecked = ref<Record<string, boolean>>({})
 
 const labels = computed(() => labelsFor(langOfLocaleIndex(localeIndex.value)))
 
@@ -31,6 +32,12 @@ function isTask(ex: Exercise): boolean {
 
 function onTaskComplete(id: string) {
   taskPassed.value[id] = true
+  taskChecked.value[id] = true
+}
+
+function onTaskChecked(id: string, pass: boolean) {
+  taskChecked.value[id] = true
+  if (pass) taskPassed.value[id] = true
 }
 </script>
 
@@ -58,23 +65,28 @@ function onTaskComplete(id: string) {
           {{ ex.question }}
         </p>
 
-        <div v-if="isTask(ex)" class="exercise-task">
-          <Playground
-            :scenario="ex.scenario!"
-            :goal="ex.goal"
-            :checks="ex.checks"
-            @complete="onTaskComplete(ex.id)"
-          />
-          <div
-            v-if="taskPassed[ex.id]"
-            class="exercise-feedback is-correct"
-            data-task-passed
-          >
-            <span class="feedback-mark">{{ labels.taskPassed }}</span>
-            <p class="feedback-explanation">{{ ex.explanation }}</p>
-            <a class="feedback-anchor" :href="reviewHref(ex.anchor)">{{ labels.review }}</a>
+          <div v-if="isTask(ex)" class="exercise-task">
+            <Playground
+              :scenario="ex.scenario!"
+              :goal="ex.goal"
+              :checks="ex.checks"
+              @complete="onTaskComplete(ex.id)"
+              @checked="(pass: boolean) => onTaskChecked(ex.id, pass)"
+            />
+            <div
+              v-if="taskPassed[ex.id]"
+              class="exercise-feedback is-correct"
+              data-task-passed
+            >
+              <span class="feedback-mark">{{ labels.taskPassed }}</span>
+              <p class="feedback-explanation">{{ ex.explanation }}</p>
+              <a class="feedback-anchor" :href="reviewHref(ex.anchor)">{{ labels.review }}</a>
+            </div>
+            <div v-else-if="taskChecked[ex.id]" class="exercise-feedback is-wrong">
+              <span class="feedback-mark">{{ labels.taskNotDone }}</span>
+              <a class="feedback-anchor" :href="reviewHref(ex.anchor)">{{ labels.review }}</a>
+            </div>
           </div>
-        </div>
 
         <template v-else>
           <div class="exercise-options">

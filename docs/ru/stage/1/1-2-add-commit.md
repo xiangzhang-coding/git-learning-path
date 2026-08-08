@@ -82,7 +82,7 @@ git commit -m "feat: add login page"
 
 <Exercise />
 
-## Тренажёр
+## Зона практики
 
 <Playground scenario="add-commit" />
 

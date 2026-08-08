@@ -73,7 +73,7 @@ git init
 
 <Exercise />
 
-## Тренажёр
+## Зона практики
 
 <Playground scenario="init" />
 

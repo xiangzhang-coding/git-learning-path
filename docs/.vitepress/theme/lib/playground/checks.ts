@@ -1,7 +1,6 @@
 import * as git from 'isomorphic-git'
-import type { MemoryFS } from './fs'
 import type { Session } from './scenarios'
-import { listWorkdirFiles } from './scenarios'
+import { isRepo, listWorkdirFiles, readFileFromRef } from './scenarios'
 
 export type Check =
   | { type: 'hasCommit'; messageContains?: string }
@@ -17,27 +16,6 @@ export type Check =
 export interface CheckResult {
   pass: boolean
   detail: string
-}
-
-async function headFileContent(fs: MemoryFS, dir: string, filepath: string): Promise<string | null> {
-  try {
-    const oid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
-    const commit = await git.readCommit({ fs: fs as never, dir, oid })
-    const tree = await git.readTree({ fs: fs as never, dir, oid: commit.commit.tree })
-    const entry = tree.tree.find((e: { path: string }) => e.path === filepath)
-    if (!entry) return null
-    const blob = await git.readBlob({ fs: fs as never, dir, oid: entry.oid })
-    return new TextDecoder().decode(blob.blob)
-  } catch {
-    return null
-  }
-}
-
-async function isRepo(fs: MemoryFS, dir: string): Promise<boolean> {
-  return fs
-    .stat(`${dir}/.git`)
-    .then((s) => s.isDirectory())
-    .catch(() => false)
 }
 
 export async function runChecks(session: Session, checks: Check[]): Promise<CheckResult> {
@@ -62,7 +40,7 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
         break
       }
       case 'fileCommitted': {
-        const content = await headFileContent(fs, dir, check.path)
+        const content = await readFileFromRef(fs, dir, 'HEAD', check.path)
         if (content === null) return { pass: false, detail: `"${check.path}" is not committed` }
         if (check.contentContains && !content.includes(check.contentContains)) {
           return { pass: false, detail: `committed "${check.path}" lacks "${check.contentContains}"` }
@@ -76,7 +54,7 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
         break
       }
       case 'fileDeleted': {
-        const headHas = (await headFileContent(fs, dir, check.path)) !== null
+        const headHas = (await readFileFromRef(fs, dir, 'HEAD', check.path)) !== null
         const workExists = await fs
           .stat(`${dir}/${check.path}`)
           .then(() => true)
@@ -96,6 +74,9 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
           .catch(() => false)
         if (oldExists) return { pass: false, detail: `"${check.from}" still exists` }
         if (!newExists) return { pass: false, detail: `"${check.to}" is missing` }
+        const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+        const newRow = rows.find((r) => r[0] === check.to)
+        if (!newRow || newRow[3] === 0) return { pass: false, detail: `"${check.to}" is not staged` }
         break
       }
       case 'statusClean': {

@@ -586,6 +586,47 @@ html[data-theme='retro'] .vp-doc h3 {
   font-size: 0.72rem;
 }
 
+.playground-history {
+  display: grid;
+  gap: 0;
+  padding: 0.5rem 0.9rem 0.7rem;
+  border-top: 1px solid var(--vp-c-border);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.75rem;
+}
+
+.playground-commit {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.15rem 0;
+}
+
+.playground-commit-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--vp-c-text-3);
+  flex-shrink: 0;
+}
+
+.playground-commit.head .playground-commit-dot {
+  background: var(--vp-c-brand-1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vp-c-brand-1) 25%, transparent);
+}
+
+.playground-commit-sha {
+  color: var(--vp-c-text-3);
+  min-width: 3.2rem;
+}
+
+.playground-commit-msg {
+  color: var(--vp-c-text-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @media (max-width: 720px) {
   .gitpath-search .pagefind-ui__search-input {
     width: 8rem;

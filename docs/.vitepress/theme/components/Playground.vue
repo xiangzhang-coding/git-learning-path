@@ -1,22 +1,20 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useData } from 'vitepress'
-import { Buffer } from 'buffer'
 import { Session } from '../lib/playground/scenarios'
 import { runChecks, sessionSnapshot } from '../lib/playground/checks'
 import { runGit } from '../lib/playground/commands'
+import type { ScenarioName } from '../lib/playground/scenarios'
 import type { Check } from '../lib/playground/checks'
 import { labelsFor, langOfLocaleIndex } from '../lib/labels'
 
-globalThis.Buffer = Buffer
-
 const props = defineProps<{
-  scenario: 'init' | 'add-commit' | 'history' | 'local'
+  scenario: ScenarioName
   goal?: string
   checks?: Check[]
 }>()
 
-const emit = defineEmits<{ complete: [] }>()
+const emit = defineEmits<{ complete: []; checked: [pass: boolean] }>()
 
 const { localeIndex } = useData()
 const labels = computed(() => labelsFor(langOfLocaleIndex(localeIndex.value)))
@@ -32,12 +30,18 @@ const branch = ref<string | null>(null)
 const commitCount = ref(0)
 const dirtyCount = ref(0)
 const files = ref<string[]>([])
+const commits = ref<{ short: string; message: string }[]>([])
 const checking = ref(false)
 const checkResult = ref<'pass' | 'fail' | null>(null)
 const checkDetail = ref('')
 const termEl = ref<HTMLElement | null>(null)
 
-const QUICK = ['git status', 'git add .', 'git log --oneline', 'git diff', 'git restore hello.txt']
+const QUICK: Record<ScenarioName, string[]> = {
+  init: ['git status', 'git add .', 'git log --oneline', 'git diff'],
+  'add-commit': ['git status', 'git add .', 'git log --oneline', 'git diff'],
+  history: ['git status', 'git log --oneline', 'git diff', 'git diff --staged'],
+  local: ['git status', 'git add .', 'git log --oneline', 'git restore hello.txt']
+}
 
 async function refresh() {
   if (!session) return
@@ -46,6 +50,7 @@ async function refresh() {
   commitCount.value = snap.commits.length
   dirtyCount.value = snap.dirty
   files.value = snap.files
+  commits.value = snap.commits
 }
 
 function outputKind(text: string): string {
@@ -77,6 +82,7 @@ async function run(raw: string) {
       const res = await runChecks(session, props.checks)
       checkResult.value = res.pass ? 'pass' : 'fail'
       checkDetail.value = res.detail
+      emit('checked', res.pass)
       if (res.pass) emit('complete')
     }
   }
@@ -119,6 +125,7 @@ async function checkNow() {
   const res = await runChecks(session, props.checks)
   checkResult.value = res.pass ? 'pass' : 'fail'
   checkDetail.value = res.detail
+  emit('checked', res.pass)
   if (res.pass) emit('complete')
   checking.value = false
 }
@@ -194,12 +201,26 @@ watch(
     </div>
 
     <div class="playground-quick">
-      <button v-for="q in QUICK" :key="q" type="button" @click="run(q)">{{ q }}</button>
+      <button v-for="q in QUICK[props.scenario]" :key="q" type="button" @click="run(q)">{{ q }}</button>
     </div>
 
     <div class="playground-files">
       <span class="playground-files-label">{{ labels.filesLabel }}:</span>
       <code v-for="f in files" :key="f">{{ f }}</code>
+    </div>
+
+    <div v-if="commits.length" class="playground-history" role="list">
+      <div
+        v-for="(c, i) in commits"
+        :key="c.short"
+        class="playground-commit"
+        :class="{ head: i === 0 }"
+        role="listitem"
+      >
+        <span class="playground-commit-dot"></span>
+        <span class="playground-commit-sha">{{ c.short }}</span>
+        <span class="playground-commit-msg">{{ c.message }}</span>
+      </div>
     </div>
   </div>
 </template>
