@@ -1,0 +1,107 @@
+.theme-switcher {
+  margin-left: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.theme-switcher:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+}
+
+.gitpath-search {
+  margin-left: 0.5rem;
+}
+
+.gitpath-search .pagefind-ui {
+  --pagefind-ui-primary: var(--vp-c-brand-1);
+  --pagefind-ui-text: var(--vp-c-text-1);
+  --pagefind-ui-background: var(--vp-c-bg);
+  --pagefind-ui-border: var(--vp-c-border);
+  --pagefind-ui-border-width: 1px;
+  --pagefind-ui-font: var(--vp-font-family-base);
+}
+
+.gitpath-search .pagefind-ui__search-input {
+  width: 14rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  background: var(--vp-c-bg-soft);
+  font-size: 0.85rem;
+}
+
+.gitpath-search .pagefind-ui__drawer {
+  position: absolute;
+  right: 0;
+  z-index: 100;
+  min-width: 26rem;
+  max-height: 70vh;
+  overflow-y: auto;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  box-shadow: var(--vp-shadow-3);
+}
+
+html[data-theme='terminal'] {
+  --vp-c-bg: #10131a;
+  --vp-c-bg-alt: #151a24;
+  --vp-c-bg-soft: #1a2029;
+  --vp-c-bg-elv: #1d2530;
+  --vp-c-text-1: #e6edf3;
+  --vp-c-text-2: #9aa7b4;
+  --vp-c-text-3: #6e7b8a;
+  --vp-c-brand-1: #3fb950;
+  --vp-c-brand-2: #2ea043;
+  --vp-c-brand-3: #1f7a33;
+  --vp-c-divider: #2a3340;
+  --vp-c-border: #2a3340;
+  --vp-code-block-bg: #0b0e14;
+  --vp-code-bg: #1a2029;
+}
+
+html[data-theme='retro'] {
+  --vp-c-bg: #050a05;
+  --vp-c-bg-alt: #081108;
+  --vp-c-bg-soft: #0c180c;
+  --vp-c-bg-elv: #0f1d0f;
+  --vp-c-text-1: #c8f7c8;
+  --vp-c-text-2: #7fbf7f;
+  --vp-c-text-3: #4f8f4f;
+  --vp-c-brand-1: #33ff33;
+  --vp-c-brand-2: #26cc26;
+  --vp-c-brand-3: #1a991a;
+  --vp-c-divider: #1c3a1c;
+  --vp-c-border: #1c3a1c;
+  --vp-code-block-bg: #030703;
+  --vp-code-bg: #0c180c;
+}
+
+html[data-theme='retro'] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(51, 255, 51, 0.04) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+html[data-theme='retro'] .vp-doc h1,
+html[data-theme='retro'] .vp-doc h2,
+html[data-theme='retro'] .vp-doc h3 {
+  text-shadow: 0 0 6px rgba(51, 255, 51, 0.35);
+}
+
+@media (max-width: 720px) {
+  .gitpath-search .pagefind-ui__search-input {
+    width: 8rem;
+  }
+}

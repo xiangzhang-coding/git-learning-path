@@ -1,0 +1,20 @@
+{
+  "name": "git-learning-path",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "A six-stage static course site to master common Git/GitHub commands and the principles behind them",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs && pagefind --site docs/.vitepress/dist",
+    "preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "@pagefind/default-ui": "^1.5.2",
+    "pagefind": "^1.5.2",
+    "vitepress": "^1.6.4"
+  },
+  "dependencies": {
+    "isomorphic-git": "^1.40.5"
+  }
+}
