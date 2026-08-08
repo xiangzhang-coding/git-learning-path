@@ -8,16 +8,54 @@ type LocaleKey = 'root' | (typeof LANGS)[number]
 
 const LOCALE_KEYS: LocaleKey[] = ['root', ...LANGS]
 
-const stage0Title: Record<LocaleKey, string> = {
-  root: 'Stage 0 — Concepts & Environment',
-  zh: '阶段 0 — 概念与环境',
-  ja: '段階 0 — 概念と環境',
-  ko: '단계 0 — 개념과 환경',
-  de: 'Stufe 0 — Konzepte & Umgebung',
-  fr: 'Étape 0 — Concepts et environnement',
-  es: 'Etapa 0 — Conceptos y entorno',
-  pt: 'Etapa 0 — Conceitos e ambiente',
-  ru: 'Этап 0 — Понятия и окружение'
+const stageTitles: Record<number, Record<LocaleKey, string>> = {
+  0: {
+    root: 'Stage 0 — Concepts & Environment',
+    zh: '阶段 0 — 概念与环境',
+    ja: '段階 0 — 概念と環境',
+    ko: '단계 0 — 개념과 환경',
+    de: 'Stufe 0 — Konzepte & Umgebung',
+    fr: 'Étape 0 — Concepts et environnement',
+    es: 'Etapa 0 — Conceptos y entorno',
+    pt: 'Etapa 0 — Conceitos e ambiente',
+    ru: 'Этап 0 — Понятия и окружение'
+  },
+  1: {
+    root: 'Stage 1 — Local Basics',
+    zh: '阶段 1 — 本地基础',
+    ja: '段階 1 — ローカル基礎',
+    ko: '단계 1 — 로컬 기초',
+    de: 'Stufe 1 — Lokale Grundlagen',
+    fr: 'Étape 1 — Les bases locales',
+    es: 'Etapa 1 — Conceptos básicos locales',
+    pt: 'Etapa 1 — Noções básicas locais',
+    ru: 'Этап 1 — Локальные основы'
+  }
+}
+
+const stageNavText: Record<number, Record<LocaleKey, string>> = {
+  0: {
+    root: 'Stage 0',
+    zh: '阶段 0',
+    ja: '段階 0',
+    ko: '단계 0',
+    de: 'Stufe 0',
+    fr: 'Étape 0',
+    es: 'Etapa 0',
+    pt: 'Etapa 0',
+    ru: 'Этап 0'
+  },
+  1: {
+    root: 'Stage 1',
+    zh: '阶段 1',
+    ja: '段階 1',
+    ko: '단계 1',
+    de: 'Stufe 1',
+    fr: 'Étape 1',
+    es: 'Etapa 1',
+    pt: 'Etapa 1',
+    ru: 'Этап 1'
+  }
 }
 
 const glossaryTitle: Record<LocaleKey, string> = {
@@ -80,19 +118,69 @@ const stage0Lessons: Record<LocaleKey, { slug: string; title: string }[]> = {
   ]
 }
 
-const lessonSlugs = ['0-1-version-control', '0-2-three-areas', '0-3-config-help']
-
-const stageNavText: Record<LocaleKey, string> = {
-  root: 'Stage 0',
-  zh: '阶段 0',
-  ja: '段階 0',
-  ko: '단계 0',
-  de: 'Stufe 0',
-  fr: 'Étape 0',
-  es: 'Etapa 0',
-  pt: 'Etapa 0',
-  ru: 'Этап 0'
+const stage1Lessons: Record<LocaleKey, { slug: string; title: string }[]> = {
+  root: [
+    { slug: '1-1-init-status', title: '1-1 git init and git status' },
+    { slug: '1-2-add-commit', title: '1-2 git add and git commit' },
+    { slug: '1-3-log-diff', title: '1-3 git log and git diff' },
+    { slug: '1-4-restore-rm-mv', title: '1-4 git restore, git rm and git mv' }
+  ],
+  zh: [
+    { slug: '1-1-init-status', title: '1-1 git init 与 git status' },
+    { slug: '1-2-add-commit', title: '1-2 git add 与 git commit' },
+    { slug: '1-3-log-diff', title: '1-3 git log 与 git diff' },
+    { slug: '1-4-restore-rm-mv', title: '1-4 git restore、git rm 与 git mv' }
+  ],
+  ja: [
+    { slug: '1-1-init-status', title: '1-1 git init と git status' },
+    { slug: '1-2-add-commit', title: '1-2 git add と git commit' },
+    { slug: '1-3-log-diff', title: '1-3 git log と git diff' },
+    { slug: '1-4-restore-rm-mv', title: '1-4 git restore、git rm と git mv' }
+  ],
+  ko: [
+    { slug: '1-1-init-status', title: '1-1 git init와 git status' },
+    { slug: '1-2-add-commit', title: '1-2 git add와 git commit' },
+    { slug: '1-3-log-diff', title: '1-3 git log와 git diff' },
+    { slug: '1-4-restore-rm-mv', title: '1-4 git restore, git rm와 git mv' }
+  ],
+  de: [
+    { slug: '1-1-init-status', title: '1-1 git init und git status' },
+    { slug: '1-2-add-commit', title: '1-2 git add und git commit' },
+    { slug: '1-3-log-diff', title: '1-3 git log und git diff' },
+    { slug: '1-4-restore-rm-mv', title: '1-4 git restore, git rm und git mv' }
+  ],
+  fr: [
+    { slug: '1-1-init-status', title: '1-1 git init et git status' },
+    { slug: '1-2-add-commit', title: '1-2 git add et git commit' },
+    { slug: '1-3-log-diff', title: '1-3 git log et git diff' },
+    { slug: '1-4-restore-rm-mv', title: '1-4 git restore, git rm et git mv' }
+  ],
+  es: [
+    { slug: '1-1-init-status', title: '1-1 git init y git status' },
+    { slug: '1-2-add-commit', title: '1-2 git add y git commit' },
+    { slug: '1-3-log-diff', title: '1-3 git log y git diff' },
+    { slug: '1-4-restore-rm-mv', title: '1-4 git restore, git rm y git mv' }
+  ],
+  pt: [
+    { slug: '1-1-init-status', title: '1-1 git init e git status' },
+    { slug: '1-2-add-commit', title: '1-2 git add e git commit' },
+    { slug: '1-3-log-diff', title: '1-3 git log e git diff' },
+    { slug: '1-4-restore-rm-mv', title: '1-4 git restore, git rm e git mv' }
+  ],
+  ru: [
+    { slug: '1-1-init-status', title: '1-1 git init и git status' },
+    { slug: '1-2-add-commit', title: '1-2 git add и git commit' },
+    { slug: '1-3-log-diff', title: '1-3 git log и git diff' },
+    { slug: '1-4-restore-rm-mv', title: '1-4 git restore, git rm и git mv' }
+  ]
 }
+
+const stageLessons: Record<number, Record<LocaleKey, { slug: string; title: string }[]>> = {
+  0: stage0Lessons,
+  1: stage1Lessons
+}
+
+const stageOrder = [0, 1]
 
 function localePrefix(key: LocaleKey): string {
   return key === 'root' ? '' : `/${key}`
@@ -103,13 +191,13 @@ function buildSidebar(): Record<string, DefaultTheme.SidebarItem[]> {
   for (const key of LOCALE_KEYS) {
     const prefix = localePrefix(key)
     out[`${prefix}/`] = [
-      {
-        text: stage0Title[key],
-        items: stage0Lessons[key].map((lesson) => ({
+      ...stageOrder.map((stage) => ({
+        text: stageTitles[stage][key],
+        items: stageLessons[stage][key].map((lesson) => ({
           text: lesson.title,
-          link: `${prefix}/stage/0/${lesson.slug}`
+          link: `${prefix}/stage/${stage}/${lesson.slug}`
         }))
-      },
+      })),
       { text: glossaryTitle[key], link: `${prefix}/glossary` }
     ]
   }
@@ -121,7 +209,10 @@ function buildNav(): Record<string, DefaultTheme.NavItem[]> {
   for (const key of LOCALE_KEYS) {
     const prefix = localePrefix(key)
     out[`${prefix}/`] = [
-      { text: stageNavText[key], link: `${prefix}/stage/0/` },
+      ...stageOrder.map((stage) => ({
+        text: stageNavText[stage][key],
+        link: `${prefix}/stage/${stage}/`
+      })),
       { text: glossaryTitle[key], link: `${prefix}/glossary` }
     ]
   }

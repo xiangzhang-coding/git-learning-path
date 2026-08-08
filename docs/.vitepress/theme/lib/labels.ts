@@ -15,6 +15,13 @@ export interface Labels {
   commit: string
   reset: string
   saved: string
+  commitsLabel: string
+  dirtyLabel: string
+  taskLabel: string
+  checkLabel: string
+  taskPassed: string
+  taskNotDone: string
+  typeCommandLabel: string
 }
 
 export const LABELS: Record<string, Labels> = {
@@ -30,7 +37,14 @@ export const LABELS: Record<string, Labels> = {
     add: 'git add',
     commit: 'git commit',
     reset: 'Reset',
-    saved: 'Saved as a commit ✓'
+    saved: 'Saved as a commit ✓',
+    commitsLabel: 'Commits',
+    dirtyLabel: 'changes',
+    taskLabel: 'Task',
+    checkLabel: 'Check',
+    taskPassed: 'Task complete ✓',
+    taskNotDone: 'Task not complete yet',
+    typeCommandLabel: 'Type a git command…',
   },
   zh: {
     correct: '正确',
@@ -44,7 +58,14 @@ export const LABELS: Record<string, Labels> = {
     add: 'git add',
     commit: 'git commit',
     reset: '重置',
-    saved: '已保存为一次提交 ✓'
+    saved: '已保存为一次提交 ✓',
+    commitsLabel: '提交',
+    dirtyLabel: '改动',
+    taskLabel: '任务',
+    checkLabel: '检查',
+    taskPassed: '任务完成 ✓',
+    taskNotDone: '任务尚未完成',
+    typeCommandLabel: '输入 git 命令…',
   },
   ja: {
     correct: '正解',
@@ -58,7 +79,14 @@ export const LABELS: Record<string, Labels> = {
     add: 'git add',
     commit: 'git commit',
     reset: 'リセット',
-    saved: 'コミットとして保存 ✓'
+    saved: 'コミットとして保存 ✓',
+    commitsLabel: 'コミット',
+    dirtyLabel: '変更',
+    taskLabel: 'タスク',
+    checkLabel: 'チェック',
+    taskPassed: 'タスク完了 ✓',
+    taskNotDone: 'まだ完了していません',
+    typeCommandLabel: 'git コマンドを入力…',
   },
   ko: {
     correct: '정답',
@@ -72,7 +100,14 @@ export const LABELS: Record<string, Labels> = {
     add: 'git add',
     commit: 'git commit',
     reset: '초기화',
-    saved: '커밋으로 저장됨 ✓'
+    saved: '커밋으로 저장됨 ✓',
+    commitsLabel: '커밋',
+    dirtyLabel: '변경',
+    taskLabel: '과제',
+    checkLabel: '확인',
+    taskPassed: '과제 완료 ✓',
+    taskNotDone: '아직 완료되지 않음',
+    typeCommandLabel: 'git 명령어 입력…',
   },
   de: {
     correct: 'Richtig',
@@ -86,7 +121,14 @@ export const LABELS: Record<string, Labels> = {
     add: 'git add',
     commit: 'git commit',
     reset: 'Zurücksetzen',
-    saved: 'Als Commit gespeichert ✓'
+    saved: 'Als Commit gespeichert ✓',
+    commitsLabel: 'Commits',
+    dirtyLabel: 'Änderungen',
+    taskLabel: 'Aufgabe',
+    checkLabel: 'Prüfen',
+    taskPassed: 'Aufgabe erledigt ✓',
+    taskNotDone: 'Noch nicht erledigt',
+    typeCommandLabel: 'Git-Befehl eingeben…',
   },
   fr: {
     correct: 'Correct',
@@ -100,7 +142,14 @@ export const LABELS: Record<string, Labels> = {
     add: 'git add',
     commit: 'git commit',
     reset: 'Réinitialiser',
-    saved: 'Enregistré comme commit ✓'
+    saved: 'Enregistré comme commit ✓',
+    commitsLabel: 'commits',
+    dirtyLabel: 'modifications',
+    taskLabel: 'Tâche',
+    checkLabel: 'Vérifier',
+    taskPassed: 'Tâche terminée ✓',
+    taskNotDone: 'Pas encore terminée',
+    typeCommandLabel: 'Saisissez une commande git…',
   },
   es: {
     correct: 'Correcto',
@@ -114,7 +163,14 @@ export const LABELS: Record<string, Labels> = {
     add: 'git add',
     commit: 'git commit',
     reset: 'Reiniciar',
-    saved: 'Guardado como commit ✓'
+    saved: 'Guardado como commit ✓',
+    commitsLabel: 'commits',
+    dirtyLabel: 'cambios',
+    taskLabel: 'Tarea',
+    checkLabel: 'Comprobar',
+    taskPassed: 'Tarea completada ✓',
+    taskNotDone: 'Aún no completada',
+    typeCommandLabel: 'Escribe un comando git…',
   },
   pt: {
     correct: 'Correto',
@@ -128,7 +184,14 @@ export const LABELS: Record<string, Labels> = {
     add: 'git add',
     commit: 'git commit',
     reset: 'Reiniciar',
-    saved: 'Salvo como commit ✓'
+    saved: 'Salvo como commit ✓',
+    commitsLabel: 'commits',
+    dirtyLabel: 'mudanças',
+    taskLabel: 'Tarefa',
+    checkLabel: 'Verificar',
+    taskPassed: 'Tarefa concluída ✓',
+    taskNotDone: 'Ainda não concluída',
+    typeCommandLabel: 'Digite um comando git…',
   },
   ru: {
     correct: 'Верно',
@@ -142,7 +205,14 @@ export const LABELS: Record<string, Labels> = {
     add: 'git add',
     commit: 'git commit',
     reset: 'Сбросить',
-    saved: 'Сохранено как коммит ✓'
+    saved: 'Сохранено как коммит ✓',
+    commitsLabel: 'коммиты',
+    dirtyLabel: 'изменения',
+    taskLabel: 'Задание',
+    checkLabel: 'Проверить',
+    taskPassed: 'Задание выполнено ✓',
+    taskNotDone: 'Задание ещё не выполнено',
+    typeCommandLabel: 'Введите команду git…',
   }
 }
 
