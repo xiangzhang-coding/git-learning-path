@@ -78,7 +78,7 @@ origin  /origin  (push)
 | remote | 원격 저장소의 주소, 예: `/origin` |
 | 추적 브랜치(tracking branch) | `refs/remotes/origin/main`, 로컬이「원격의 main이 어디를 가리키는지」기록하는 미러 |
 
-추적 브랜치는 다음 단계인 clone/fetch의 핵심입니다. 네트워크 없이도「원격이 어떻게 생겼는지」확인할 수 있게 해줍니다.
+추적 브랜치는 다음 과인 clone/fetch의 핵심입니다. 네트워크 없이도「원격이 어떻게 생겼는지」확인할 수 있게 해줍니다.
 
 ## 연습
 

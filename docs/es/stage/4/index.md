@@ -1,6 +1,6 @@
-# Etapa 4 — Reparación y avanzar
+# Capítulo 4 — Reparación y avanzar
 
-El hilo de principios de esta etapa: **refs y reflog**. reset mueve la punta de la rama, revert/cherry-pick crean commits nuevos, rebase reescribe la historia — y reflog registra cada movimiento de HEAD, para que cualquier «me arrepiento» se pueda recuperar.
+El hilo de principios de este capítulo: **refs y reflog**. reset mueve la punta de la rama, revert/cherry-pick crean commits nuevos, rebase reescribe la historia — y reflog registra cada movimiento de HEAD, para que cualquier «me arrepiento» se pueda recuperar.
 
 ## Lecciones
 
@@ -9,7 +9,7 @@ El hilo de principios de esta etapa: **refs y reflog**. reset mueve la punta de 
 - 4-3 [git revert y git cherry-pick](/es/stage/4/4-3-revert-cherry-pick): deshacer con un commit inverso y copiar commits
 - 4-4 [git rebase: reaplica commits](/es/stage/4/4-4-rebase): historia lineal, conflictos y abort
 
-## Comandos nuevos de esta etapa
+## Comandos nuevos de este capítulo
 
 | Comando | Qué hace |
 | --- | --- |

@@ -73,7 +73,7 @@ pull ist die Zusammenfassung beider Schritte: erst fetch (Spiegelung aktualisier
 
 - **Lokal gibt es keine neuen Commits**: Fast-forward-Merge, das Arbeitsverzeichnis wird direkt aktualisiert, die Historie bleibt eine Linie
 - **Lokal gibt es ebenfalls neue Commits**: Es entsteht ein Merge-Commit, die Geschichten beider Branches werden zusammengeführt
-- **Beide Seiten haben dieselbe Stelle geändert**: Konflikt — der Lösungsablauf ist derselbe wie in Stufe 2 (editieren → add → commit)
+- **Beide Seiten haben dieselbe Stelle geändert**: Konflikt — der Lösungsablauf ist derselbe wie in Kapitel 2 (editieren → add → commit)
 
 ## Wann welcher Befehl
 

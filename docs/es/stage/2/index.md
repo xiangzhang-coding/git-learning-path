@@ -1,6 +1,6 @@
-# Etapa 2 — Ramas y fusiones
+# Capítulo 2 — Ramas y fusiones
 
-El hilo de principios de esta etapa: **el grafo de commits y HEAD**. Una rama es solo un puntero a un commit; HEAD marca tu posición actual; todas las operaciones con ramas (switch, merge, conflictos) son, en el fondo, mover punteros por el grafo de commits o volver a cerrar las bifurcaciones.
+El hilo de principios de este capítulo: **el grafo de commits y HEAD**. Una rama es solo un puntero a un commit; HEAD marca tu posición actual; todas las operaciones con ramas (switch, merge, conflictos) son, en el fondo, mover punteros por el grafo de commits o volver a cerrar las bifurcaciones.
 
 ## Lecciones
 
@@ -9,7 +9,7 @@ El hilo de principios de esta etapa: **el grafo de commits y HEAD**. Una rama es
 - 2-3 [git merge: fusionar ramas](/es/stage/2/2-3-merge): fusión fast-forward y merge commit
 - 2-4 [Resolver conflictos de fusión](/es/stage/2/2-4-merge-conflict): marcadores de conflicto y el proceso de resolución
 
-## Comandos nuevos de esta etapa
+## Comandos nuevos de este capítulo
 
 | Comando | Qué hace |
 | --- | --- |

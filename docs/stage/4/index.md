@@ -1,6 +1,6 @@
-# Stage 4 — Fixing and Going Further
+# Chapter 4 — Fixing and Going Further
 
-The principle thread of this stage: **refs and reflog**. reset moves the branch pointer, revert/cherry-pick create new commits, rebase rewrites history — and reflog records every move of HEAD, so any "regret" can be recovered.
+The principle thread of this chapter: **refs and reflog**. reset moves the branch pointer, revert/cherry-pick create new commits, rebase rewrites history — and reflog records every move of HEAD, so any "regret" can be recovered.
 
 ## Lessons
 
@@ -9,7 +9,7 @@ The principle thread of this stage: **refs and reflog**. reset moves the branch 
 - 4-3 [git revert and git cherry-pick](/stage/4/4-3-revert-cherry-pick): undo in reverse and copy commits
 - 4-4 [git rebase replays commits](/stage/4/4-4-rebase): straighten history, conflicts and abort
 
-## New commands in this stage
+## New commands in this chapter
 
 | Command | What it does |
 | --- | --- |

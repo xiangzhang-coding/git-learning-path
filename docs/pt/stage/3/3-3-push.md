@@ -60,7 +60,7 @@ To /origin
 
 ## Atualização fast-forward e a tracking branch
 
-O push essencialmente faz o branch remoto **avançar (fast-forward)** até a posição do branch local (o conceito de fast-forward vem do merge da etapa 2). Após o push, a tracking branch local `origin/main` também avança junto — ela é o espelho de "onde o remoto está agora" e passa a bater com o remoto.
+O push essencialmente faz o branch remoto **avançar (fast-forward)** até a posição do branch local (o conceito de fast-forward vem do merge do capítulo 2). Após o push, a tracking branch local `origin/main` também avança junto — ela é o espelho de "onde o remoto está agora" e passa a bater com o remoto.
 
 **Upstream (a montante)**: após o push bem-sucedido, o branch local e o branch remoto estabelecem uma relação de upstream — o branch remoto é o upstream do branch local. A partir daí, `git push` / `git pull` sem argumentos também sabem com qual branch remoto sincronizar.
 

@@ -1,6 +1,6 @@
-# Étape 4 — Réparation et perfectionnement
+# Chapitre 4 — Réparation et perfectionnement
 
-Le fil de principe de cette étape : **refs et reflog**. reset déplace le pointeur de branche, revert/cherry-pick créent de nouveaux commits, rebase réécrit l'historique — et reflog enregistre chaque déplacement de HEAD, pour que tout « regret » reste récupérable.
+Le fil de principe de ce chapitre : **refs et reflog**. reset déplace le pointeur de branche, revert/cherry-pick créent de nouveaux commits, rebase réécrit l'historique — et reflog enregistre chaque déplacement de HEAD, pour que tout « regret » reste récupérable.
 
 ## Cours
 
@@ -9,7 +9,7 @@ Le fil de principe de cette étape : **refs et reflog**. reset déplace le point
 - 4-3 [git revert et git cherry-pick](/fr/stage/4/4-3-revert-cherry-pick) : annuler en marche arrière et copier des commits
 - 4-4 [git rebase : rejouer les commits](/fr/stage/4/4-4-rebase) : linéariser l'historique, conflits et abandon
 
-## Nouvelles commandes de cette étape
+## Nouvelles commandes de ce chapitre
 
 | Commande | Rôle |
 | --- | --- |

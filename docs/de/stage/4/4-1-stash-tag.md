@@ -92,7 +92,7 @@ git tag -a v1.0 -m "Hinweis"  # annotierter Tag: mit Beschreibung
 git tag                     # alle Tags auflisten
 ```
 
-Für eine Veröffentlichung brauchen Sie einen Namen, der **dauerhaft auf diesen Commit zeigt** — das ist **tag**: eine Markierung, die an einem Commit festgenagelt ist. Anders als ein branch bewegt sich ein tag nicht mit neuen Commits mit. Später kommen Sie jederzeit mit `git switch <tag>` zu dieser Version zurück (HEAD befindet sich dann im detached-Zustand; dazu mehr in dieser Stufe).
+Für eine Veröffentlichung brauchen Sie einen Namen, der **dauerhaft auf diesen Commit zeigt** — das ist **tag**: eine Markierung, die an einem Commit festgenagelt ist. Anders als ein branch bewegt sich ein tag nicht mit neuen Commits mit. Später kommen Sie jederzeit mit `git switch <tag>` zu dieser Version zurück (HEAD befindet sich dann im detached-Zustand; dazu mehr in diesem Kapitel).
 **Zu einem Tag wechseln und detached HEAD**: Mit `git switch <tag>` zeigt HEAD auf den Commit des Tags — aber dann hängt HEAD an keiner Branche mehr; das ist der detached HEAD (abgetrennter HEAD). Committen Sie in diesem Zustand, gehört der neue Commit zu keiner Branche und kann unauffindbar sein, sobald Sie wieder wechseln. Zum Ansehen ist das also kein Problem; wollen Sie committen, legen Sie zuerst mit `git switch -c <neuer Branchname>` eine neue Branche an.
 
 ## Übungen

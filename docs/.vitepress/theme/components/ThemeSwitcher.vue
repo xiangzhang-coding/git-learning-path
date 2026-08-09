@@ -1,20 +1,21 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useData } from 'vitepress'
+import { labelsFor, langOfLocaleIndex } from '../lib/labels'
 
 const KEY = 'gitpath-theme'
-const themes = [
-  { value: 'system', label: 'System' },
-  { value: 'light', label: 'Light' },
-  { value: 'dark', label: 'Dark' },
-  { value: 'terminal', label: 'Terminal' },
-  { value: 'retro', label: 'Retro' }
-]
+const themeValues = ['system', 'light', 'dark', 'terminal', 'retro'] as const
+type ThemeValue = (typeof themeValues)[number]
 
-const current = ref('system')
+const { localeIndex } = useData()
+const labels = computed(() => labelsFor(langOfLocaleIndex(localeIndex.value)))
+const themes = computed(() => themeValues.map((value) => ({ value, label: labels.value.theme[value] })))
+
+const current = ref<ThemeValue>('system')
 const open = ref(false)
 const wrapEl = ref<HTMLElement | null>(null)
 
-function apply(theme: string) {
+function apply(theme: ThemeValue) {
   const root = document.documentElement
   const isDark = theme === 'dark' || theme === 'terminal' || theme === 'retro'
   const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -28,9 +29,9 @@ function apply(theme: string) {
 
 onMounted(() => {
   const saved = localStorage.getItem(KEY)
-  if (saved && themes.some((t) => t.value === saved)) {
-    current.value = saved
-    apply(saved)
+  if (saved && themeValues.some((t) => t === saved)) {
+    current.value = saved as ThemeValue
+    apply(current.value)
   }
   window
     .matchMedia('(prefers-color-scheme: dark)')
@@ -61,7 +62,7 @@ function toggle() {
   open.value = !open.value
 }
 
-function choose(value: string) {
+function choose(value: ThemeValue) {
   current.value = value
   localStorage.setItem(KEY, value)
   apply(value)
@@ -76,15 +77,15 @@ function choose(value: string) {
       class="theme-switcher"
       :aria-expanded="open"
       aria-haspopup="listbox"
-      :aria-label="`Theme: ${current}`"
+      :aria-label="`${labels.themeLabel}: ${labels.theme[current]}`"
       @click="toggle"
     >
-      <span class="theme-switcher-label">{{ current }}</span>
+      <span class="theme-switcher-label">{{ labels.theme[current] }}</span>
       <svg class="theme-switcher-arrow" viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
         <path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
     </button>
-    <div v-if="open" class="theme-switcher-menu" role="listbox" aria-label="Theme">
+    <div v-if="open" class="theme-switcher-menu" role="listbox" :aria-label="labels.themeLabel">
       <button
         v-for="t in themes"
         :key="t.value"

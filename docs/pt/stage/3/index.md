@@ -1,6 +1,6 @@
-# Etapa 3 — Colaboração remota
+# Capítulo 3 — Colaboração remota
 
-A linha de princípios desta etapa: **duas cópias do repositório e a tracking branch**. Um remote é o endereço de outra cópia do repositório; o clone a copia, o fetch atualiza o "espelho do remoto" (origin/main), o push envia os commits locais para lá, e o pull = fetch + merge.
+A linha de princípios deste capítulo: **duas cópias do repositório e a tracking branch**. Um remote é o endereço de outra cópia do repositório; o clone a copia, o fetch atualiza o "espelho do remoto" (origin/main), o push envia os commits locais para lá, e o pull = fetch + merge.
 
 ## Lições
 
@@ -9,7 +9,7 @@ A linha de princípios desta etapa: **duas cópias do repositório e a tracking 
 - 3-3 [git push: enviando commits](/pt/stage/3/3-3-push): enviar commits locais, rejeição non-fast-forward
 - 3-4 [git fetch e git pull](/pt/stage/3/3-4-fetch-pull): fetch só vê, não mexe; pull = fetch + merge
 
-## Novos comandos desta etapa
+## Novos comandos deste capítulo
 
 | Comando | Efeito |
 | --- | --- |

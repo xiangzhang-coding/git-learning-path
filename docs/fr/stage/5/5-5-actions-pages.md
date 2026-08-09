@@ -82,7 +82,7 @@ L'état du déploiement, les journaux et les causes d'échec sont dans l'onglet 
 ## Exercices pratiques
 
 - créez `.github/workflows/deploy.yml` dans un dépôt pour déployer une page statique
-- cassez volontairement l'étape de build et observez le journal d'échec d'Actions
+- cassez volontairement le build et observez le journal d'échec d'Actions
 - ajoutez à votre dépôt d'entraînement un workflow qui exécute des tests
 
 ## Exercices

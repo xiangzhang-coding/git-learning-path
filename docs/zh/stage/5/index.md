@@ -1,6 +1,6 @@
-# 阶段 5 — GitHub 生态
+# 章节 5 — GitHub 生态
 
-本阶段的原理主线：**围绕 GitHub 的协作回路**。fork 建立你的副本，upstream 连接原作者；PR 是提交进入主干的门，issue 承载讨论，release 发布版本，Actions 与 Pages 把测试和部署自动化。本阶段在真实 GitHub 上练习——每个概念都配有动手任务。
+本章节的原理主线：**围绕 GitHub 的协作回路**。fork 建立你的副本，upstream 连接原作者；PR 是提交进入主干的门，issue 承载讨论，release 发布版本，Actions 与 Pages 把测试和部署自动化。本章节在真实 GitHub 上练习——每个概念都配有动手任务。
 
 ## 课程
 
@@ -10,7 +10,7 @@
 - 5-4 [Releases 与版本发布](/zh/stage/5/5-4-releases)：语义化版本、tag 推送、Release 发布
 - 5-5 [GitHub Actions 与 Pages](/zh/stage/5/5-5-actions-pages)：workflow 自动化、Pages 部署
 
-## 本阶段核心功能
+## 本章节核心功能
 
 | 功能 | 作用 |
 | --- | --- |

@@ -73,7 +73,7 @@ pull is both steps combined: first fetch (update the mirror), then merge `origin
 
 - **You have no new local commits**: fast-forward merge, the working tree updates directly, history stays a straight line
 - **You also have new local commits**: a merge commit is created, joining the two branches' histories
-- **Both sides changed the same spot**: conflict — the resolution flow is identical to Stage 2 (edit → add → commit)
+- **Both sides changed the same spot**: conflict — the resolution flow is identical to Chapter 2 (edit → add → commit)
 
 ## When to use which
 

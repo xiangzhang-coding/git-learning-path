@@ -60,7 +60,7 @@ To /origin
 
 ## Fast-forward updates and the tracking branch
 
-Push is essentially **fast-forwarding** the remote branch to your local branch's position (fast-forward comes from Stage 2's merge). After a successful push, your local tracking branch `origin/main` advances too — it's the mirror of "where the remote is right now", and now it agrees with the remote.
+Push is essentially **fast-forwarding** the remote branch to your local branch's position (fast-forward comes from Chapter 2's merge). After a successful push, your local tracking branch `origin/main` advances too — it's the mirror of "where the remote is right now", and now it agrees with the remote.
 
 **Upstream**: after a successful push, the local branch and the remote branch have an upstream relationship — the remote branch is the local branch's upstream. From then on, bare `git push` / `git pull` know which remote branch to sync with.
 

@@ -82,7 +82,7 @@ git tag -a v1.0 -m "note" # annotated tag: carries a message
 git tag                   # list all tags
 ```
 
-When you ship a version, you want a name that "always points to this commit" — a **tag** is a marker pinned to a commit. Unlike a branch, a tag doesn't move as new commits are made. Later you can `git switch <tag>` any time to return to that version (HEAD then enters detached state, which Stage 4 covers later).
+When you ship a version, you want a name that "always points to this commit" — a **tag** is a marker pinned to a commit. Unlike a branch, a tag doesn't move as new commits are made. Later you can `git switch <tag>` any time to return to that version (HEAD then enters detached state, which Chapter 4 covers later).
 
 ## Exercises
 

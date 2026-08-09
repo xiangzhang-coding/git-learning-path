@@ -1,6 +1,6 @@
-# 阶段 4 — 修复与进阶
+# 章节 4 — 修复与进阶
 
-本阶段的原理主线：**refs 与 reflog**。reset 移动分支指针，revert/cherry-pick 生成新提交，rebase 重写历史——而 reflog 记录 HEAD 的每一次移动，让任何「后悔」都找得回来。
+本章节的原理主线：**refs 与 reflog**。reset 移动分支指针，revert/cherry-pick 生成新提交，rebase 重写历史——而 reflog 记录 HEAD 的每一次移动，让任何「后悔」都找得回来。
 
 ## 课程
 
@@ -9,7 +9,7 @@
 - 4-3 [git revert 与 git cherry-pick](/zh/stage/4/4-3-revert-cherry-pick)：反向撤销与复制提交
 - 4-4 [git rebase 重放提交](/zh/stage/4/4-4-rebase)：线性化历史，冲突与中止
 
-## 本阶段新命令
+## 本章节新命令
 
 | 命令 | 作用 |
 | --- | --- |

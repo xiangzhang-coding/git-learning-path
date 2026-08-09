@@ -1,6 +1,6 @@
-# Stufe 0 — Konzepte & Umgebung
+# Kapitel 0 — Konzepte & Umgebung
 
-Der Prinzipfaden dieser Stufe: **warum Versionskontrolle existiert**. Erst die Konzepte, dann die Hände.
+Der Prinzipfaden dieses Kapitels: **warum Versionskontrolle existiert**. Erst die Konzepte, dann die Hände.
 
 <StageProgress
   :lessons="[

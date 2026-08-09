@@ -73,7 +73,7 @@ O pull é a junção de dois passos: primeiro o fetch (atualiza o espelho) e dep
 
 - **O local não tem commits novos**: mesclagem em fast-forward, a área de trabalho é atualizada direto e o histórico segue em linha reta
 - **O local também tem commits novos**: gera um merge commit, unindo os históricos dos dois branches
-- **Os dois lados mudaram o mesmo trecho**: conflito — o fluxo de resolução é igual ao da etapa 2 (editar → add → commit)
+- **Os dois lados mudaram o mesmo trecho**: conflito — o fluxo de resolução é igual ao do capítulo 2 (editar → add → commit)
 
 ## Quando usar cada um
 

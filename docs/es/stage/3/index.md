@@ -1,6 +1,6 @@
-# Etapa 3 — Colaboración remota
+# Capítulo 3 — Colaboración remota
 
-El hilo de principios de esta etapa: **dos repositorios y las ramas de seguimiento**. Un remote es la dirección de otro repositorio; clone lo copia, fetch actualiza el «espejo del remoto» (origin/main), push envía tus commits locales y pull = fetch + merge.
+El hilo de principios de este capítulo: **dos repositorios y las ramas de seguimiento**. Un remote es la dirección de otro repositorio; clone lo copia, fetch actualiza el «espejo del remoto» (origin/main), push envía tus commits locales y pull = fetch + merge.
 
 ## Lecciones
 
@@ -9,7 +9,7 @@ El hilo de principios de esta etapa: **dos repositorios y las ramas de seguimien
 - 3-3 [git push: subir commits](/es/stage/3/3-3-push): envía tus commits locales, el rechazo non-fast-forward
 - 3-4 [git fetch y git pull](/es/stage/3/3-4-fetch-pull): fetch solo mira sin tocar nada, pull = fetch + merge
 
-## Comandos nuevos de esta etapa
+## Comandos nuevos de este capítulo
 
 | Comando | Qué hace |
 | --- | --- |

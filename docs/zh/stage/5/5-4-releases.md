@@ -52,7 +52,7 @@ exercises:
 
 ## 打 tag 并推送
 
-发布前先在本地打 tag（阶段 4 学过）：
+发布前先在本地打 tag（章节 4 学过）：
 
 ```bash
 git tag -a v1.0.0 -m "v1.0.0: first release"

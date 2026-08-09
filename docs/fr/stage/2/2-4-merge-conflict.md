@@ -84,7 +84,7 @@ Chaque bloc en conflit du fichier porte trois marqueurs :
 
 ## Le déroulement de résolution d'un conflit
 
-Le déroulement standard tient en quatre étapes :
+Le déroulement standard tient en quatre temps :
 
 ```bash
 git merge feature          # 1. déclencher le conflit

@@ -1,6 +1,6 @@
-# Stage 2 — Branches and Merging
+# Chapter 2 — Branches and Merging
 
-The principle thread of this stage: **the commit graph and HEAD**. A branch is just a pointer to a commit, and HEAD marks where you currently are; every branch operation (switch, merge, conflict) either moves pointers on the commit graph or folds forks back together.
+The principle thread of this chapter: **the commit graph and HEAD**. A branch is just a pointer to a commit, and HEAD marks where you currently are; every branch operation (switch, merge, conflict) either moves pointers on the commit graph or folds forks back together.
 
 ## Lessons
 
@@ -9,7 +9,7 @@ The principle thread of this stage: **the commit graph and HEAD**. A branch is j
 - 2-3 [git merge merges branches](/stage/2/2-3-merge): fast-forward merges and merge commits
 - 2-4 [Resolving merge conflicts](/stage/2/2-4-merge-conflict): conflict markers and the resolution workflow
 
-## New commands in this stage
+## New commands in this chapter
 
 | Command | What it does |
 | --- | --- |

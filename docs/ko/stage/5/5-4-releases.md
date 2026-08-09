@@ -52,7 +52,7 @@ exercises:
 
 ## tag 만들고 push하기
 
-출시 전에 먼저 로컬에서 tag를 만듭니다(단계 4에서 학습):
+출시 전에 먼저 로컬에서 tag를 만듭니다(챕터 4에서 학습):
 
 ```bash
 git tag -a v1.0.0 -m "v1.0.0: first release"

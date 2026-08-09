@@ -1,6 +1,6 @@
-# Etapa 4 — Reparos e avançado
+# Capítulo 4 — Reparos e avançado
 
-A linha de princípios desta etapa: **refs e reflog**. O reset move o ponteiro do branch, o revert/cherry-pick geram commits novos, o rebase reescreve o histórico — e o reflog registra cada movimento do HEAD, fazendo com que qualquer "arrependimento" possa ser recuperado.
+A linha de princípios deste capítulo: **refs e reflog**. O reset move o ponteiro do branch, o revert/cherry-pick geram commits novos, o rebase reescreve o histórico — e o reflog registra cada movimento do HEAD, fazendo com que qualquer "arrependimento" possa ser recuperado.
 
 ## Lições
 
@@ -9,7 +9,7 @@ A linha de princípios desta etapa: **refs e reflog**. O reset move o ponteiro d
 - 4-3 [git revert e git cherry-pick](/pt/stage/4/4-3-revert-cherry-pick): desfazer com commit inverso e copiar commits
 - 4-4 [git rebase: reaplicar commits](/pt/stage/4/4-4-rebase): histórico linear, conflitos e abort
 
-## Novos comandos desta etapa
+## Novos comandos deste capítulo
 
 | Comando | Efeito |
 | --- | --- |

@@ -13,7 +13,7 @@ exercises:
   - id: 5-5-e2
     question: workflow 안에서 job과 step의 관계는?
     options:
-      - job은 작업(병렬 가능, 서로 다른 머신에서 실행), step은 job 안의 한 단계 동작
+      - job은 작업(병렬 가능, 서로 다른 머신에서 실행), step은 job 안의 개별 동작
       - job은 동작이고 step은 머신이다
       - 둘은 같은 것이다
     correct: 0
@@ -60,7 +60,7 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
 ```
 
-구조: `on`은 트리거 이벤트를 선언하고, `jobs`는 작업을 정의하며(병렬 실행 가능, 각자 한 머신에서), `steps`는 작업 안의 한 단계 한 단계 동작입니다(`run`은 명령 실행, `uses`는 커뮤니티가 만든 action 재사용).
+구조: `on`은 트리거 이벤트를 선언하고, `jobs`는 작업을 정의하며(병렬 실행 가능, 각자 한 머신에서), `steps`는 작업 안의 개별 동작입니다(`run`은 명령 실행, `uses`는 커뮤니티가 만든 action 재사용).
 
 ## 자주 쓰는 트리거 이벤트
 
@@ -82,7 +82,7 @@ push ──▶ workflow 트리거 ──▶ 의존성 설치 → 빌드 → 산�
 ## 직접 해보기
 
 - 저장소에 `.github/workflows/deploy.yml`을 만들어 정적 페이지 하나를 배포하세요
-- 일부러 빌드 단계를 틀리게 해서 Actions의 실패 로그를 관찰하세요
+- 일부러 빌드 스텝을 틀리게 해서 Actions의 실패 로그를 관찰하세요
 - 연습용 저장소에 테스트를 실행하는 workflow를 추가하세요
 
 ## 연습

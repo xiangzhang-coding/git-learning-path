@@ -89,7 +89,7 @@ git switch -c <nombre> # crea y cambia a la vez (el más usado)
 - `git switch feature`: HEAD se mueve a `feature` y los archivos del working tree se reemplazan por la instantánea a la que apunta esa rama
 - `git switch -c feature`: crea una rama nueva y cambia a ella al instante; equivale a `git branch feature` + `git switch feature`
 
-**Sintaxis antigua**: `git checkout <nombre>` y `git checkout -b <nombre>` son los comandos antiguos equivalentes; `git switch` es el comando nuevo recomendado, y la zona de práctica soporta ambos. `git checkout` también tenía el uso de «restaurar archivos», que hoy cubre `git restore` (etapa 1).
+**Sintaxis antigua**: `git checkout <nombre>` y `git checkout -b <nombre>` son los comandos antiguos equivalentes; `git switch` es el comando nuevo recomendado, y la zona de práctica soporta ambos. `git checkout` también tenía el uso de «restaurar archivos», que hoy cubre `git restore` (capítulo 1).
 
 Si el working tree tiene cambios sin commitear, git se niega a cambiar y te pide commitearlos o apartarlos con stash — porque al cambiar de instantánea, esos cambios no tendrían dónde quedarse.
 

@@ -52,7 +52,7 @@ A regra é simples: aumentar o major explica "por que seu programa quebrou de re
 
 ## Criar um tag e enviar (push)
 
-Antes de publicar, crie o tag no local (visto na Etapa 4):
+Antes de publicar, crie o tag no local (visto no Capítulo 4):
 
 ```bash
 git tag -a v1.0.0 -m "v1.0.0: first release"

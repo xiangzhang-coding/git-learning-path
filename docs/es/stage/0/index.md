@@ -1,6 +1,6 @@
-# Etapa 0 — Conceptos y entorno
+# Capítulo 0 — Conceptos y entorno
 
-El hilo de principios de esta etapa: **por qué existe el control de versiones**. Primero los conceptos, luego las manos.
+El hilo de principios de este capítulo: **por qué existe el control de versiones**. Primero los conceptos, luego las manos.
 
 <StageProgress
   :lessons="[

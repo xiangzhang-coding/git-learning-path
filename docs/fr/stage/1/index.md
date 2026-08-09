@@ -1,6 +1,6 @@
-# Étape 1 — Les bases en local
+# Chapitre 1 — Les bases en local
 
-Le fil de principe de cette étape : **snapshots et SHA**. Toutes les commandes de cette étape reviennent, au fond, à déplacer du contenu entre les trois zones.
+Le fil de principe de ce chapitre : **snapshots et SHA**. Toutes les commandes de ce chapitre reviennent, au fond, à déplacer du contenu entre les trois zones.
 
 <StageProgress
   :lessons="[

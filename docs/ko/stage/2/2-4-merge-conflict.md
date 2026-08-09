@@ -84,7 +84,7 @@ Automatic merge failed; fix conflicts and then commit the result.
 
 ## 충돌 해결 절차
 
-표준 절차는 네 단계입니다:
+표준 절차는 네 동작입니다:
 
 ```bash
 git merge feature          # 1. 충돌 발생시키기

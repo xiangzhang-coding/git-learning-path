@@ -1,6 +1,6 @@
-# Stage 1 — Local Basics
+# Chapter 1 — Local Basics
 
-The principle thread of this stage: **snapshots and SHA**. Every command in this stage moves content between the three areas.
+The principle thread of this chapter: **snapshots and SHA**. Every command in this chapter moves content between the three areas.
 
 <StageProgress
   :lessons="[

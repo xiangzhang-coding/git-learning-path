@@ -24,6 +24,9 @@ export interface Labels {
   typeCommandLabel: string
   save: string
   cancel: string
+  backToTop: string
+  themeLabel: string
+  theme: Record<'system' | 'light' | 'dark' | 'terminal' | 'retro', string>
 }
 
 export const LABELS: Record<string, Labels> = {
@@ -48,6 +51,9 @@ export const LABELS: Record<string, Labels> = {
     taskNotDone: 'Task not complete yet',
     typeCommandLabel: 'Type a git command…',
     save: 'Save',
+    backToTop: 'Back to top',
+    themeLabel: 'Theme',
+    theme: { 'system': 'System', 'light': 'Light', 'dark': 'Dark', 'terminal': 'Terminal', 'retro': 'Retro' },
     cancel: 'Cancel',
   },
   zh: {
@@ -71,6 +77,9 @@ export const LABELS: Record<string, Labels> = {
     taskNotDone: '任务尚未完成',
     typeCommandLabel: '输入 git 命令…',
     save: '保存',
+    backToTop: '回到顶部',
+    themeLabel: '主题',
+    theme: { 'system': '跟随系统', 'light': '浅色', 'dark': '深色', 'terminal': '终端', 'retro': '复古' },
     cancel: '取消',
   },
   ja: {
@@ -94,6 +103,9 @@ export const LABELS: Record<string, Labels> = {
     taskNotDone: 'まだ完了していません',
     typeCommandLabel: 'git コマンドを入力…',
     save: '保存',
+    backToTop: 'トップへ戻る',
+    themeLabel: 'テーマ',
+    theme: { 'system': 'システム', 'light': 'ライト', 'dark': 'ダーク', 'terminal': 'ターミナル', 'retro': 'レトロ' },
     cancel: 'キャンセル',
   },
   ko: {
@@ -117,6 +129,9 @@ export const LABELS: Record<string, Labels> = {
     taskNotDone: '아직 완료되지 않음',
     typeCommandLabel: 'git 명령어 입력…',
     save: '저장',
+    backToTop: '맨 위로',
+    themeLabel: '테마',
+    theme: { 'system': '시스템', 'light': '라이트', 'dark': '다크', 'terminal': '터미널', 'retro': '레트로' },
     cancel: '취소',
   },
   de: {
@@ -140,6 +155,9 @@ export const LABELS: Record<string, Labels> = {
     taskNotDone: 'Noch nicht erledigt',
     typeCommandLabel: 'Git-Befehl eingeben…',
     save: 'Speichern',
+    backToTop: 'Nach oben',
+    themeLabel: 'Design',
+    theme: { 'system': 'System', 'light': 'Hell', 'dark': 'Dunkel', 'terminal': 'Terminal', 'retro': 'Retro' },
     cancel: 'Abbrechen',
   },
   fr: {
@@ -163,6 +181,9 @@ export const LABELS: Record<string, Labels> = {
     taskNotDone: 'Pas encore terminée',
     typeCommandLabel: 'Saisissez une commande git…',
     save: 'Enregistrer',
+    backToTop: 'Retour en haut',
+    themeLabel: 'Thème',
+    theme: { 'system': 'Système', 'light': 'Clair', 'dark': 'Sombre', 'terminal': 'Terminal', 'retro': 'Rétro' },
     cancel: 'Annuler',
   },
   es: {
@@ -186,6 +207,9 @@ export const LABELS: Record<string, Labels> = {
     taskNotDone: 'Aún no completada',
     typeCommandLabel: 'Escribe un comando git…',
     save: 'Guardar',
+    backToTop: 'Volver arriba',
+    themeLabel: 'Tema',
+    theme: { 'system': 'Sistema', 'light': 'Claro', 'dark': 'Oscuro', 'terminal': 'Terminal', 'retro': 'Retro' },
     cancel: 'Cancelar',
   },
   pt: {
@@ -209,6 +233,9 @@ export const LABELS: Record<string, Labels> = {
     taskNotDone: 'Ainda não concluída',
     typeCommandLabel: 'Digite um comando git…',
     save: 'Salvar',
+    backToTop: 'Voltar ao topo',
+    themeLabel: 'Tema',
+    theme: { 'system': 'Sistema', 'light': 'Claro', 'dark': 'Escuro', 'terminal': 'Terminal', 'retro': 'Retrô' },
     cancel: 'Cancelar',
   },
   ru: {
@@ -232,6 +259,9 @@ export const LABELS: Record<string, Labels> = {
     taskNotDone: 'Задание ещё не выполнено',
     typeCommandLabel: 'Введите команду git…',
     save: 'Сохранить',
+    backToTop: 'Наверх',
+    themeLabel: 'Тема',
+    theme: { 'system': 'Система', 'light': 'Светлая', 'dark': 'Тёмная', 'terminal': 'Терминал', 'retro': 'Ретро' },
     cancel: 'Отмена',
   }
 }

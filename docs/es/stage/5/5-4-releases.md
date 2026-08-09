@@ -52,7 +52,7 @@ La regla es simple: subir la versión principal explica «por qué tu programa s
 
 ## Crear un tag y subirlo
 
-Antes de publicar, crea el tag en local (lo viste en la etapa 4):
+Antes de publicar, crea el tag en local (lo viste en el capítulo 4):
 
 ```bash
 git tag -a v1.0.0 -m "v1.0.0: first release"

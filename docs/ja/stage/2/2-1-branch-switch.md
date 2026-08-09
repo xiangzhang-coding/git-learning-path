@@ -89,7 +89,7 @@ git switch -c <名前> # 作成して切り替える（最もよく使う）
 - `git switch feature`：HEAD が `feature` に移動し、ワークツリーのファイルがそのブランチが指すスナップショットに置き換わる
 - `git switch -c feature`：新しいブランチを作成してすぐに切り替える。`git branch feature` + `git switch feature` と同じ
 
-**古い書き方**: `git checkout <名前>` と `git checkout -b <名前>` は同じことを行う旧コマンドです。`git switch` が新しい推奨コマンドで、練手区は両方に対応しています。`git checkout` には「ファイルを復元する」用途もあり、現在は `git restore`（段階 1 で学習済み）が担っています。
+**古い書き方**: `git checkout <名前>` と `git checkout -b <名前>` は同じことを行う旧コマンドです。`git switch` が新しい推奨コマンドで、練手区は両方に対応しています。`git checkout` には「ファイルを復元する」用途もあり、現在は `git restore`（章 1 で学習済み）が担っています。
 
 切り替え時にワークツリーに未コミットの変更があると、git は拒否して先にコミットか stash を促します——スナップショットが切り替わると、変更の置き場所がなくなってしまうからです。
 

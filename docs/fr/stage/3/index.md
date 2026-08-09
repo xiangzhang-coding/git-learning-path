@@ -1,6 +1,6 @@
-# Étape 3 — La collaboration à distance
+# Chapitre 3 — La collaboration à distance
 
-Le fil de principe de cette étape : **deux dépôts et le tracking branch**. remote est l'adresse d'un autre dépôt ; clone le copie, fetch met à jour « l'image distante » (origin/main), push envoie les commits locaux, pull = fetch + merge.
+Le fil de principe de ce chapitre : **deux dépôts et le tracking branch**. remote est l'adresse d'un autre dépôt ; clone le copie, fetch met à jour « l'image distante » (origin/main), push envoie les commits locaux, pull = fetch + merge.
 
 ## Cours
 
@@ -9,7 +9,7 @@ Le fil de principe de cette étape : **deux dépôts et le tracking branch**. re
 - 3-3 [git push : envoyer des commits](/fr/stage/3/3-3-push) : envoyer les commits locaux, le refus non-fast-forward
 - 3-4 [git fetch et git pull](/fr/stage/3/3-4-fetch-pull) : fetch regarde sans toucher, pull = fetch + merge
 
-## Nouvelles commandes de cette étape
+## Nouvelles commandes de ce chapitre
 
 | Commande | Rôle |
 | --- | --- |
