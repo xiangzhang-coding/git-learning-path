@@ -1,8 +1,32 @@
 import * as git from 'isomorphic-git'
 import type { Session } from './scenarios'
-import { isRepo, listWorkdirFiles, mergeInProgress, readBranchOid, readFileFromRef, readReflog, resolveAnyRef } from './scenarios'
+import { isRepo, listWorkdirFiles, mergeInProgress, readBranchOid, readFileFromRef, readReflog, resolveAnyRef,
+  MatrixRow} from './scenarios'
 import type { GraphCommit } from './graph'
 import { commitGraph } from './graph'
+
+export const CHECK_TYPES = [
+  'hasCommit',
+  'fileCommitted',
+  'fileStaged',
+  'fileDeleted',
+  'fileRenamed',
+  'statusClean',
+  'branchIs',
+  'configIs',
+  'fileExists',
+  'branchExists',
+  'mergeDone',
+  'mergeCommit',
+  'noMergeCommit',
+  'pushedTo',
+  'tagExists',
+  'headAt',
+  'workdirModified',
+  'rebaseAborted'
+] as const
+
+export type CheckType = (typeof CHECK_TYPES)[number]
 
 export type Check =
   | { type: 'hasCommit'; messageContains?: string }
@@ -59,7 +83,7 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
         break
       }
       case 'fileStaged': {
-        const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+        const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
         const row = rows.find((r) => r[0] === check.path)
         if (!row || row[3] === 0) return { pass: false, detail: `"${check.path}" is not staged` }
         break
@@ -85,13 +109,13 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
           .catch(() => false)
         if (oldExists) return { pass: false, detail: `"${check.from}" still exists` }
         if (!newExists) return { pass: false, detail: `"${check.to}" is missing` }
-        const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+        const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
         const newRow = rows.find((r) => r[0] === check.to)
         if (!newRow || newRow[3] === 0) return { pass: false, detail: `"${check.to}" is not staged` }
         break
       }
       case 'statusClean': {
-        const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+        const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
         const dirty = rows.filter(([, h, w, s]) => !(h === 1 && w === 1 && s === 1))
         if (dirty.length) return { pass: false, detail: 'working tree is not clean' }
         break
@@ -127,7 +151,7 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
           const merged = await branchMerged(fs, dir, check.branch)
           if (!merged) return { pass: false, detail: `branch "${check.branch}" is not merged into HEAD` }
         }
-        const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+        const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
         const dirty = rows.filter(([, h, w, s]) => !(h === 1 && w === 1 && s === 1))
         if (dirty.length) return { pass: false, detail: 'working tree is not clean' }
         break
@@ -176,7 +200,7 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
         break
       }
       case 'workdirModified': {
-        const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+        const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
         const row = rows.find((r) => r[0] === check.path)
         if (!row || row[2] === row[3]) {
           return { pass: false, detail: `"${check.path}" is not modified in the working tree` }
@@ -190,6 +214,10 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
           return { pass: false, detail: 'no rebase was aborted' }
         }
         break
+      }
+      default: {
+        const type = (check as { type: string }).type
+        return { pass: false, detail: `unknown check type "${type}"` }
       }
     }
   }
@@ -224,7 +252,7 @@ export async function sessionSnapshot(session: Session): Promise<{
     commits = []
   }
   const files = await listWorkdirFiles(fs, dir)
-  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
   const graph = await commitGraph(fs, dir)
   return {
     branch,

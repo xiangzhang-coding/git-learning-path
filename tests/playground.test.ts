@@ -84,6 +84,34 @@ describe('playground command engine', () => {
     expect(out).toContain('+world!')
   })
 
+  it('diff --staged shows staged changes only', async () => {
+    const session = await Session.create('add-commit')
+    await exec(session, 'git add hello.txt')
+    const staged = await exec(session, 'git diff --staged')
+    expect(staged).toContain('diff --git a/hello.txt b/hello.txt')
+    const unstaged = await exec(session, 'git diff')
+    expect(unstaged).toBe('')
+  })
+
+  it('config sets and reads values in the repo', async () => {
+    const session = await Session.create('init')
+    await exec(session, 'git init')
+    await exec(session, 'git config user.name "Ada Lovelace"')
+    const name = await exec(session, 'git config user.name')
+    expect(name).toContain('Ada Lovelace')
+    const missing = await exec(session, 'git config no.such.key')
+    expect(missing).toBe('')
+  })
+
+  it('help lists the available playground commands', async () => {
+    const session = await Session.create('init')
+    const out = await exec(session, 'git help')
+    expect(out).toContain('git status')
+    expect(out).toContain('git commit -m')
+    expect(out).toContain('git rebase')
+    expect(out).toContain('git reflog')
+  })
+
   it('restore discards working tree changes', async () => {
     const session = await Session.create('local')
     await exec(session, 'git restore hello.txt')

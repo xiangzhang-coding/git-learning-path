@@ -4,4 +4,4 @@
 
 - **Status**: accepted
 - **Considered Options**: 自研迷你 git 引擎（语义漂移风险、工作量高）；真实 git 后端 + WebSocket（需服务端，违背纯静态）
-- **Consequences**: 练手区依赖一个 npm 运行时依赖；远程操作是模拟而非真实网络；每场景需预设初始仓库状态
+- **Consequences**: 练手区依赖一个 npm 运行时依赖；远程操作是模拟而非真实网络；每场景需预设初始仓库状态；练手区覆盖阶段 1–4（阶段 0 为纯概念课，阶段 5 在真实 GitHub 上练习）

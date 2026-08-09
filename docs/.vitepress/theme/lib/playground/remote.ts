@@ -6,7 +6,6 @@ import {
   branchOids,
   cloneRepo,
   copyObjects,
-  headBranchOf,
   isRepo,
   readBranchOid,
   readTrackingOid,
@@ -142,8 +141,13 @@ export async function runPush(session: Session, argv: string[]): Promise<Command
   }
   const remoteOid = await readBranchOid(remote.fs, remote.dir, branch)
   if (remoteOid) {
-    const bases = await git.findMergeBase({ fs: session.fs as never, dir: session.dir, oids: [localOid, remoteOid] })
-    const base = bases[0]
+    let base: string | undefined
+    try {
+      const bases = await git.findMergeBase({ fs: session.fs as never, dir: session.dir, oids: [localOid, remoteOid] })
+      base = bases[0]
+    } catch {
+      base = undefined
+    }
     if (!base || base !== remoteOid) {
       return {
         out: [

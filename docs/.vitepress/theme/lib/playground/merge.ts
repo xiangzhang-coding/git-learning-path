@@ -1,6 +1,7 @@
 import * as git from 'isomorphic-git'
 import type { MemoryFS } from './fs'
-import { AUTHOR, appendReflog, listWorkdirFiles } from './scenarios'
+import { AUTHOR, appendReflog, listWorkdirFiles,
+  MatrixRow} from './scenarios'
 
 export interface ThreeWayResult {
   text: string[]
@@ -14,9 +15,14 @@ interface Region {
   targetEnd: number
 }
 
+const MAX_DIFF_CELLS = 4_000_000
+
 function diffRegions(base: string[], target: string[]): Region[] {
   const n = base.length
   const m = target.length
+  if (n * m > MAX_DIFF_CELLS) {
+    return [{ baseStart: 0, baseEnd: n, targetStart: 0, targetEnd: m }]
+  }
   const dp: number[][] = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0))
   for (let i = n - 1; i >= 0; i--) {
     for (let j = m - 1; j >= 0; j--) {
@@ -199,11 +205,11 @@ async function buildTreeFromMap(
 }
 
 export async function syncIndex(fs: MemoryFS, dir: string): Promise<void> {
-  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
   for (const [path, h, w, s] of rows) {
     if (h === 1 && w === 0) await git.remove({ fs: fs as never, dir, filepath: path })
     else if (w === 0 && s !== 0) await git.remove({ fs: fs as never, dir, filepath: path })
-    else if (w !== 0 && s !== w) await git.add({ fs: fs as never, dir, filepath: path })
+    else if (w !== 0 && s !== w && !(h === 0 && s === 0)) await git.add({ fs: fs as never, dir, filepath: path })
   }
 }
 
@@ -224,9 +230,10 @@ export async function applyMergedFiles(
   dir: string,
   files: Map<string, string | null>
 ): Promise<void> {
-  const oldFiles = await listWorkdirFiles(fs, dir)
-  for (const old of oldFiles) {
-    if (!files.has(old)) await fs.unlink(`${dir}/${old}`)
+  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
+  const stagedOrTracked = new Set(rows.filter(([, h, , s]) => h === 1 || s !== 0).map((r) => r[0]))
+  for (const old of await listWorkdirFiles(fs, dir)) {
+    if (!files.has(old) && stagedOrTracked.has(old)) await fs.unlink(`${dir}/${old}`)
   }
   for (const [path, content] of files) {
     if (content === null) {

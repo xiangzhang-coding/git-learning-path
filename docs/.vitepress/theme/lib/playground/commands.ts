@@ -2,7 +2,8 @@ import * as git from 'isomorphic-git'
 import type { MemoryFS } from './fs'
 import type { Session } from './scenarios'
 import {
-  AUTHOR,
+    MatrixRow,
+AUTHOR,
   NOT_A_REPO,
   conflictFiles,
   endMerge,
@@ -32,7 +33,6 @@ export interface CommandResult {
   changed: boolean
 }
 
-type MatrixRow = [string, number, number, number]
 
 function short(sha: string): string {
   return sha.slice(0, 7)
@@ -156,11 +156,16 @@ async function unresolvedConflicts(fs: MemoryFS, dir: string, listed: string[]):
   return out
 }
 
+const MAX_DIFF_CELLS = 4_000_000
+
 function diffLines(oldContent: string, newContent: string): string[] {
   const oldLines = oldContent.split('\n')
   const newLines = newContent.split('\n')
   const n = oldLines.length
   const m = newLines.length
+  if (n * m > MAX_DIFF_CELLS) {
+    return [...oldLines.map((l) => `-${l}`), ...newLines.map((l) => `+${l}`)]
+  }
   const dp: number[][] = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0))
   for (let i = n - 1; i >= 0; i--) {
     for (let j = m - 1; j >= 0; j--) {
@@ -301,6 +306,17 @@ async function runCommit(session: Session, argv: string[]): Promise<CommandResul
     return {
       out: [`[${branch} ${short(oid)}] ${finalMessage.split('\n')[0]}`, ` ${files.size} file(s) changed`],
       changed: true
+    }
+  }
+
+  if (await rebaseInProgress(session.fs, session.dir)) {
+    return {
+      out: [
+        'fatal: You are in the middle of a rebase -- cannot commit.',
+        'Fix conflicts and then run "git rebase --continue".',
+        'Or run "git rebase --abort" to cancel the rebase.'
+      ],
+      changed: false
     }
   }
 
@@ -488,8 +504,29 @@ export async function runMerge(session: Session, argv: string[]): Promise<Comman
 
   if (base === oursOid) {
     const theirsTree = (await git.readCommit({ fs: fs as never, dir, oid: theirsOid })).commit.tree
-    await applyMergedFiles(fs, dir, await readTreeFiles(fs, dir, theirsTree))
+    const theirsFiles = await readTreeFiles(fs, dir, theirsTree)
+    const oursFiles = await readTreeFiles(fs, dir, (await git.readCommit({ fs: fs as never, dir, oid: oursOid })).commit.tree)
+    const changed = new Map<string, string | null>()
+    for (const [path, content] of theirsFiles) {
+      if (oursFiles.get(path) !== content) changed.set(path, content)
+    }
+    for (const path of oursFiles.keys()) {
+      if (!theirsFiles.has(path)) changed.set(path, null)
+    }
+    const blocked = await untrackedWouldBeHit(session, changed)
+    if (blocked.length) {
+      return {
+        out: [
+          'error: The following untracked working tree files would be overwritten by merge:',
+          ...blocked.map((p) => `\t${p}`),
+          'Please move or remove them before you merge.'
+        ],
+        changed: false
+      }
+    }
+    await applyMergedFiles(fs, dir, theirsFiles)
     await updateHeadRef(session.fs, session.dir, theirsOid, `merge ${target}: Fast-forward`)
+    await syncIndex(fs, dir)
     return {
       out: [`Updating ${short(oursOid)}..${short(theirsOid)}`, 'Fast-forward'],
       changed: true
@@ -504,6 +541,17 @@ export async function runMerge(session: Session, argv: string[]): Promise<Comman
   const merged = new Map<string, string | null>(await readTreeFiles(fs, dir, oursTree))
   const conflicts: string[] = []
   const affected = await affectedFiles(fs, dir, base, oursOid, theirsOid)
+  const blocked = await untrackedWouldBeHit(session, new Map(affected.map((p) => [p, null])))
+  if (blocked.length) {
+    return {
+      out: [
+        'error: The following untracked working tree files would be overwritten by merge:',
+        ...blocked.map((p) => `\t${p}`),
+        'Please move or remove them before you merge.'
+      ],
+      changed: false
+    }
+  }
   for (const path of affected) {
     const baseC = await readFileFromRef(fs, dir, base, path)
     const oursC = await readFileFromRef(fs, dir, oursOid, path)
@@ -520,6 +568,7 @@ export async function runMerge(session: Session, argv: string[]): Promise<Comman
   if (!conflicts.length) {
     await applyMergedFiles(fs, dir, merged)
     await createMergeCommit(fs, dir, merged, `Merge branch '${target}'`, theirsOid)
+    await syncIndex(fs, dir)
     return {
       out: [`Merge made by the 'ort' strategy.`, ` ${affected.length} file(s) changed`],
       changed: true
@@ -544,6 +593,28 @@ export async function runMerge(session: Session, argv: string[]): Promise<Comman
     ],
     changed: true
   }
+}
+
+async function untrackedWouldBeHit(session: Session, paths: Map<string, string | null>): Promise<string[]> {
+  const rows = (await git.statusMatrix({ fs: session.fs as never, dir: session.dir })) as MatrixRow[]
+  const untracked = new Set(rows.filter(([, h, , s]) => h === 0 && s === 0).map((r) => r[0]))
+  const out: string[] = []
+  for (const path of paths.keys()) {
+    if (!untracked.has(path)) continue
+    const exists = await session.fs
+      .stat(`${session.dir}/${path}`)
+      .then(() => true)
+      .catch(() => false)
+    if (!exists) continue
+    const content = paths.get(path)
+    if (content === null) {
+      out.push(path)
+      continue
+    }
+    const current = await session.fs.readFile(`${session.dir}/${path}`).catch(() => null)
+    if (current && current.toString() !== content) out.push(path)
+  }
+  return out.sort()
 }
 
 async function affectedFiles(

@@ -52,7 +52,9 @@ function onTaskChecked(id: string, pass: boolean) {
           isTask(ex)
             ? taskPassed[ex.id]
               ? 'correct'
-              : 'unanswered'
+              : taskChecked[ex.id]
+                ? 'wrong'
+                : 'unanswered'
             : selected[ex.id] === undefined
               ? 'unanswered'
               : answered[ex.id]
