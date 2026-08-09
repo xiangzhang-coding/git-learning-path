@@ -27,7 +27,7 @@ exercises:
       - 毎回手動でファイルをアップロードする
     correct: 0
     explanation: コミットが Actions をトリガーして自動ビルド・Pages へのデプロイを行います。これがこのコースサイトのデプロイ方式です。
-    anchor: "#github-pages-のデプロイ"
+    anchor: "#github-pages-のデプロイ"
 ---
 
 # GitHub Actions と Pages

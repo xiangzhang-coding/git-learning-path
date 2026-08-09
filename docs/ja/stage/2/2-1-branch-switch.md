@@ -9,7 +9,7 @@ exercises:
       - 未コミットの変更
     correct: 0
     explanation: git branch はリポジトリ内のブランチを一覧表示し、* で現在いるブランチを教えてくれます。
-    anchor: "#git-branch-でブランチを確認・作成する"
+    anchor: "#git-branch-でブランチを確認・作成する"
   - id: 2-1-e2
     question: ブランチは本質的に何ですか？
     options:
@@ -18,7 +18,7 @@ exercises:
       - 独立したフォルダ
     correct: 0
     explanation: ブランチは commit を指すポインタにすぎません。作成してもファイルはコピーされないので、とても軽量です。
-    anchor: "#ブランチはポインタ"
+    anchor: "#ブランチはポインタ"
   - id: 2-1-e3
     question: 下の練手区で、ブランチ feature を作成して切り替えましょう。
     type: task
@@ -30,7 +30,7 @@ exercises:
       - type: branchIs
         name: feature
     explanation: git switch -c feature は「ブランチ feature の作成＋切り替え」をまとめた操作です。HEAD はこれで feature を指します。
-    anchor: "#git-switch-でブランチを切り替える"
+    anchor: "#git-switch-でブランチを切り替える"
   - id: 2-1-e4
     question: 下の練手区で、main ブランチに切り替えましょう。
     type: task
@@ -40,7 +40,7 @@ exercises:
       - type: branchIs
         name: main
     explanation: ブランチの切り替えは HEAD とワークツリーの内容を動かすだけです。コミットはそれぞれのブランチに残ったままです。
-    anchor: "#git-switch-でブランチを切り替える"
+    anchor: "#git-switch-でブランチを切り替える"
 ---
 
 # git branch と git switch

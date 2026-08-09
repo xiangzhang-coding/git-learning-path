@@ -9,7 +9,7 @@ exercises:
       - 3 つの数字に違いはない
     correct: 0
     explanation: MAJOR.MINOR.PATCH：メジャーは互換性を壊し、マイナーは機能を追加し、パッチは bug を直します。繰り上がりの規則でバージョン番号が互換性の情報を伝えます。
-    anchor: "#セマンティックバージョニング"
+    anchor: "#セマンティックバージョニング"
   - id: 5-4-e2
     question: 注釈付きタグをリモートに push するには、正しい手順は？
     options:

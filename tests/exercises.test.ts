@@ -43,8 +43,8 @@ describe('exercise data across all locales', () => {
       const headings = headingTexts(lesson).map(slugify)
       for (const raw of fm.exercises) {
         const anchor = (raw as { anchor?: string }).anchor ?? ''
-        const text = slugify(anchor.replace(/^#/, ''))
-        expect(headings, `anchor "${anchor}" must match a heading in ${rel}`).toContain(text)
+        const href = anchor.replace(/^#/, '')
+        expect(headings, `anchor "${anchor}" must match a heading in ${rel} (byte-identical, as browsers resolve it)`).toContain(href)
       }
     })
   }

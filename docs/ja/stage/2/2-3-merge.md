@@ -9,7 +9,7 @@ exercises:
       - 両方のブランチに新しいコミットがあるとき
     correct: 0
     explanation: main が止まったままで feature だけがその後ろにコミットを積んだ場合、merge は main ポインタを直接前進させるだけで済みます。履歴は一直線のままで、新しいコミットは生まれません。
-    anchor: "#fast-forward（ファストフォワード）マージ"
+    anchor: "#fast-forward-ファストフォワード-マージ"
   - id: 2-3-e2
     question: 両方のブランチに新しいコミットがあるとき、git merge は何を生成しますか？
     options:
@@ -34,7 +34,7 @@ exercises:
         path: feature.txt
         contentContains: feature work
     explanation: 出力に Fast-forward と表示されます：main に新しいコミットがないため、ポインタが feature まで直接前進し、ワークツリーに feature.txt が現れます。
-    anchor: "#fast-forward（ファストフォワード）マージ"
+    anchor: "#fast-forward-ファストフォワード-マージ"
   - id: 2-3-e4
     question: 下の練手区で、feature を main にマージしましょう（両方のブランチが分岐しています）。
     type: task

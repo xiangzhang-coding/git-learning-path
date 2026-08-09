@@ -40,7 +40,7 @@ exercises:
       - 現在のブランチのコミットグラフ
     correct: 0
     explanation: git show は 1 つのコミットを展開します：先頭は作者と日付、その下は親コミットとの diff——「あるコミットで何が変わったのか」を確認する標準的な方法です。
-    anchor: "#git-show-でコミットを確認"
+    anchor: "#git-show-でコミットを確認"
   - id: 1-3-e5
     question: git blame <ファイル> は何に使いますか？
     options:
@@ -49,7 +49,7 @@ exercises:
       - 2 つのファイルの差分を比較する
     correct: 0
     explanation: blame は行ごとに責任を追跡します：各行の先頭に「最後に変更したコミットの短いハッシュ + 作者」が付きます。「この行は誰が、どのコミットで変えたのか」を調べたいときに役立ちます。
-    anchor: "#git-blame-で行の由来を追う"
+    anchor: "#git-blame-で行の由来を追う"
 ---
 
 # git log と git diff

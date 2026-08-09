@@ -9,7 +9,7 @@ exercises:
       - 変更をリモートにプッシュする
     correct: 0
     explanation: --hard は 3 つをまとめて戻す操作です：ブランチのポインタ、ステージングエリア、ワークツリーがすべて対象の commit の状態に戻ります——危険ですがよく使われます。
-    anchor: "#git-reset-で-HEAD-を移動する"
+    anchor: "#git-reset-で-head-を移動する"
   - id: 4-2-e2
     question: reset で捨てたコミットは取り戻せますか？
     options:
@@ -28,7 +28,7 @@ exercises:
       - type: headAt
         ref: HEAD~1
     explanation: reset --hard HEAD~1 はブランチを一歩後退させ、ワークツリーも前の状態に戻します。
-    anchor: "#git-reset-で-HEAD-を移動する"
+    anchor: "#git-reset-で-head-を移動する"
   - id: 4-2-e4
     question: 下の練手区で、reflog を使って reset したコミットを取り戻しましょう。
     type: task
@@ -47,7 +47,7 @@ exercises:
       - 追跡済みファイルの変更を元に戻す
     correct: 0
     explanation: clean は未追跡ファイルだけを扱います。デフォルトでは直接削除を拒否し（clean.requireForce）、-n でプレビュー、-f で実行します——削除したファイルは git では取り戻せません。
-    anchor: "#git-clean-で未追跡ファイルを削除"
+    anchor: "#git-clean-で未追跡ファイルを削除"
   - id: 4-2-e6
     question: 下の練手区で、未追跡ファイルをすべて削除しましょう。
     type: task
@@ -56,7 +56,7 @@ exercises:
     checks:
       - type: workdirClean
     explanation: clean -f は未追跡ファイルを削除します。ワークツリーにコミット済みのファイルだけが残ればタスクはクリアです。
-    anchor: "#git-clean-で未追跡ファイルを削除"
+    anchor: "#git-clean-で未追跡ファイルを削除"
 ---
 
 # git reset と reflog

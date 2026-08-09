@@ -18,7 +18,7 @@ exercises:
       - マージ方式は履歴に影響しない
     correct: 0
     explanation: 3 つの方式で履歴が変わります：merge commit は分岐を残し、squash は 1 つのコミットにまとめ、rebase は線形にリプレイします。
-    anchor: "#マージとクローズ"
+    anchor: "#マージとクローズ"
   - id: 5-2-e3
     question: メンテナーから修正を求められたら、開いた PR はどう更新しますか？
     options:
@@ -27,7 +27,7 @@ exercises:
       - PR のタイトルを変えればよい
     correct: 0
     explanation: PR はブランチの「窓口」です。そのブランチに新しいコミットを push すれば、PR の差分も自動で更新されます。
-    anchor: "#pr-ブランチの更新"
+    anchor: "#pr-ブランチの更新"
 ---
 
 # Pull Request の流れ

@@ -1,6 +1,6 @@
 # 章节 5 动手清单：localStorage 打卡，不设门槛
 
-章节 5 在真实 GitHub 上练习（ADR-0002），操作无法在线验证。为此在章节 5 索引页新增「动手清单」组件：10 项真实操作任务（fork → upstream 同步 → PR → review → issue → fixes 关联 → Release → Actions 部署 → 失败日志），勾选状态存 localStorage。
+章节 5 在真实 GitHub 上练习（ADR-0002），操作无法在线验证。为此在章节 5 索引页新增「动手清单」组件：10 项真实操作任务（fork → upstream 同步 → PR → review → issue → fixes 关联 → v0.1.0 Release → patch release 三段式发布说明 → Actions 部署 → 失败日志），勾选状态存 localStorage。
 
 - **Status**: accepted
 - **Considered Options**: 保持纯叙述引导（散落各课，无可追踪性）；每课各放清单（分散、难维护）；后端打卡（违背纯静态）

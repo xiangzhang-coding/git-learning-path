@@ -18,7 +18,7 @@ exercises:
       - issue は手動でしか閉じられない
     correct: 0
     explanation: GitHub は closes、fixes、resolves キーワードと issue 番号を認識し、PR のマージ時に該当 issue を自動でクローズします。
-    anchor: "#pr-で-issue-をクローズする"
+    anchor: "#pr-で-issue-をクローズする"
   - id: 5-3-e3
     question: label と milestone の役割はそれぞれ？
     options:
@@ -27,7 +27,7 @@ exercises:
       - どちらもリポジトリにスターを付ける機能
     correct: 0
     explanation: labels は絞り込みと分類に便利です。milestones は「このバージョンで何を達成するか」を示し、Release と対応することが多いです。
-    anchor: "#ラベルとマイルストーン"
+    anchor: "#ラベルとマイルストーン"
 ---
 
 # Issues と協働

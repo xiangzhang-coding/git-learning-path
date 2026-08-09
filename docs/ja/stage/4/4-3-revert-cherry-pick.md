@@ -18,7 +18,7 @@ exercises:
       - ファイルを選んで比較する
     correct: 0
     explanation: cherry-pick は指定したコミットの変更を現在のブランチに適用し、新しいコミットを作ります——他人の特定のコミットだけ欲しいときに便利です。
-    anchor: "#git-cherry-pick-でコミットをコピーする"
+    anchor: "#git-cherry-pick-でコミットをコピーする"
   - id: 4-3-e3
     question: 下の練手区で、悪いコミットを取り消しましょう。
     type: task
@@ -44,7 +44,7 @@ exercises:
         path: feature.txt
         contentContains: feature work
     explanation: cherry-pick でコミットをコピーしても feature ブランチはそのまま残り、main にも中身の同じコミットが 1 つ増えます。
-    anchor: "#git-cherry-pick-でコミットをコピーする"
+    anchor: "#git-cherry-pick-でコミットをコピーする"
   - id: 4-3-e5
     question: git bisect は何に使いますか？
     options:
@@ -53,7 +53,7 @@ exercises:
       - 直近のコミットを取り消す
     correct: 0
     explanation: bisect は「悪い」コミットと「良い」コミットをマークすると、中間のコミットを繰り返し checkout して確認させ、二分法で「どのコミットから悪くなったか」を素早く特定します。
-    anchor: "#git-bisect-で原因コミットを二分探索"
+    anchor: "#git-bisect-で原因コミットを二分探索"
   - id: 4-3-e6
     question: 下の練手区で、bisect を使ってバグを導入したコミットを特定しましょう。
     type: task
@@ -62,7 +62,7 @@ exercises:
     checks:
       - type: bisectDone
     explanation: 'bisect は「fix: typo in add」のコミットを特定します——add 関数はこのコミットから壊れ始めます。終了後は git bisect reset で元のブランチに戻れます。'
-    anchor: "#git-bisect-で原因コミットを二分探索"
+    anchor: "#git-bisect-で原因コミットを二分探索"
 ---
 
 # git revert と git cherry-pick

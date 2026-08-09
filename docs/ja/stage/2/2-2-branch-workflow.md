@@ -9,7 +9,7 @@ exercises:
       - コミットメッセージによる
     correct: 0
     explanation: コミットは毎回現在のブランチポインタに積まれます。feature でのコミットは feature を進めるだけで、main の履歴は影響を受けません。
-    anchor: "#コミットは現在のブランチにだけ積まれる"
+    anchor: "#コミットは現在のブランチにだけ積まれる"
   - id: 2-2-e2
     question: 2つのブランチがそれぞれコミットすると、コミットグラフ（commit graph）はどんな形になりますか？
     options:
@@ -18,7 +18,7 @@ exercises:
       - 1本のブランチの記録だけが残る
     correct: 0
     explanation: ブランチがそれぞれ進むと、履歴は共通のコミットから分岐し、分岐した木の形になります——git の世界ではこれを DAG と呼びます。
-    anchor: "#分岐とコミットグラフ"
+    anchor: "#分岐とコミットグラフ"
   - id: 2-2-e3
     question: 下の練手区で、feature ブランチでコミットを1つ作りましょう。
     type: task
@@ -32,7 +32,7 @@ exercises:
       - type: hasCommit
         messageContains: feat
     explanation: コミットすると、練手区の下のコミットグラフが分岐します：feature ポインタは1つ前進し、main はその場に止まったままです。
-    anchor: "#コミットは現在のブランチにだけ積まれる"
+    anchor: "#コミットは現在のブランチにだけ積まれる"
   - id: 2-2-e4
     question: 下の練手区で、main に切り替えてワークツリーをクリーンな状態に保ちましょう。
     type: task
@@ -43,7 +43,7 @@ exercises:
         name: main
       - type: statusClean
     explanation: main に切り替えると、feature でのコミットは main の履歴からは見えません。しかしブランチポインタは残っているので、いつでも切り替えて戻れます。
-    anchor: "#コミットは現在のブランチにだけ積まれる"
+    anchor: "#コミットは現在のブランチにだけ積まれる"
 ---
 
 # ブランチでの作業

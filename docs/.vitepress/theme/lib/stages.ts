@@ -223,55 +223,64 @@ const stage4Lessons: Record<LocaleKey, { slug: string; title: string }[]> = {
     { slug: '4-1-stash-tag', title: '4-1 git stash and git tag' },
     { slug: '4-2-reset-reflog', title: '4-2 git reset and git reflog' },
     { slug: '4-3-revert-cherry-pick', title: '4-3 git revert and git cherry-pick' },
-    { slug: '4-4-rebase', title: '4-4 git rebase' }
+    { slug: '4-4-rebase', title: '4-4 git rebase' },
+    { slug: '4-5-worktree', title: '4-5 git worktree' },
   ],
   zh: [
     { slug: '4-1-stash-tag', title: '4-1 git stash 与 git tag' },
     { slug: '4-2-reset-reflog', title: '4-2 git reset 与 reflog' },
     { slug: '4-3-revert-cherry-pick', title: '4-3 git revert 与 git cherry-pick' },
-    { slug: '4-4-rebase', title: '4-4 git rebase 重放提交' }
+    { slug: '4-4-rebase', title: '4-4 git rebase 重放提交' },
+    { slug: '4-5-worktree', title: '4-5 git worktree 多工作树' },
   ],
   ja: [
     { slug: '4-1-stash-tag', title: '4-1 git stash と git tag' },
     { slug: '4-2-reset-reflog', title: '4-2 git reset と git reflog' },
     { slug: '4-3-revert-cherry-pick', title: '4-3 git revert と git cherry-pick' },
-    { slug: '4-4-rebase', title: '4-4 git rebase' }
+    { slug: '4-4-rebase', title: '4-4 git rebase' },
+    { slug: '4-5-worktree', title: '4-5 git worktree' },
   ],
   ko: [
     { slug: '4-1-stash-tag', title: '4-1 git stash와 git tag' },
     { slug: '4-2-reset-reflog', title: '4-2 git reset과 git reflog' },
     { slug: '4-3-revert-cherry-pick', title: '4-3 git revert와 git cherry-pick' },
-    { slug: '4-4-rebase', title: '4-4 git rebase' }
+    { slug: '4-4-rebase', title: '4-4 git rebase' },
+    { slug: '4-5-worktree', title: '4-5 git worktree' },
   ],
   de: [
     { slug: '4-1-stash-tag', title: '4-1 git stash und git tag' },
     { slug: '4-2-reset-reflog', title: '4-2 git reset und git reflog' },
     { slug: '4-3-revert-cherry-pick', title: '4-3 git revert und git cherry-pick' },
-    { slug: '4-4-rebase', title: '4-4 git rebase' }
+    { slug: '4-4-rebase', title: '4-4 git rebase' },
+    { slug: '4-5-worktree', title: '4-5 git worktree' },
   ],
   fr: [
     { slug: '4-1-stash-tag', title: '4-1 git stash et git tag' },
     { slug: '4-2-reset-reflog', title: '4-2 git reset et git reflog' },
     { slug: '4-3-revert-cherry-pick', title: '4-3 git revert et git cherry-pick' },
-    { slug: '4-4-rebase', title: '4-4 git rebase' }
+    { slug: '4-4-rebase', title: '4-4 git rebase' },
+    { slug: '4-5-worktree', title: '4-5 git worktree' },
   ],
   es: [
     { slug: '4-1-stash-tag', title: '4-1 git stash y git tag' },
     { slug: '4-2-reset-reflog', title: '4-2 git reset y git reflog' },
     { slug: '4-3-revert-cherry-pick', title: '4-3 git revert y git cherry-pick' },
-    { slug: '4-4-rebase', title: '4-4 git rebase' }
+    { slug: '4-4-rebase', title: '4-4 git rebase' },
+    { slug: '4-5-worktree', title: '4-5 git worktree' },
   ],
   pt: [
     { slug: '4-1-stash-tag', title: '4-1 git stash e git tag' },
     { slug: '4-2-reset-reflog', title: '4-2 git reset e git reflog' },
     { slug: '4-3-revert-cherry-pick', title: '4-3 git revert e git cherry-pick' },
-    { slug: '4-4-rebase', title: '4-4 git rebase' }
+    { slug: '4-4-rebase', title: '4-4 git rebase' },
+    { slug: '4-5-worktree', title: '4-5 git worktree' },
   ],
   ru: [
     { slug: '4-1-stash-tag', title: '4-1 git stash и git tag' },
     { slug: '4-2-reset-reflog', title: '4-2 git reset и git reflog' },
     { slug: '4-3-revert-cherry-pick', title: '4-3 git revert и git cherry-pick' },
-    { slug: '4-4-rebase', title: '4-4 git rebase' }
+    { slug: '4-4-rebase', title: '4-4 git rebase' },
+    { slug: '4-5-worktree', title: '4-5 git worktree' },
   ]
 }
 const stage5Lessons: Record<LocaleKey, { slug: string; title: string }[]> = {

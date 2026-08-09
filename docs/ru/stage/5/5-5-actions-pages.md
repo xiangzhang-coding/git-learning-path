@@ -9,7 +9,7 @@ exercises:
       - Только в корне, и файл обязательно должен называться main.yml
     correct: 0
     explanation: Workflow записывается в .github/workflows/*.yml и запускается событиями (например, push, pull_request).
-    anchor: "#workflow-файл"
+    anchor: "#workflow-фаил"
   - id: 5-5-e2
     question: Как соотносятся job и step в workflow?
     options:
@@ -18,7 +18,7 @@ exercises:
       - Это одно и то же
     correct: 0
     explanation: workflow состоит из jobs, каждый job состоит из steps (step выполняет команду или переиспользует action), между jobs можно объявлять зависимости.
-    anchor: "#workflow-файл"
+    anchor: "#workflow-фаил"
   - id: 5-5-e3
     question: К какому сценарию относится развёртывание этого учебного сайта (GitHub Pages)?
     options:
