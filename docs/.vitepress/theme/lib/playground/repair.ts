@@ -1,0 +1,459 @@
+import * as git from 'isomorphic-git'
+import type { MemoryFS } from './fs'
+import type { Session } from './scenarios'
+import {
+  AUTHOR,
+  NOT_A_REPO,
+  appendReflog,
+  endRebase,
+  hasConflictMarkers,
+  isRepo,
+  readFileFromRef,
+  readReflog,
+  rebaseConflicts,
+  rebaseHeadOid,
+  rebaseInProgress,
+  rebaseOnto,
+  rebaseOrigHead,
+  rebaseQueue,
+  resolveAnyRef,
+  writeRebaseConflicts,
+  writeRebaseState
+} from './scenarios'
+import type { CommandResult } from './commands'
+import { applyMergedFiles, readTreeFiles, syncIndex, threeWayMerge, updateHeadRef, writeTreeFromFiles } from './merge'
+
+function short(sha: string): string {
+  return sha.slice(0, 7)
+}
+
+export async function runTag(session: Session, argv: string[]): Promise<CommandResult> {
+  if (!(await isRepo(session.fs, session.dir))) {
+    return { out: [NOT_A_REPO], changed: false }
+  }
+  const { fs, dir } = session
+  if (argv.includes('-a') || argv.includes('--annotate')) {
+    const name = argv.find((a) => !a.startsWith('-') && a !== 'tag')
+    const msgIdx = argv.indexOf('-m')
+    const message = msgIdx > -1 && argv[msgIdx + 1] ? argv[msgIdx + 1] : name ?? ''
+    if (!name) return { out: ['fatal: tag name missing'], changed: false }
+    const existing = await git.listTags({ fs: fs as never, dir })
+    if (existing.includes(name)) return { out: [`fatal: tag '${name}' already exists`], changed: false }
+    await git.annotatedTag({ fs: fs as never, dir, ref: name, message, tagger: AUTHOR })
+    return { out: [], changed: true }
+  }
+  const name = argv.find((a) => !a.startsWith('-'))
+  if (!name) {
+    const tags = await git.listTags({ fs: fs as never, dir })
+    tags.sort()
+    return { out: tags, changed: false }
+  }
+  const existing = await git.listTags({ fs: fs as never, dir })
+  if (existing.includes(name)) return { out: [`fatal: tag '${name}' already exists`], changed: false }
+  const oid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+  await git.writeRef({ fs: fs as never, dir, ref: `refs/tags/${name}`, value: oid })
+  return { out: [], changed: true }
+}
+
+export async function runStash(session: Session, argv: string[]): Promise<CommandResult> {
+  if (!(await isRepo(session.fs, session.dir))) {
+    return { out: [NOT_A_REPO], changed: false }
+  }
+  const { fs, dir } = session
+  const op = argv.find((a) => !a.startsWith('-'))
+  if (op === 'list') {
+    const entries = (await git.stash({ fs: fs as never, dir, op: 'list' })) as unknown as string[]
+    return { out: entries, changed: false }
+  }
+  if (op === 'pop' || op === 'apply') {
+    const before = (await git.stash({ fs: fs as never, dir, op: 'list' })) as unknown as string[]
+    if (!before.length) {
+      return { out: ['No stash entries found.'], changed: false }
+    }
+    const refIdx = argv.includes('stash@{0}') || argv.some((a) => /^stash@\{\d+\}$/.test(a)) ? 0 : undefined
+    await git.stash({ fs: fs as never, dir, op: op === 'apply' ? 'apply' : 'pop', refIdx })
+    await syncIndex(fs, dir)
+    if (op === 'pop') return { out: ['Dropped stash@{0}'], changed: true }
+    return { out: [], changed: true }
+  }
+  if (op === 'drop' || op === 'clear') {
+    await git.stash({ fs: fs as never, dir, op })
+    return { out: [], changed: true }
+  }
+  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+  const dirty = rows.filter(([, h, w, s]) => !(h === 1 && w === 1 && s === 1))
+  if (!dirty.length) return { out: ['No local changes to save'], changed: false }
+  const branch = ((await git.currentBranch({ fs: fs as never, dir })) as string | null) ?? 'HEAD'
+  const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+  const stashOid = (await git.stash({ fs: fs as never, dir, message: 'WIP on ' + branch })) as string
+  const head = await git.readCommit({ fs: fs as never, dir, oid: headOid })
+  await syncIndex(fs, dir)
+  return {
+    out: [
+      `Saved working directory and index state WIP on ${branch}: ${short(headOid)} ${head.commit.message.split('\n')[0]}`,
+      `stash@{0} created (${short(stashOid)})`
+    ],
+    changed: true
+  }
+}
+
+export async function runReset(session: Session, argv: string[]): Promise<CommandResult> {
+  if (!(await isRepo(session.fs, session.dir))) {
+    return { out: [NOT_A_REPO], changed: false }
+  }
+  const { fs, dir } = session
+  const hard = argv.includes('--hard')
+  const soft = argv.includes('--soft')
+  const target = argv.find((a) => !a.startsWith('-')) ?? 'HEAD'
+  const newOid = await resolveAnyRef(fs, dir, target)
+  if (!newOid) return { out: [`fatal: ambiguous argument '${target}': unknown revision`], changed: false }
+  const oldOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+  if (oldOid === newOid && hard) {
+    const commit = await git.readCommit({ fs: fs as never, dir, oid: newOid })
+    return {
+      out: [`HEAD is now at ${short(newOid)} ${commit.commit.message.split('\n')[0]}`],
+      changed: false
+    }
+  }
+  await updateHeadRef(fs, dir, newOid, `reset: moving to ${target}`)
+  if (soft) {
+    return { out: hard ? [`HEAD is now at ${short(newOid)}`] : [], changed: true }
+  }
+  const tree = (await git.readCommit({ fs: fs as never, dir, oid: newOid })).commit.tree
+  if (hard) {
+    await applyMergedFiles(fs, dir, await readTreeFiles(fs, dir, tree))
+    const commit = await git.readCommit({ fs: fs as never, dir, oid: newOid })
+    return {
+      out: [`HEAD is now at ${short(newOid)} ${commit.commit.message.split('\n')[0]}`],
+      changed: true
+    }
+  }
+  const kept = new Map<string, string | null>()
+  for (const file of await listWorkdir(fs, dir)) {
+    const content = await fs.readFile(`${dir}/${file}`).catch(() => null)
+    kept.set(file, content ? content.toString() : null)
+  }
+  await applyMergedFiles(fs, dir, await readTreeFiles(fs, dir, tree))
+  for (const [file, content] of kept) {
+    if (content === null) await fs.unlink(`${dir}/${file}`).catch(() => {})
+    else await fs.writeFile(`${dir}/${file}`, content)
+  }
+  return { out: [], changed: true }
+}
+
+async function listWorkdir(fs: MemoryFS, dir: string): Promise<string[]> {
+  const out: string[] = []
+  const walk = async (sub: string): Promise<void> => {
+    const entries = await fs.readdir(sub)
+    for (const entry of entries) {
+      if (sub === dir && entry === '.git') continue
+      const full = sub === dir ? `${dir}/${entry}` : `${sub}/${entry}`
+      const stat = await fs.stat(full)
+      if (stat.isDirectory()) await walk(full)
+      else out.push(full.slice(dir.length + 1))
+    }
+  }
+  await walk(dir)
+  return out
+}
+
+interface DiffResult {
+  out: string[]
+  changed: boolean
+}
+
+async function applyDiffCommit(
+  session: Session,
+  baseOid: string,
+  targetOid: string,
+  message: string,
+  reflogMsg: string
+): Promise<DiffResult | { conflicts: string[] }> {
+  const { fs, dir } = session
+  const baseFiles = await readTreeFiles(fs, dir, (await git.readCommit({ fs: fs as never, dir, oid: baseOid })).commit.tree)
+  const targetFiles = await readTreeFiles(fs, dir, (await git.readCommit({ fs: fs as never, dir, oid: targetOid })).commit.tree)
+  const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+  const headFiles = await readTreeFiles(fs, dir, (await git.readCommit({ fs: fs as never, dir, oid: headOid })).commit.tree)
+
+  const paths = new Set([...baseFiles.keys(), ...targetFiles.keys(), ...headFiles.keys()])
+  const merged = new Map<string, string | null>(headFiles)
+  const conflicts: string[] = []
+  for (const path of paths) {
+    const baseC = baseFiles.get(path) ?? null
+    const targetC = targetFiles.get(path) ?? null
+    const oursC = headFiles.get(path) ?? null
+    if (oursC === targetC) continue
+    if (baseC === oursC || baseC === targetC) {
+      merged.set(path, targetC)
+      continue
+    }
+    const result = threeWayMerge(baseC, oursC, targetC, 'HEAD')
+    if (result.conflicts) conflicts.push(path)
+    merged.set(path, result.text.length ? result.text.join('\n') + '\n' : null)
+  }
+  if (conflicts.length) {
+    for (const [path, content] of merged) {
+      if (content === null) await fs.unlink(`${dir}/${path}`).catch(() => {})
+      else await fs.writeFile(`${dir}/${path}`, content)
+      if (!conflicts.includes(path)) {
+        await git.add({ fs: fs as never, dir, filepath: path })
+      }
+    }
+    return { conflicts }
+  }
+  const treeOid = await writeTreeFromFiles(fs, dir, merged)
+  const identity = {
+    name: AUTHOR.name,
+    email: AUTHOR.email,
+    timestamp: Math.floor(Date.now() / 1000),
+    timezoneOffset: -new Date().getTimezoneOffset()
+  }
+  const oid = await git.writeCommit({ fs: fs as never, dir, commit: { tree: treeOid, parent: [headOid], author: identity, committer: identity, message } })
+  await updateHeadRef(fs, dir, oid, reflogMsg)
+  await applyMergedFiles(fs, dir, merged)
+  const branch = ((await git.currentBranch({ fs: fs as never, dir })) as string | null) ?? 'HEAD'
+  return { out: [`[${branch} ${short(oid)}] ${message.split('\n')[0]}`], changed: true }
+}
+
+export async function runRevert(session: Session, argv: string[]): Promise<CommandResult> {
+  if (!(await isRepo(session.fs, session.dir))) {
+    return { out: [NOT_A_REPO], changed: false }
+  }
+  const target = argv.find((a) => !a.startsWith('-'))
+  if (!target) return { out: ['fatal: no commit specified'], changed: false }
+  const oid = await resolveAnyRef(session.fs, session.dir, target)
+  if (!oid) return { out: [`fatal: bad revision '${target}'`], changed: false }
+  const commit = await git.readCommit({ fs: session.fs as never, dir: session.dir, oid })
+  const parent = commit.commit.parent[0]
+  if (!parent) return { out: ['fatal: cannot revert a root commit'], changed: false }
+  const message = commit.commit.message.split('\n')[0]
+  const result = await applyDiffCommit(session, oid, parent, `Revert "${message}"`, `revert: ${target}`)
+  if ('conflicts' in result) {
+    return {
+      out: [
+        `error: could not revert ${short(oid)}... ${message}`,
+        'Automatic revert failed; fix conflicts and then commit the result.'
+      ],
+      changed: false
+    }
+  }
+  return result
+}
+
+export async function runCherryPick(session: Session, argv: string[]): Promise<CommandResult> {
+  if (!(await isRepo(session.fs, session.dir))) {
+    return { out: [NOT_A_REPO], changed: false }
+  }
+  const target = argv.find((a) => !a.startsWith('-'))
+  if (!target) return { out: ['fatal: no commit specified'], changed: false }
+  const oid = await resolveAnyRef(session.fs, session.dir, target)
+  if (!oid) return { out: [`fatal: bad revision '${target}'`], changed: false }
+  const commit = await git.readCommit({ fs: session.fs as never, dir: session.dir, oid })
+  const parent = commit.commit.parent[0]
+  if (!parent) return { out: ['fatal: cannot cherry-pick a root commit'], changed: false }
+  const message = commit.commit.message.split('\n')[0]
+  const result = await applyDiffCommit(session, parent, oid, message, `cherry-pick: ${target}`)
+  if ('conflicts' in result) {
+    return {
+      out: [
+        `error: could not apply ${short(oid)}... ${message}`,
+        'Automatic cherry-pick failed; fix conflicts and then commit the result.'
+      ],
+      changed: false
+    }
+  }
+  return result
+}
+
+export async function runRebase(session: Session, argv: string[]): Promise<CommandResult> {
+  if (!(await isRepo(session.fs, session.dir))) {
+    return { out: [NOT_A_REPO], changed: false }
+  }
+  const { fs, dir } = session
+  if (argv.includes('--abort')) {
+    if (!(await rebaseInProgress(fs, dir))) {
+      return { out: ['fatal: No rebase in progress?'], changed: false }
+    }
+    const orig = await rebaseOrigHead(fs, dir)
+    if (orig) {
+      await updateHeadRef(fs, dir, orig, `rebase (abort): returning to ${short(orig)}`)
+      const tree = (await git.readCommit({ fs: fs as never, dir, oid: orig })).commit.tree
+      await applyMergedFiles(fs, dir, await readTreeFiles(fs, dir, tree))
+    }
+    await endRebase(fs, dir)
+    return { out: ['Successfully aborted.'], changed: true }
+  }
+  if (argv.includes('--continue')) {
+    return continueRebase(session)
+  }
+  const target = argv.find((a) => !a.startsWith('-'))
+  if (!target) return { out: ['fatal: no upstream specified'], changed: false }
+  const ontoOid = await resolveAnyRef(fs, dir, target)
+  if (!ontoOid) return { out: [`fatal: invalid upstream '${target}'`], changed: false }
+  const branch = ((await git.currentBranch({ fs: fs as never, dir })) as string | null) ?? 'HEAD'
+  const origOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+  if (origOid === ontoOid) {
+    return { out: [`Current branch ${branch} is up to date.`], changed: false }
+  }
+  const ontoSet = new Set((await git.log({ fs: fs as never, dir, ref: ontoOid, depth: 50 })).map((c) => c.oid))
+  const history = await git.log({ fs: fs as never, dir, depth: 50 })
+  const toReplay = history.filter((c) => !ontoSet.has(c.oid)).reverse()
+  if (!toReplay.length) {
+    return { out: [`Current branch ${branch} is up to date.`], changed: false }
+  }
+  const state = { queue: toReplay.map((c) => c.oid), onto: ontoOid, origHead: origOid }
+  await updateHeadRef(fs, dir, ontoOid, `rebase (start): checkout ${short(ontoOid)}`)
+  const ontoTree = (await git.readCommit({ fs: fs as never, dir, oid: ontoOid })).commit.tree
+  await applyMergedFiles(fs, dir, await readTreeFiles(fs, dir, ontoTree))
+  return replayRebase(session, branch, state, toReplay)
+}
+
+async function replayRebase(
+  session: Session,
+  branch: string,
+  state: { onto: string; origHead: string },
+  queue: Awaited<ReturnType<typeof git.log>>,
+  firstRun = true
+): Promise<CommandResult> {
+  const { fs, dir } = session
+  const ontoSet = new Set((await git.log({ fs: fs as never, dir, ref: state.onto, depth: 50 })).map((c) => c.oid))
+  const current = queue[0]
+  const commit = await git.readCommit({ fs: fs as never, dir, oid: current.oid })
+  const parent = commit.commit.parent[0]
+  const message = commit.commit.message.split('\n')[0]
+  const result = await applyDiffCommit(
+    session,
+    parent,
+    current.oid,
+    message,
+    firstRun ? `rebase (start): checkout ${short(state.onto)}` : `rebase: ${message}`
+  )
+  if ('conflicts' in result) {
+    const rest = queue.slice(1).map((c) => c.oid)
+    await writeRebaseState(session.fs, session.dir, {
+      current: current.oid,
+      queue: rest,
+      onto: state.onto,
+      origHead: state.origHead
+    })
+    await writeRebaseConflicts(session.fs, session.dir, result.conflicts)
+    return {
+      out: [
+        ...result.conflicts.map((p) => `CONFLICT (content): Merge conflict in ${p}`),
+        `error: could not apply ${short(current.oid)}... ${message}`,
+        'Automatic rebase failed; fix conflicts and then commit the result.',
+        'Run "git rebase --continue" to continue, or "git rebase --abort" to cancel.'
+      ],
+      changed: true
+    }
+  }
+  const rest = queue.slice(1)
+  if (!rest.length) {
+    await endRebase(fs, dir)
+    await appendReflog(fs, dir, `rebase (finished): refs/heads/${branch} onto ${short(state.onto)}`)
+    return { out: [`Successfully rebased and updated refs/heads/${branch}.`], changed: true }
+  }
+  void ontoSet
+  return replayRebase(session, branch, state, rest, false)
+}
+
+async function continueRebase(session: Session): Promise<CommandResult> {
+  const { fs, dir } = session
+  if (!(await rebaseInProgress(fs, dir))) {
+    return { out: ['fatal: No rebase in progress?'], changed: false }
+  }
+  const conflicts = await rebaseConflicts(fs, dir)
+  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+  const unresolved: string[] = []
+  for (const path of conflicts) {
+    const row = rows.find((r) => r[0] === path)
+    const staged = row ? row[3] !== 0 && row[3] !== row[1] : false
+    if (!staged) {
+      unresolved.push(path)
+      continue
+    }
+    const content = await fs.readFile(`${dir}/${path}`).catch(() => null)
+    if (content && hasConflictMarkers(content.toString())) unresolved.push(path)
+  }
+  if (unresolved.length) {
+    return {
+      out: ['fatal: you have unstaged or unresolved changes; resolve conflicts first', ...unresolved.map((p) => `\t${p}`)],
+      changed: false
+    }
+  }
+  const currentOid = await rebaseHeadOid(fs, dir)
+  const rest = await rebaseQueue(fs, dir)
+  const onto = await rebaseOnto(fs, dir)
+  const origHead = await rebaseOrigHead(fs, dir)
+  if (!currentOid || !onto || !origHead) {
+    return { out: ['fatal: rebase state is incomplete'], changed: false }
+  }
+  const current = await git.readCommit({ fs: fs as never, dir, oid: currentOid })
+  const message = current.commit.message.split('\n')[0]
+  const snapshot = await mergeSnapshot(session)
+  const treeOid = await writeTreeFromFiles(fs, dir, snapshot)
+  const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+  const identity = {
+    name: AUTHOR.name,
+    email: AUTHOR.email,
+    timestamp: Math.floor(Date.now() / 1000),
+    timezoneOffset: -new Date().getTimezoneOffset()
+  }
+  const oid = await git.writeCommit({ fs: fs as never, dir, commit: { tree: treeOid, parent: [headOid], author: identity, committer: identity, message } })
+  await updateHeadRef(fs, dir, oid, `rebase: ${message}`)
+  await applyMergedFiles(fs, dir, snapshot)
+  if (!rest.length) {
+    const branch = ((await git.currentBranch({ fs: fs as never, dir })) as string | null) ?? 'HEAD'
+    await endRebase(fs, dir)
+    await appendReflog(fs, dir, `rebase (finished): refs/heads/${branch} onto ${short(onto)}`)
+    return { out: [`Successfully rebased and updated refs/heads/${branch}.`], changed: true }
+  }
+  const queue = await Promise.all(rest.map(async (oid) => (await git.readCommit({ fs: fs as never, dir, oid })) as never))
+  return replayRebase(session, ((await git.currentBranch({ fs: fs as never, dir })) as string | null) ?? 'HEAD', { onto, origHead }, queue as Awaited<ReturnType<typeof git.log>>, false)
+}
+
+async function mergeSnapshot(session: Session): Promise<Map<string, string | null>> {
+  const { fs, dir } = session
+  const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+  const tree = (await git.readCommit({ fs: fs as never, dir, oid: headOid })).commit.tree
+  const files = new Map<string, string | null>(await readTreeFiles(fs, dir, tree))
+  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+  for (const [path, h, , s] of rows) {
+    if (s === 0) {
+      if (h === 1) files.set(path, null)
+      continue
+    }
+    if (h === 1 && s === 1) continue
+    if (s === 2) {
+      const content = await fs.readFile(`${dir}/${path}`).catch(() => null)
+      files.set(path, content ? content.toString() : null)
+    } else {
+      files.set(path, null)
+    }
+  }
+  return files
+}
+
+export async function runReflog(session: Session, argv: string[]): Promise<CommandResult> {
+  if (!(await isRepo(session.fs, session.dir))) {
+    return { out: [NOT_A_REPO], changed: false }
+  }
+  const { fs, dir } = session
+  let entries = await readReflog(fs, dir)
+  if (!entries.length) {
+    const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+    const head = await git.readCommit({ fs: fs as never, dir, oid: headOid })
+    const message = head.commit.message.split('\n')[0]
+    await appendReflog(fs, dir, `commit (initial): ${message}`)
+    entries = await readReflog(fs, dir)
+  }
+  const reversed = [...entries].reverse()
+  const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+  return {
+    out: reversed.map((e, i) => {
+      const marker = e.newOid === headOid ? 'HEAD@{' + i + '}' : 'HEAD@{' + i + '}'
+      return `${short(e.newOid)} ${marker}: ${e.msg}`
+    }),
+    changed: false
+  }
+}

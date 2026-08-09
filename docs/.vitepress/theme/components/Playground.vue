@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useData } from 'vitepress'
-import { Session, isRepo } from '../lib/playground/scenarios'
+import { Session, hasConflictMarkers, isRepo } from '../lib/playground/scenarios'
 import { runChecks, sessionSnapshot } from '../lib/playground/checks'
 import { runGit } from '../lib/playground/commands'
 import type { ScenarioName } from '../lib/playground/scenarios'
 import type { Check } from '../lib/playground/checks'
 import type { GraphCommit } from '../lib/playground/graph'
-import { hasConflictMarkers } from '../lib/playground/commands'
 import { labelsFor, langOfLocaleIndex } from '../lib/labels'
 
 const props = defineProps<{
@@ -55,7 +54,14 @@ const QUICK: Record<ScenarioName, string[]> = {
   clone: ['git clone /origin', 'cd origin', 'git status', 'git log --oneline'],
   push: ['git status', 'git log --oneline', 'git remote -v', 'git push'],
   'pull-ff': ['git status', 'git log --oneline', 'git fetch', 'git pull'],
-  pull: ['git status', 'git log --oneline', 'git fetch', 'git pull']
+  pull: ['git status', 'git log --oneline', 'git fetch', 'git pull'],
+  stash: ['git status', 'git stash', 'git stash list', 'git stash pop'],
+  tag: ['git status', 'git log --oneline', 'git tag v1.0', 'git tag'],
+  reset: ['git status', 'git log --oneline', 'git reset --hard HEAD~1', 'git reflog'],
+  revert: ['git status', 'git log --oneline', 'git revert HEAD', 'git log --oneline'],
+  'cherry-pick': ['git status', 'git log --oneline', 'git cherry-pick feature', 'git log --oneline'],
+  rebase: ['git status', 'git log --oneline', 'git rebase main', 'git log --oneline'],
+  'rebase-conflict': ['git status', 'git log --oneline', 'git rebase main', 'git rebase --abort']
 }
 
 function laneCells(row: GraphCommit): { char: string; isDot: boolean }[] {

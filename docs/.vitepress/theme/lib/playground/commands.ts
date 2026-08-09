@@ -11,13 +11,21 @@ import {
   mergeHeadOid,
   mergeInProgress,
   mergeMessage,
+  hasConflictMarkers,
   readFileFromRef,
   resolveAnyRef,
   startMerge
 } from './scenarios'
 import { applyMergedFiles, createMergeCommit, readTreeFiles, syncIndex, threeWayMerge, writeTreeFromFiles, updateHeadRef } from './merge'
 import { runCd, runClone, runFetch, runPush, runRemote } from './remote'
-import { readTrackingOid } from './scenarios'
+import { runCherryPick, runRebase, runReflog, runReset, runRevert, runStash, runTag } from './repair'
+import {
+  appendReflog,
+  rebaseConflicts,
+  rebaseInProgress,
+  rebaseOnto,
+  readTrackingOid
+} from './scenarios'
 
 export interface CommandResult {
   out: string[]
@@ -66,7 +74,13 @@ function statusLabels(row: MatrixRow): string[] {
   return labels
 }
 
-function formatStatus(rows: MatrixRow[], branch: string, merging: string[] | null): string[] {
+function formatStatus(
+  rows: MatrixRow[],
+  branch: string,
+  merging: string[] | null,
+  rebasing: string[] | null,
+  rebasingOnto: string
+): string[] {
   const staged: string[] = []
   const unstaged: string[] = []
   const untracked: string[] = []
@@ -96,6 +110,24 @@ function formatStatus(rows: MatrixRow[], branch: string, merging: string[] | nul
       out.push('All conflicts fixed but you are still merging.', '\t(use "git commit" to conclude merge)')
     }
   }
+  if (rebasing !== null) {
+    if (rebasing.length) {
+      out.push(
+        `You are currently rebasing branch '${branch}' on '${short(rebasingOnto)}'.`,
+        '\t(fix conflicts and then run "git rebase --continue")',
+        '\t(use "git rebase --abort" to check out the original branch)',
+        '',
+        'Unmerged paths:',
+        '\t(use "git add <file>..." to mark resolution)',
+        ...rebasing.map((p) => `\t\tboth modified:   ${p}`)
+      )
+    } else {
+      out.push(
+        `You are currently rebasing branch '${branch}' on '${short(rebasingOnto)}'.`,
+        '\t(all conflicts fixed: run "git rebase --continue")'
+      )
+    }
+  }
   if (staged.length) {
     out.push('', 'Changes to be committed:', '\t(use "git restore --staged <file>..." to unstage)')
     out.push(...staged)
@@ -112,10 +144,6 @@ function formatStatus(rows: MatrixRow[], branch: string, merging: string[] | nul
     out.push('nothing to commit, working tree clean')
   }
   return out
-}
-
-export function hasConflictMarkers(content: string): boolean {
-  return content.includes('<<<<<<<') || content.includes('>>>>>>>')
 }
 
 async function unresolvedConflicts(fs: MemoryFS, dir: string, listed: string[]): Promise<string[]> {
@@ -183,11 +211,17 @@ async function runStatus(session: Session): Promise<CommandResult> {
   const rows = await fileStatuses(session.fs, session.dir)
   const branch = await branchName(session.fs, session.dir)
   let merging: string[] | null = null
+  let rebasing: string[] | null = null
+  let rebasingOnto = ''
   if (await mergeInProgress(session.fs, session.dir)) {
     const listed = await conflictFiles(session.fs, session.dir)
     merging = await unresolvedConflicts(session.fs, session.dir, listed)
+  } else if (await rebaseInProgress(session.fs, session.dir)) {
+    const listed = await rebaseConflicts(session.fs, session.dir)
+    rebasing = await unresolvedConflicts(session.fs, session.dir, listed)
+    rebasingOnto = (await rebaseOnto(session.fs, session.dir)) ?? ''
   }
-  return { out: formatStatus(rows, branch, merging), changed: false }
+  return { out: formatStatus(rows, branch, merging, rebasing, rebasingOnto), changed: false }
 }
 
 async function runAdd(session: Session, paths: string[]): Promise<CommandResult> {
@@ -257,6 +291,7 @@ async function runCommit(session: Session, argv: string[]): Promise<CommandResul
     const oid = await createMergeCommit(session.fs, session.dir, files, finalMessage, mergeHead)
     await endMerge(session.fs, session.dir)
     await syncIndex(session.fs, session.dir)
+    await appendReflog(session.fs, session.dir, `merge ${finalMessage.split('\n')[0]}: Merge made by the 'ort' strategy`)
     const branch = await branchName(session.fs, session.dir)
     return {
       out: [`[${branch} ${short(oid)}] ${finalMessage.split('\n')[0]}`, ` ${files.size} file(s) changed`],
@@ -274,6 +309,7 @@ async function runCommit(session: Session, argv: string[]): Promise<CommandResul
   }
   const sha = await git.commit({ fs: session.fs as never, dir: session.dir, author: AUTHOR, message })
   const branch = await branchName(session.fs, session.dir)
+  await appendReflog(session.fs, session.dir, `commit: ${message}`)
   return {
     out: [`[${branch} ${short(sha)}] ${message}`, ` ${staged.length} file(s) changed`],
     changed: true
@@ -373,6 +409,7 @@ async function runSwitch(session: Session, argv: string[]): Promise<CommandResul
     if (existing) return { out: [`fatal: a branch named '${name}' already exists`], changed: false }
     await git.branch({ fs: session.fs as never, dir: session.dir, ref: name, checkout: true })
     await syncIndex(session.fs, session.dir)
+    await appendReflog(session.fs, session.dir, `checkout: moving from HEAD to ${name}`)
     return { out: [`Switched to a new branch '${name}'`], changed: true }
   }
   try {
@@ -387,6 +424,7 @@ async function runSwitch(session: Session, argv: string[]): Promise<CommandResul
     return { out: [`error: ${message}`], changed: false }
   }
   await syncIndex(session.fs, session.dir)
+  await appendReflog(session.fs, session.dir, `checkout: moving to ${name}`)
   return { out: [`Switched to branch '${name}'`], changed: true }
 }
 
@@ -428,7 +466,7 @@ export async function runMerge(session: Session, argv: string[]): Promise<Comman
   if (base === oursOid) {
     const theirsTree = (await git.readCommit({ fs: fs as never, dir, oid: theirsOid })).commit.tree
     await applyMergedFiles(fs, dir, await readTreeFiles(fs, dir, theirsTree))
-    await updateHeadRef(session.fs, session.dir, theirsOid)
+    await updateHeadRef(session.fs, session.dir, theirsOid, `merge ${target}: Fast-forward`)
     return {
       out: [`Updating ${short(oursOid)}..${short(theirsOid)}`, 'Fast-forward'],
       changed: true
@@ -717,6 +755,20 @@ export async function runGit(session: Session, input: string): Promise<CommandRe
         return await runPush(session, rest)
       case 'pull':
         return await runPull(session, rest)
+      case 'tag':
+        return await runTag(session, rest)
+      case 'stash':
+        return await runStash(session, rest)
+      case 'reset':
+        return await runReset(session, rest)
+      case 'revert':
+        return await runRevert(session, rest)
+      case 'cherry-pick':
+        return await runCherryPick(session, rest)
+      case 'rebase':
+        return await runRebase(session, rest)
+      case 'reflog':
+        return await runReflog(session, rest)
       case 'help':
         return {
           out: [
@@ -739,6 +791,13 @@ export async function runGit(session: Session, input: string): Promise<CommandRe
             '  git fetch [<remote>]',
             '  git push [<remote>] [<branch>]',
             '  git pull',
+            '  git tag [<name>] | -a <name> -m <msg>',
+            '  git stash [list|pop]',
+            '  git reset [--hard|--soft] <ref>',
+            '  git revert <ref>',
+            '  git cherry-pick <ref>',
+            '  git rebase <branch> | --continue | --abort',
+            '  git reflog',
             '  cd <dir>'
           ],
           changed: false

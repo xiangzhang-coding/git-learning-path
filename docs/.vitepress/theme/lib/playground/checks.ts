@@ -19,6 +19,9 @@ export type Check =
   | { type: 'mergeCommit' }
   | { type: 'noMergeCommit' }
   | { type: 'pushedTo'; branch?: string }
+  | { type: 'tagExists'; name: string }
+  | { type: 'headAt'; ref: string }
+  | { type: 'workdirModified'; path: string }
 
 export interface CheckResult {
   pass: boolean
@@ -157,6 +160,25 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
         const remoteOid = await readBranchOid(session.remoteFs, session.remoteDir, branch)
         if (remoteOid !== localOid) {
           return { pass: false, detail: `remote "${session.remoteDir}" is not at the local ${branch}` }
+        }
+        break
+      }
+      case 'tagExists': {
+        const tags = await git.listTags({ fs: fs as never, dir })
+        if (!tags.includes(check.name)) return { pass: false, detail: `tag "${check.name}" does not exist` }
+        break
+      }
+      case 'headAt': {
+        const target = await resolveAnyRef(fs, dir, check.ref)
+        const head = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+        if (target !== head) return { pass: false, detail: `HEAD is not at ${check.ref}` }
+        break
+      }
+      case 'workdirModified': {
+        const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+        const row = rows.find((r) => r[0] === check.path)
+        if (!row || row[2] === row[3]) {
+          return { pass: false, detail: `"${check.path}" is not modified in the working tree` }
         }
         break
       }

@@ -9,7 +9,12 @@ export const AUTHOR = { name: 'Learner', email: 'learner@example.com' }
 
 export const NOT_A_REPO = 'fatal: not a git repository (or any of the parent directories): .git'
 
+export function hasConflictMarkers(content: string): boolean {
+  return content.includes('<<<<<<<') || content.includes('>>>>>>>')
+}
+
 export const STAGE3_SCENARIOS = ['remote', 'clone', 'push', 'pull-ff', 'pull'] as const
+export const STAGE4_SCENARIOS = ['stash', 'tag', 'reset', 'revert', 'cherry-pick', 'rebase', 'rebase-conflict'] as const
 
 export type ScenarioName =
   | 'init'
@@ -25,6 +30,13 @@ export type ScenarioName =
   | 'push'
   | 'pull-ff'
   | 'pull'
+  | 'stash'
+  | 'tag'
+  | 'reset'
+  | 'revert'
+  | 'cherry-pick'
+  | 'rebase'
+  | 'rebase-conflict'
 
 export async function mergeInProgress(fs: MemoryFS, dir: string): Promise<boolean> {
   return fs
@@ -150,11 +162,28 @@ export async function headBranchOf(fs: MemoryFS, dir: string): Promise<string | 
 }
 
 export async function resolveAnyRef(fs: MemoryFS, dir: string, ref: string): Promise<string | null> {
-  for (const candidate of [`refs/heads/${ref}`, ref]) {
+  const headN = ref.match(/^HEAD~(\d+)$/)
+  if (headN) {
+    const index = Number(headN[1])
+    try {
+      const log = await git.log({ fs: fs as never, dir, depth: index + 2 })
+      return log[index]?.oid ?? null
+    } catch {
+      return null
+    }
+  }
+  for (const candidate of [`refs/heads/${ref}`, `refs/tags/${ref}`, ref]) {
     try {
       return await git.resolveRef({ fs: fs as never, dir, ref: candidate })
     } catch {
       continue
+    }
+  }
+  if (/^[0-9a-f]{4,40}$/.test(ref)) {
+    try {
+      return await git.expandOid({ fs: fs as never, dir, oid: ref })
+    } catch {
+      return null
     }
   }
   return null
@@ -200,6 +229,166 @@ export async function readTrackingOid(
   } catch {
     return null
   }
+}
+
+const REFLOG_PATH = (dir: string): string => `${dir}/.git/logs/HEAD`
+
+export async function initReflog(fs: MemoryFS, dir: string): Promise<void> {
+  try {
+    await fs.readFile(REFLOG_PATH(dir))
+    return
+  } catch {
+    // no reflog yet
+  }
+  try {
+    const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+    const head = await git.readCommit({ fs: fs as never, dir, oid: headOid })
+    const headMsg = head.commit.message.split('\n')[0]
+    const ts = Math.floor(Date.now() / 1000)
+    const tz = -new Date().getTimezoneOffset()
+    await fs.writeFile(
+      REFLOG_PATH(dir),
+      `${'0'.repeat(40)} ${headOid} ${AUTHOR.name} <${AUTHOR.email}> ${ts} ${tz}\tcommit (initial): ${headMsg}\n`
+    )
+  } catch {
+    // unborn HEAD
+  }
+}
+
+export async function appendReflog(fs: MemoryFS, dir: string, msg: string): Promise<void> {
+  let existing = ''
+  try {
+    existing = (await fs.readFile(REFLOG_PATH(dir))).toString()
+  } catch {
+    existing = ''
+  }
+  let oldOid: string
+  const newOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+  if (!existing) {
+    try {
+      const head = await git.readCommit({ fs: fs as never, dir, oid: newOid })
+      const headMsg = head.commit.message.split('\n')[0]
+      const ts = Math.floor(Date.now() / 1000)
+      const tz = -new Date().getTimezoneOffset()
+      existing = `${'0'.repeat(40)} ${newOid} ${AUTHOR.name} <${AUTHOR.email}> ${ts} ${tz}\tcommit (initial): ${headMsg}\n`
+    } catch {
+      existing = ''
+    }
+  }
+  const lines = existing.split('\n').filter(Boolean)
+  const last = lines[lines.length - 1]
+  oldOid = last ? last.split(' ')[1] : '0'.repeat(40)
+  const ts = Math.floor(Date.now() / 1000)
+  const tz = -new Date().getTimezoneOffset()
+  await fs.writeFile(
+    REFLOG_PATH(dir),
+    `${existing}${oldOid} ${newOid} ${AUTHOR.name} <${AUTHOR.email}> ${ts} ${tz}\t${msg}\n`
+  )
+}
+
+export interface ReflogEntry {
+  oldOid: string
+  newOid: string
+  msg: string
+}
+
+export async function readReflog(fs: MemoryFS, dir: string): Promise<ReflogEntry[]> {
+  try {
+    const raw = await fs.readFile(REFLOG_PATH(dir))
+    return raw
+      .toString()
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => {
+        const parts = line.split('\t')
+        const [oldOid, newOid] = parts[0].split(' ')
+        return { oldOid, newOid, msg: parts[1] ?? '' }
+      })
+  } catch {
+    return []
+  }
+}
+
+export async function rebaseInProgress(fs: MemoryFS, dir: string): Promise<boolean> {
+  return fs
+    .readFile(`${dir}/.git/REBASE_HEAD`)
+    .then(() => true)
+    .catch(() => false)
+}
+
+export async function rebaseHeadOid(fs: MemoryFS, dir: string): Promise<string | null> {
+  try {
+    const raw = await fs.readFile(`${dir}/.git/REBASE_HEAD`)
+    return raw.toString().trim() || null
+  } catch {
+    return null
+  }
+}
+
+export async function rebaseQueue(fs: MemoryFS, dir: string): Promise<string[]> {
+  try {
+    const raw = await fs.readFile(`${dir}/.git/REBASE_QUEUE`)
+    return raw
+      .toString()
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean)
+  } catch {
+    return []
+  }
+}
+
+export async function writeRebaseState(
+  fs: MemoryFS,
+  dir: string,
+  state: { current?: string; queue: string[]; onto: string; origHead: string }
+): Promise<void> {
+  const gitdir = `${dir}/.git`
+  if (state.current) await fs.writeFile(`${gitdir}/REBASE_HEAD`, `${state.current}\n`)
+  await fs.writeFile(`${gitdir}/REBASE_QUEUE`, `${state.queue.join('\n')}\n`)
+  await fs.writeFile(`${gitdir}/REBASE_ONTO`, `${state.onto}\n`)
+  await fs.writeFile(`${gitdir}/REBASE_ORIG_HEAD`, `${state.origHead}\n`)
+}
+
+export async function rebaseOnto(fs: MemoryFS, dir: string): Promise<string | null> {
+  try {
+    const raw = await fs.readFile(`${dir}/.git/REBASE_ONTO`)
+    return raw.toString().trim() || null
+  } catch {
+    return null
+  }
+}
+
+export async function rebaseOrigHead(fs: MemoryFS, dir: string): Promise<string | null> {
+  try {
+    const raw = await fs.readFile(`${dir}/.git/REBASE_ORIG_HEAD`)
+    return raw.toString().trim() || null
+  } catch {
+    return null
+  }
+}
+
+export async function endRebase(fs: MemoryFS, dir: string): Promise<void> {
+  const gitdir = `${dir}/.git`
+  for (const file of ['REBASE_HEAD', 'REBASE_QUEUE', 'REBASE_ONTO', 'REBASE_ORIG_HEAD', 'REBASE_CONFLICTS']) {
+    await fs.unlink(`${gitdir}/${file}`).catch(() => {})
+  }
+}
+
+export async function rebaseConflicts(fs: MemoryFS, dir: string): Promise<string[]> {
+  try {
+    const raw = await fs.readFile(`${dir}/.git/REBASE_CONFLICTS`)
+    return raw
+      .toString()
+      .split('\n')
+      .filter((p) => p.trim().length)
+  } catch {
+    return []
+  }
+}
+
+export async function writeRebaseConflicts(fs: MemoryFS, dir: string, paths: string[]): Promise<void> {
+  await fs.writeFile(`${dir}/.git/REBASE_CONFLICTS`, `${paths.join('\n')}\n`)
 }
 
 export async function readBranchOid(fs: MemoryFS, dir: string, branch: string): Promise<string | null> {
@@ -252,7 +441,10 @@ export async function buildScenario(fs: MemoryFS, name: ScenarioName): Promise<v
     await write(fs, dir, 'hello.txt', 'hello\n')
     return
   }
-  if ((STAGE3_SCENARIOS as readonly string[]).includes(name)) {
+  if (
+    (STAGE3_SCENARIOS as readonly string[]).includes(name) ||
+    (STAGE4_SCENARIOS as readonly string[]).includes(name)
+  ) {
     return
   }
   await git.init({ fs: fs as never, dir, defaultBranch: 'main' })
@@ -330,6 +522,75 @@ export async function buildScenario(fs: MemoryFS, name: ScenarioName): Promise<v
   await git.branch({ fs: fs as never, dir, ref: 'feature', checkout: true })
   await write(fs, dir, 'hello.txt', 'hello feature\n')
   await write(fs, dir, 'notes.txt', 'notes from feature\n')
+  await commitAll(fs, dir, 'feat: feature version')
+  await git.checkout({ fs: fs as never, dir, ref: 'main' })
+  await write(fs, dir, 'hello.txt', 'hello main\n')
+  await commitAll(fs, dir, 'fix: main version')
+}
+
+export async function buildRepairScenario(fs: MemoryFS, name: ScenarioName): Promise<void> {
+  const dir = '/repo'
+  if (!(STAGE4_SCENARIOS as readonly string[]).includes(name)) {
+    return
+  }
+  await git.init({ fs: fs as never, dir, defaultBranch: 'main' })
+  await git.setConfig({ fs: fs as never, dir, path: 'user.name', value: AUTHOR.name })
+  await git.setConfig({ fs: fs as never, dir, path: 'user.email', value: AUTHOR.email })
+
+  if (name === 'stash') {
+    await write(fs, dir, 'hello.txt', 'hello world\n')
+    await commitAll(fs, dir, 'chore: add notes')
+    await write(fs, dir, 'hello.txt', 'hello git\n')
+    return
+  }
+
+  if (name === 'tag') {
+    await write(fs, dir, 'README.md', '# Project\n')
+    await commitAll(fs, dir, 'docs: init readme')
+    await write(fs, dir, 'hello.txt', 'hello\n')
+    await commitAll(fs, dir, 'feat: add hello')
+    return
+  }
+
+  if (name === 'reset' || name === 'revert') {
+    await write(fs, dir, 'README.md', '# Project\n')
+    await commitAll(fs, dir, 'docs: init readme')
+    await write(fs, dir, 'hello.txt', 'hello world\n')
+    await commitAll(fs, dir, 'feat: add hello')
+    await write(fs, dir, 'hello.txt', 'hello broken\n')
+    await commitAll(fs, dir, 'fix: break hello')
+    return
+  }
+
+  if (name === 'cherry-pick') {
+    await write(fs, dir, 'README.md', '# Project\n')
+    await commitAll(fs, dir, 'docs: init readme')
+    await write(fs, dir, 'main.txt', 'main work\n')
+    await commitAll(fs, dir, 'feat: main work')
+    await git.branch({ fs: fs as never, dir, ref: 'feature' })
+    await git.checkout({ fs: fs as never, dir, ref: 'feature' })
+    await write(fs, dir, 'feature.txt', 'feature work\n')
+    await commitAll(fs, dir, 'feat: feature work')
+    await git.checkout({ fs: fs as never, dir, ref: 'main' })
+    return
+  }
+
+  if (name === 'rebase') {
+    await write(fs, dir, 'README.md', '# Project\n')
+    await commitAll(fs, dir, 'docs: init readme')
+    await git.branch({ fs: fs as never, dir, ref: 'feature', checkout: true })
+    await write(fs, dir, 'feature.txt', 'feature work\n')
+    await commitAll(fs, dir, 'feat: feature work')
+    await git.checkout({ fs: fs as never, dir, ref: 'main' })
+    await write(fs, dir, 'main.txt', 'main work\n')
+    await commitAll(fs, dir, 'feat: main work')
+    return
+  }
+
+  await write(fs, dir, 'README.md', '# Project\n')
+  await commitAll(fs, dir, 'docs: init readme')
+  await git.branch({ fs: fs as never, dir, ref: 'feature', checkout: true })
+  await write(fs, dir, 'hello.txt', 'hello feature\n')
   await commitAll(fs, dir, 'feat: feature version')
   await git.checkout({ fs: fs as never, dir, ref: 'main' })
   await write(fs, dir, 'hello.txt', 'hello main\n')
@@ -420,6 +681,8 @@ export class Session {
     this.remoteFs = new MemoryFS()
     this.dir = '/repo'
     await buildScenario(this.fs, name)
+    await buildRepairScenario(this.fs, name)
     await buildRemoteScenario(this.fs, this.remoteFs, name)
+    await initReflog(this.fs, this.dir)
   }
 }
