@@ -1,5 +1,5 @@
 ---
-title: 5-3 Issues와 협업
+title: Issues와 협업
 exercises:
   - id: 5-3-e1
     question: GitHub Issue의 전형적인 용도는 무엇인가요?

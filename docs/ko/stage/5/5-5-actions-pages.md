@@ -1,5 +1,5 @@
 ---
-title: 5-5 GitHub Actions와 Pages
+title: GitHub Actions와 Pages
 exercises:
   - id: 5-5-e1
     question: GitHub Actions의 workflow 파일은 어디에 두나요?

@@ -1,5 +1,5 @@
 ---
-title: 5-3 Issues 与协作
+title: Issues 与协作
 exercises:
   - id: 5-3-e1
     question: GitHub Issue 的典型用途是什么？

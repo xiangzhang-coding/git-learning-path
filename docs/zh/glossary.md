@@ -41,6 +41,7 @@
 | fork | 派生，把别人的仓库复制到自己账号 | 阶段 5 |
 | pull request | 拉取请求（PR），请求合入你的分支 | 阶段 5 |
 | issue | 问题，仓库里围绕 bug/功能/任务的讨论线程 | 阶段 5 |
+| label | 标签，给 issue 分类（如 bug、enhancement） | 阶段 5 |
 | milestone | 里程碑，把一组 issue 归入同一版本目标 | 阶段 5 |
 | release | 发布，基于 tag 的正式版本，附说明与产物 | 阶段 5 |
 | workflow | 工作流，GitHub Actions 的自动化流程 | 阶段 5 |

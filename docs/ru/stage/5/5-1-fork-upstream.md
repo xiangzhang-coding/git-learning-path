@@ -1,5 +1,5 @@
 ---
-title: 5-1 fork и синхронизация с upstream
+title: fork и синхронизация с upstream
 exercises:
   - id: 5-1-e1
     question: В чём разница между fork и clone?
@@ -79,7 +79,7 @@ git remote -v
 Upstream постоянно обновляется, чтобы fork не отставал:
 
 ```bash
-git checkout main
+git switch main
 git fetch upstream
 git merge upstream/main
 git push origin main

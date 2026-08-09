@@ -41,6 +41,7 @@ Terms always keep their English names; this table gives a short definition for e
 | fork | Copy someone else's repository into your account | Stage 5 |
 | pull request | Request to merge your branch (PR) | Stage 5 |
 | issue | Discussion thread for bugs, features, and tasks | Stage 5 |
+| label | Category tag on an issue, e.g. bug or enhancement | Stage 5 |
 | milestone | Group issues under one version goal | Stage 5 |
 | release | Official version built on a tag, with notes and assets | Stage 5 |
-| workflow | The automated process definition of GitHub Actions | Stage 5 |
+| workflow | The automated process of GitHub Actions | Stage 5 |

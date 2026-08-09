@@ -1,5 +1,5 @@
 ---
-title: 5-5 GitHub Actions 与 Pages
+title: GitHub Actions 与 Pages
 exercises:
   - id: 5-5-e1
     question: GitHub Actions 的工作流文件放在哪里？

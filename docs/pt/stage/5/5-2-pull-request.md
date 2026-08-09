@@ -1,5 +1,5 @@
 ---
-title: 5-2 Fluxo de trabalho de Pull Request
+title: Fluxo de trabalho de Pull Request
 exercises:
   - id: 5-2-e1
     question: O que é um Pull Request (PR)?

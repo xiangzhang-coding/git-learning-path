@@ -1,5 +1,5 @@
 ---
-title: 5-5 GitHub Actions y Pages
+title: GitHub Actions y Pages
 exercises:
   - id: 5-5-e1
     question: ¿Dónde se guarda el archivo de workflow de GitHub Actions?

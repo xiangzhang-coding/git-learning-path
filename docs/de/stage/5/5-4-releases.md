@@ -1,5 +1,5 @@
 ---
-title: 5-4 Releases und Versionierung
+title: Releases und Versionierung
 exercises:
   - id: 5-4-e1
     question: Was bedeutet jede Ziffer in der semantischen Version 2.4.1?

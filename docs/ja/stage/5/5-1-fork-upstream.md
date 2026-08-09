@@ -1,5 +1,5 @@
 ---
-title: 5-1 fork と upstream の同期
+title: fork と upstream の同期
 exercises:
   - id: 5-1-e1
     question: fork と clone の違いは何ですか？
@@ -79,7 +79,7 @@ git remote -v
 上流は常に更新されています。fork を最新に保つには：
 
 ```bash
-git checkout main
+git switch main
 git fetch upstream
 git merge upstream/main
 git push origin main

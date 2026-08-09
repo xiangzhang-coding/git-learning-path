@@ -1,5 +1,5 @@
 ---
-title: 5-2 Pull Request 工作流
+title: Pull Request 工作流
 exercises:
   - id: 5-2-e1
     question: Pull Request（PR）是什么？
@@ -49,7 +49,7 @@ Pull Request（PR）是「请把我的提交合入你的仓库」的正式请求
                     原作者仓库的 main（等待 review 与 merge）
 ```
 
-PR 不止是提交：它包含代码对比（diff）、讨论、自动检查（CI）结果，是开源协作的核心单元。
+PR 不止是提交：它包含代码对比（diff）、讨论、自动检查（CI）结果，是开源协作的核心环节。
 
 ## 开一个 PR
 

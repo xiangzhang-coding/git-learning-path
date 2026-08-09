@@ -1,5 +1,5 @@
 ---
-title: 5-4 Releases와 버전 출시
+title: Releases와 버전 출시
 exercises:
   - id: 5-4-e1
     question: 의미론적 버전 2.4.1에서 각 숫자는 무엇을 뜻하나요?

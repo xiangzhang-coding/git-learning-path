@@ -1,5 +1,5 @@
 ---
-title: 5-4 Releases とバージョン公開
+title: Releases とバージョン公開
 exercises:
   - id: 5-4-e1
     question: セマンティックバージョニング 2.4.1 で、各数字は何を表しますか？

@@ -1,5 +1,5 @@
 ---
-title: 5-5 GitHub Actions e Pages
+title: GitHub Actions e Pages
 exercises:
   - id: 5-5-e1
     question: Onde ficam os arquivos de workflow do GitHub Actions?

@@ -1,5 +1,5 @@
 ---
-title: 5-1 fork and upstream sync
+title: fork and upstream sync
 exercises:
   - id: 5-1-e1
     question: What is the difference between fork and clone?
@@ -79,7 +79,7 @@ Now you have two remotes: `origin` (your fork, read/write) and `upstream` (the o
 The upstream keeps moving. To keep your fork in step:
 
 ```bash
-git checkout main
+git switch main
 git fetch upstream
 git merge upstream/main
 git push origin main

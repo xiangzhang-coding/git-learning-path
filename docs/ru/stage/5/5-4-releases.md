@@ -1,5 +1,5 @@
 ---
-title: 5-4 Releases и выпуск версий
+title: Releases и выпуск версий
 exercises:
   - id: 5-4-e1
     question: Что означает каждая цифра в семантической версии 2.4.1?

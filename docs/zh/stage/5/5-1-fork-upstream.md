@@ -1,5 +1,5 @@
 ---
-title: 5-1 fork 与 upstream 同步
+title: fork 与 upstream 同步
 exercises:
   - id: 5-1-e1
     question: fork 与 clone 的区别是什么？
@@ -79,7 +79,7 @@ git remote -v
 上游一直在更新，想让 fork 跟上节奏：
 
 ```bash
-git checkout main
+git switch main
 git fetch upstream
 git merge upstream/main
 git push origin main

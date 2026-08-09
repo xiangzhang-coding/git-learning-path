@@ -1,5 +1,5 @@
 ---
-title: 5-1 fork y sincronización con upstream
+title: fork y sincronización con upstream
 exercises:
   - id: 5-1-e1
     question: ¿Cuál es la diferencia entre fork y clone?
@@ -79,7 +79,7 @@ Ahora hay dos remotes: `origin` (tu fork, lectura y escritura) y `upstream` (el 
 El upstream se actualiza todo el tiempo; para que tu fork siga el ritmo:
 
 ```bash
-git checkout main
+git switch main
 git fetch upstream
 git merge upstream/main
 git push origin main

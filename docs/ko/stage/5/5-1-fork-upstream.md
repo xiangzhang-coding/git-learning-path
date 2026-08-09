@@ -1,5 +1,5 @@
 ---
-title: 5-1 fork와 upstream 동기화
+title: fork와 upstream 동기화
 exercises:
   - id: 5-1-e1
     question: fork와 clone의 차이는 무엇인가요?
@@ -79,7 +79,7 @@ git remote -v
 상위 저장소는 계속 업데이트됩니다. fork를 따라가게 하려면:
 
 ```bash
-git checkout main
+git switch main
 git fetch upstream
 git merge upstream/main
 git push origin main

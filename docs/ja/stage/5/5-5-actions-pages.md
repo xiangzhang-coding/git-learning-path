@@ -1,5 +1,5 @@
 ---
-title: 5-5 GitHub Actions と Pages
+title: GitHub Actions と Pages
 exercises:
   - id: 5-5-e1
     question: GitHub Actions のワークフローファイルはどこに置きますか？

@@ -1,5 +1,5 @@
 ---
-title: 5-2 Pull Request 워크플로
+title: Pull Request 워크플로
 exercises:
   - id: 5-2-e1
     question: Pull Request(PR)란 무엇인가요?

@@ -1,5 +1,5 @@
 ---
-title: 5-2 Pull Request の流れ
+title: Pull Request の流れ
 exercises:
   - id: 5-2-e1
     question: Pull Request（PR）とは何ですか？

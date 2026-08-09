@@ -1,5 +1,5 @@
 ---
-title: 5-2 Рабочий процесс Pull Request
+title: Рабочий процесс Pull Request
 exercises:
   - id: 5-2-e1
     question: Что такое Pull Request (PR)?

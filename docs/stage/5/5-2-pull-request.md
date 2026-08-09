@@ -1,5 +1,5 @@
 ---
-title: 5-2 Pull Request workflow
+title: Pull Request workflow
 exercises:
   - id: 5-2-e1
     question: What is a Pull Request (PR)?

@@ -41,6 +41,7 @@
 | fork | 포크. 남의 저장소를 내 계정으로 복제 | 단계 5 |
 | pull request | 풀 리퀘스트(PR). 브랜치 병합을 요청 | 단계 5 |
 | issue | 이슈. 저장소에서 bug/기능/작업을 둘러싼 토론 스레드 | 단계 5 |
+| label | 라벨. issue를 분류하는 태그(예: bug, enhancement) | 단계 5 |
 | milestone | 마일스톤. issue 무리를 하나의 버전 목표로 묶기 | 단계 5 |
 | release | 릴리스. tag를 기반으로 한 정식 버전(설명과 산출물 포함) | 단계 5 |
 | workflow | 워크플로. GitHub Actions의 자동화 절차 | 단계 5 |

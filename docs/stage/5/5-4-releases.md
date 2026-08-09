@@ -1,5 +1,5 @@
 ---
-title: 5-4 Releases and versioning
+title: Releases and versioning
 exercises:
   - id: 5-4-e1
     question: In the semantic version 2.4.1, what does each number mean?

@@ -1,5 +1,5 @@
 ---
-title: 5-3 Issues et collaboration
+title: Issues et collaboration
 exercises:
   - id: 5-3-e1
     question: Quel est l'usage typique d'une issue GitHub ?

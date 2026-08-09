@@ -1,5 +1,5 @@
 ---
-title: 5-3 Issues と協働
+title: Issues と協働
 exercises:
   - id: 5-3-e1
     question: GitHub Issue の代表的な使い方は？

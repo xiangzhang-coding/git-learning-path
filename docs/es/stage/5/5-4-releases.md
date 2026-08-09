@@ -1,5 +1,5 @@
 ---
-title: 5-4 Releases y versionado
+title: Releases y versionado
 exercises:
   - id: 5-4-e1
     question: En el versionado semántico 2.4.1, ¿qué representa cada número?

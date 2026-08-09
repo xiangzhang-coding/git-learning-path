@@ -1,5 +1,5 @@
 ---
-title: 5-3 Issues и совместная работа
+title: Issues и совместная работа
 exercises:
   - id: 5-3-e1
     question: Каково типичное назначение issue на GitHub?

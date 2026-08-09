@@ -1,5 +1,5 @@
 ---
-title: 5-4 Releases 与版本发布
+title: Releases 与版本发布
 exercises:
   - id: 5-4-e1
     question: 语义化版本 2.4.1 中，每个数字代表什么？

@@ -41,6 +41,7 @@ Begriffe behalten immer ihren englischen Namen; diese Tabelle gibt eine kurze Er
 | fork | Das Repository eines anderen in das eigene Konto kopieren | Stufe 5 |
 | pull request | Anfrage, den eigenen Branch zu mergen (PR) | Stufe 5 |
 | issue | Diskussionsthread zu bug, Feature oder Aufgabe im Repository | Stufe 5 |
+| label | Kennzeichnung zur Kategorisierung von issues (z. B. bug, enhancement) | Stufe 5 |
 | milestone | Eine Gruppe von issues einem Versionsziel zuordnen | Stufe 5 |
 | release | Formelle Veröffentlichung auf Basis eines tag, mit Anmerkungen und Artefakten | Stufe 5 |
 | workflow | Automatisierter Ablauf in GitHub Actions | Stufe 5 |

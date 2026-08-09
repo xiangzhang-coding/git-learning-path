@@ -1,5 +1,5 @@
 ---
-title: 5-4 Releases e versionamento
+title: Releases e versionamento
 exercises:
   - id: 5-4-e1
     question: Em 2.4.1, o que representa cada número do versionamento semântico?
