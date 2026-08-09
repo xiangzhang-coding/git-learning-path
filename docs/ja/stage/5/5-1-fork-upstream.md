@@ -44,7 +44,7 @@ fork（フォーク）は、GitHub 上で他人のリポジトリを自分のア
 
 ```mermaid
 flowchart TD
-    A["原作者：github.com/author/project"] -->|fork| B["自分：github.com/you/project<br/>← 自由に変更できる"]
+    A["原作者：github.com/author/project"] -->|fork| B["自分：github.com/you/project<br/>（自由に変更できる）"]
 ```
 
 fork は GitHub の機能（git コマンドではない）です。clone との違い：fork は GitHub サーバー上にコピーを作り、clone はリポジトリをローカルのパソコンに複製します。典型的なオープンソースの流れは「まず fork、次に自分の fork を clone」——原作者のリポジトリには書き込み権限がないので、自分のコピーで作業します。
