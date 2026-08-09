@@ -45,7 +45,7 @@ O Pull Request (PR) é um pedido formal de "mescle os meus commits no seu reposi
 ```mermaid
 flowchart TD
     A["branch no seu fork"] -->|push| B["seu fork"]
-    B -->|abre PR| C["main do repositório do autor"]
+    B["seu fork"] -->|abre PR| C["main do repositório do autor"]
 ```
 
 O PR não é só um commit: ele reúne o diff, a discussão e o resultado das verificações automáticas (CI) — é a unidade central da colaboração open source.

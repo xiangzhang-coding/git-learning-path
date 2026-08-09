@@ -75,7 +75,7 @@ Para desplegar en Pages hay dos caminos: activar Pages en los ajustes del reposi
 
 ```mermaid
 flowchart LR
-    A[push] --> B[se dispara el workflow] --> C[instalar dependencias] --> D[build] --> E[publicar el artefacto en Pages]
+    A["push"] --> B["se dispara el workflow"] --> C["instalar dependencias"] --> D["build"] --> E["publicar el artefacto en Pages"]
 ```
 
 El estado del despliegue, los logs y los fallos están en la pestaña Actions del repositorio. La pequeña marca verde al lado del commit (✓/✗) es la puerta de entrada al resultado de las comprobaciones.

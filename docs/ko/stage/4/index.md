@@ -8,6 +8,7 @@
 - 4-2 [git reset과 reflog](/ko/stage/4/4-2-reset-reflog): HEAD를 움직이는 세 가지 모드, reflog로 커밋 되찾기
 - 4-3 [git revert와 git cherry-pick](/ko/stage/4/4-3-revert-cherry-pick): 역방향 취소와 커밋 복사
 - 4-4 [git rebase로 커밋 재생](/ko/stage/4/4-4-rebase): 역사 선형화, 충돌과 중단
+- 4-5 [git worktree](/ko/stage/4/4-5-worktree): 하나의 저장소에 여러 작업 트리
 
 ## 이 챕터의 새 명령
 
@@ -20,5 +21,6 @@
 | `git revert <ref>` | 역방향 새 커밋으로 하나의 커밋 취소 |
 | `git cherry-pick <ref>` | 어떤 커밋을 현재 브랜치로 복사 |
 | `git rebase <branch>` / `--continue` / `--abort` | 브랜치 커밋을 대상 브랜치에 재생 |
+| `git worktree add/list/remove` | 저장소에 여러 작업 디렉터리를 연결한다 |
 
 <StageProgress stage="4" />

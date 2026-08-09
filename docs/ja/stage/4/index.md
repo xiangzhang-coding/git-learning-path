@@ -8,6 +8,7 @@
 - 4-2 [git reset と reflog](/ja/stage/4/4-2-reset-reflog)：HEAD を動かす 3 つのモード、reflog でコミットを取り戻す
 - 4-3 [git revert と git cherry-pick](/ja/stage/4/4-3-revert-cherry-pick)：逆方向の取り消しとコミットのコピー
 - 4-4 [git rebase でコミットを重ね直す](/ja/stage/4/4-4-rebase)：履歴を一直線に、コンフリクトと中止
+- 4-5 [git worktree](/ja/stage/4/4-5-worktree)：1 つのリポジトリに複数の作業ディレクトリ
 
 ## この章の新コマンド
 
@@ -20,5 +21,6 @@
 | `git revert <ref>` | 逆方向の新しいコミットで 1 つのコミットを取り消す |
 | `git cherry-pick <ref>` | 特定のコミットを現在のブランチへコピーする |
 | `git rebase <branch>` / `--continue` / `--abort` | ブランチのコミットを対象ブランチに重ね直す |
+| `git worktree add/list/remove` | リポジトリに複数の作業ディレクトリを追加する |
 
 <StageProgress stage="4" />

@@ -8,6 +8,7 @@ A linha de princípios deste capítulo: **refs e reflog**. O reset move o pontei
 - 4-2 [git reset e reflog](/pt/stage/4/4-2-reset-reflog): os três modos de mover o HEAD, recuperar commits com o reflog
 - 4-3 [git revert e git cherry-pick](/pt/stage/4/4-3-revert-cherry-pick): desfazer com commit inverso e copiar commits
 - 4-4 [git rebase: reaplicar commits](/pt/stage/4/4-4-rebase): histórico linear, conflitos e abort
+- 4-5 [git worktree](/pt/stage/4/4-5-worktree): vários diretórios de trabalho para um repositório
 
 ## Novos comandos deste capítulo
 
@@ -20,5 +21,6 @@ A linha de princípios deste capítulo: **refs e reflog**. O reset move o pontei
 | `git revert <ref>` | Desfaz um commit com um commit inverso novo |
 | `git cherry-pick <ref>` | Copia um commit para o branch atual |
 | `git rebase <branch>` / `--continue` / `--abort` | Reaplica os commits do branch sobre o branch de destino |
+| `git worktree add/list/remove` | Anexar diretórios de trabalho extras a um repositório |
 
 <StageProgress stage="4" />

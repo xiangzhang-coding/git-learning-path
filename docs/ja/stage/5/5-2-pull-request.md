@@ -44,8 +44,8 @@ Pull Request（PR）は「私のコミットをあなたのリポジトリに統
 
 ```mermaid
 flowchart TD
-    A[自分の fork のブランチ] -->|push| B[自分の fork]
-    B -->|PR を開く| C[原作者リポジトリの main（review と merge を待つ）]
+    A["自分の fork のブランチ"] -->|push| B["自分の fork"]
+    B -->|PR を開く| C["原作者リポジトリの main（review と merge を待つ）"]
 ```
 
 PR はコミットだけではありません：コード差分（diff）・議論・自動チェック（CI）の結果を含み、オープンソース協働の中心となる単位です。

@@ -8,6 +8,7 @@ The principle thread of this chapter: **refs and reflog**. reset moves the branc
 - 4-2 [git reset and reflog](/stage/4/4-2-reset-reflog): the three modes of moving HEAD, reflog recovers commits
 - 4-3 [git revert and git cherry-pick](/stage/4/4-3-revert-cherry-pick): undo in reverse and copy commits
 - 4-4 [git rebase replays commits](/stage/4/4-4-rebase): straighten history, conflicts and abort
+- 4-5 [git worktree multiple working trees](/stage/4/4-5-worktree): parallel working directories for one repository
 
 ## New commands in this chapter
 
@@ -20,5 +21,6 @@ The principle thread of this chapter: **refs and reflog**. reset moves the branc
 | `git revert <ref>` | Undo a commit with a new reverse commit |
 | `git cherry-pick <ref>` | Copy a commit onto the current branch |
 | `git rebase <branch>` / `--continue` / `--abort` | Replay branch commits onto the target branch |
+| `git worktree add/list/remove` | Attach extra working directories to one repository |
 
 <StageProgress stage="4" />

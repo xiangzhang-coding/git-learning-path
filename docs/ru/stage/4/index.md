@@ -8,6 +8,7 @@
 - 4-2 [git reset и reflog](/ru/stage/4/4-2-reset-reflog): три режима перемещения HEAD, reflog возвращает коммиты
 - 4-3 [git revert и git cherry-pick](/ru/stage/4/4-3-revert-cherry-pick): обратная отмена и копирование коммитов
 - 4-4 [git rebase: переигровка коммитов](/ru/stage/4/4-4-rebase): линейная история, конфликты и прерывание
+- 4-5 [git worktree](/ru/stage/4/4-5-worktree): несколько рабочих деревьев для одного репозитория
 
 ## Новые команды главы
 
@@ -20,5 +21,6 @@
 | `git revert <ref>` | Отменить коммит новым обратным коммитом |
 | `git cherry-pick <ref>` | Скопировать коммит в текущую ветку |
 | `git rebase <branch>` / `--continue` / `--abort` | Переиграть коммиты ветки на целевую ветку |
+| `git worktree add/list/remove` | Подключает дополнительные рабочие деревья к репозиторию |
 
 <StageProgress stage="4" />

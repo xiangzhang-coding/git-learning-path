@@ -44,7 +44,7 @@ fork — это копия чужого репозитория в вашем а�
 
 ```mermaid
 flowchart TD
-    A["Автор: github.com/author/project"] -- fork --> B["Вы: github.com/you/project<br/>можете менять как угодно"]
+    A["Автор: github.com/author/project"] -->|fork| B["Вы: github.com/you/project<br/>можете менять как угодно"]
 ```
 
 fork — это функция GitHub (а не команда git). Отличие от clone: fork создаёт копию на сервере GitHub, а clone копирует репозиторий на локальный компьютер. Типичный open source процесс — «сначала fork, потом clone своего fork»: у вас нет права записи в репозиторий автора, поэтому работать можно только в своей копии.

@@ -8,6 +8,7 @@ Der Prinzipfaden dieses Kapitels: **refs und reflog**. reset verschiebt Branch-Z
 - 4-2 [git reset und reflog](/de/stage/4/4-2-reset-reflog): Die drei Modi, HEAD zu verschieben, Commits per reflog wiederfinden
 - 4-3 [git revert und git cherry-pick](/de/stage/4/4-3-revert-cherry-pick): Rückgängig machen und Commits kopieren
 - 4-4 [git rebase: Commits neu aufspielen](/de/stage/4/4-4-rebase): Historie linearisieren, Konflikte und Abbruch
+- 4-5 [git worktree](/de/stage/4/4-5-worktree): mehrere Arbeitsverzeichnisse für ein Repository
 
 ## Neue Befehle dieses Kapitels
 
@@ -20,5 +21,6 @@ Der Prinzipfaden dieses Kapitels: **refs und reflog**. reset verschiebt Branch-Z
 | `git revert <ref>` | einen Commit mit einem umgekehrten neuen Commit zurücknehmen |
 | `git cherry-pick <ref>` | einen Commit auf den aktuellen Branch kopieren |
 | `git rebase <branch>` / `--continue` / `--abort` | Branch-Commits auf den Ziel-Branch aufspielen |
+| `git worktree add/list/remove` | Weitere Arbeitsverzeichnisse an ein Repository anhängen |
 
 <StageProgress stage="4" />

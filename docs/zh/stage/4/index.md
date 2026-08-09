@@ -8,6 +8,7 @@
 - 4-2 [git reset 与 reflog](/zh/stage/4/4-2-reset-reflog)：移动 HEAD 的三种模式，reflog 找回提交
 - 4-3 [git revert 与 git cherry-pick](/zh/stage/4/4-3-revert-cherry-pick)：反向撤销与复制提交
 - 4-4 [git rebase 重放提交](/zh/stage/4/4-4-rebase)：线性化历史，冲突与中止
+- 4-5 [git worktree 多工作树](/zh/stage/4/4-5-worktree)：一个仓库多个并行工作目录
 
 ## 本章节新命令
 
@@ -20,5 +21,6 @@
 | `git revert <ref>` | 用反向新提交撤销一个提交 |
 | `git cherry-pick <ref>` | 把某个提交复制到当前分支 |
 | `git rebase <branch>` / `--continue` / `--abort` | 把分支提交重放到目标分支 |
+| `git worktree add/list/remove` | 为一个仓库挂载多个并行工作目录 |
 
 <StageProgress stage="4" />

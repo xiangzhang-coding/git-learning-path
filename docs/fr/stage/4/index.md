@@ -8,6 +8,7 @@ Le fil de principe de ce chapitre : **refs et reflog**. reset déplace le pointe
 - 4-2 [git reset et reflog](/fr/stage/4/4-2-reset-reflog) : les trois modes de déplacement de HEAD, reflog pour retrouver les commits
 - 4-3 [git revert et git cherry-pick](/fr/stage/4/4-3-revert-cherry-pick) : annuler en marche arrière et copier des commits
 - 4-4 [git rebase : rejouer les commits](/fr/stage/4/4-4-rebase) : linéariser l'historique, conflits et abandon
+- 4-5 [git worktree](/fr/stage/4/4-5-worktree) : plusieurs répertoires de travail pour un dépôt
 
 ## Nouvelles commandes de ce chapitre
 
@@ -20,5 +21,6 @@ Le fil de principe de ce chapitre : **refs et reflog**. reset déplace le pointe
 | `git revert <ref>` | annuler un commit avec un nouveau commit inversé |
 | `git cherry-pick <ref>` | copier un commit sur la branche courante |
 | `git rebase <branche>` / `--continue` / `--abort` | rejouer les commits de la branche sur la branche cible |
+| `git worktree add/list/remove` | Attacher des répertoires de travail supplémentaires à un dépôt |
 
 <StageProgress stage="4" />
