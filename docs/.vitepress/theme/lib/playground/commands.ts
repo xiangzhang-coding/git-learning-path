@@ -1,4 +1,5 @@
 import * as git from 'isomorphic-git'
+import { short } from './fs'
 import type { MemoryFS } from './fs'
 import type { Session } from './scenarios'
 import {
@@ -17,7 +18,7 @@ AUTHOR,
   resolveAnyRef,
   startMerge
 } from './scenarios'
-import { applyMergedFiles, createMergeCommit, readTreeFiles, syncIndex, threeWayMerge, writeTreeFromFiles, updateHeadRef } from './merge'
+import { applyMergedFiles, createMergeCommit, mergeSnapshot, readTreeFiles, syncIndex, threeWayMerge, writeTreeFromFiles, updateHeadRef } from './merge'
 import { runCd, runClone, runFetch, runPush, runRemote } from './remote'
 import { runBisect, runBlame, runCherryPick, runClean, runRebase, runReflog, runReset, runRevert, runShow, runStash, runTag } from './repair'
 import {
@@ -34,9 +35,6 @@ export interface CommandResult {
 }
 
 
-function short(sha: string): string {
-  return sha.slice(0, 7)
-}
 
 async function branchName(fs: MemoryFS, dir: string): Promise<string> {
   try {
@@ -158,6 +156,21 @@ async function unresolvedConflicts(fs: MemoryFS, dir: string, listed: string[]):
 
 const MAX_DIFF_CELLS = 4_000_000
 
+const stagedSnapshots = new WeakMap<MemoryFS, Map<string, string | null>>()
+
+function stagedSnapshot(fs: MemoryFS): Map<string, string | null> {
+  let snap = stagedSnapshots.get(fs)
+  if (!snap) {
+    snap = new Map()
+    stagedSnapshots.set(fs, snap)
+  }
+  return snap
+}
+
+export function clearStagedSnapshot(session: Session): void {
+  stagedSnapshots.set(session.fs, new Map())
+}
+
 export function diffLines(oldContent: string, newContent: string): string[] {
   const oldLines = oldContent.split('\n')
   const newLines = newContent.split('\n')
@@ -255,8 +268,14 @@ async function runAdd(session: Session, paths: string[]): Promise<CommandResult>
       }
     }
   }
+  const snap = stagedSnapshot(session.fs)
   for (const target of targets) {
     await git.add({ fs: session.fs as never, dir: session.dir, filepath: target })
+    const content = await session.fs
+      .readFile(`${session.dir}/${target}`)
+      .then((b) => b.toString())
+      .catch(() => null)
+    snap.set(target, content)
   }
   return { out: [], changed: true }
 }
@@ -301,6 +320,7 @@ async function runCommit(session: Session, argv: string[]): Promise<CommandResul
     const oid = await createMergeCommit(session.fs, session.dir, files, finalMessage, mergeHead)
     await endMerge(session.fs, session.dir)
     await syncIndex(session.fs, session.dir)
+    clearStagedSnapshot(session)
     await appendReflog(session.fs, session.dir, `merge ${finalMessage.split('\n')[0]}: Merge made by the 'ort' strategy`)
     const branch = await branchName(session.fs, session.dir)
     return {
@@ -329,6 +349,7 @@ async function runCommit(session: Session, argv: string[]): Promise<CommandResul
     return { out: ['nothing to commit, working tree clean'], changed: false }
   }
   const sha = await git.commit({ fs: session.fs as never, dir: session.dir, author: AUTHOR, message })
+  clearStagedSnapshot(session)
   const branch = await branchName(session.fs, session.dir)
   await appendReflog(session.fs, session.dir, `commit: ${message}`)
   return {
@@ -337,27 +358,6 @@ async function runCommit(session: Session, argv: string[]): Promise<CommandResul
   }
 }
 
-async function mergeSnapshot(session: Session): Promise<Map<string, string | null>> {
-  const { fs, dir } = session
-  const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
-  const headTree = (await git.readCommit({ fs: fs as never, dir, oid: headOid })).commit.tree
-  const files = new Map<string, string | null>(await readTreeFiles(fs, dir, headTree))
-  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
-  for (const [path, h, , s] of rows) {
-    if (s === 0) {
-      if (h === 1) files.set(path, null)
-      continue
-    }
-    if (h === 1 && s === 1) continue
-    if (s === 2) {
-      const content = await fs.readFile(`${dir}/${path}`).catch(() => null)
-      files.set(path, content ? content.toString() : null)
-    } else {
-      files.set(path, null)
-    }
-  }
-  return files
-}
 
 async function runPull(session: Session, argv: string[]): Promise<CommandResult> {
   const args = argv.filter((a) => !a.startsWith('-'))
@@ -464,6 +464,7 @@ async function runSwitch(session: Session, argv: string[]): Promise<CommandResul
       changed: true
     }
   }
+  clearStagedSnapshot(session)
   return { out: [`Switched to branch '${name}'`], changed: true }
 }
 
@@ -527,6 +528,7 @@ export async function runMerge(session: Session, argv: string[]): Promise<Comman
     await applyMergedFiles(fs, dir, theirsFiles)
     await updateHeadRef(session.fs, session.dir, theirsOid, `merge ${target}: Fast-forward`)
     await syncIndex(fs, dir)
+    clearStagedSnapshot(session)
     return {
       out: [`Updating ${short(oursOid)}..${short(theirsOid)}`, 'Fast-forward'],
       changed: true
@@ -569,6 +571,7 @@ export async function runMerge(session: Session, argv: string[]): Promise<Comman
     await applyMergedFiles(fs, dir, merged)
     await createMergeCommit(fs, dir, merged, `Merge branch '${target}'`, theirsOid)
     await syncIndex(fs, dir)
+    clearStagedSnapshot(session)
     return {
       out: [`Merge made by the 'ort' strategy.`, ` ${affected.length} file(s) changed`],
       changed: true
@@ -690,7 +693,9 @@ async function runDiff(session: Session, argv: string[]): Promise<CommandResult>
     return { out: [NOT_A_REPO], changed: false }
   }
   const staged = argv.includes('--staged') || argv.includes('--cached')
-  const rows = (await git.statusMatrix({ fs: session.fs as never, dir: session.dir })) as MatrixRow[]
+  const { fs, dir } = session
+  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
+  const snap = stagedSnapshot(fs)
   const out: string[] = []
   for (const row of rows) {
     const labels = statusLabels(row)
@@ -698,22 +703,25 @@ async function runDiff(session: Session, argv: string[]): Promise<CommandResult>
     const isUnstagedRow = labels.includes('modified') || labels.includes('deleted')
     if (staged ? !isStagedRow : !isUnstagedRow) continue
     const path = row[0]
-    const headContent = await readFileFromRef(session.fs, session.dir, 'HEAD', path)
+    const headContent = await readFileFromRef(fs, dir, 'HEAD', path)
     const workContent =
-      row[2] === 0 ? null : await session.fs.readFile(`${session.dir}/${path}`).then((b) => b.toString()).catch(() => null)
-    const oldContent = headContent ?? ''
-    const newContent = staged ? (row[2] === 0 ? '' : (workContent ?? '')) : (workContent ?? '')
-    out.push(`diff --git a/${path} b/${path}`, `--- a/${path}`, `+++ b/${path}`)
-    const lines = diffLines(oldContent, newContent)
-    const adds = lines.filter((l) => l.startsWith('+')).length
-    const dels = lines.filter((l) => l.startsWith('-')).length
-    if (adds || dels) {
-      const oldLabel = headContent === null ? '/dev/null' : `a/${path}`
-      const newLabel = workContent === null ? '/dev/null' : `b/${path}`
-      out.push(`diff --git a/${path} b/${path}`, `--- ${oldLabel}`, `+++ ${newLabel}`)
-      out.push(...lines)
-      out.push('')
-    }
+      row[2] === 0 ? null : await fs.readFile(`${dir}/${path}`).then((b) => b.toString()).catch(() => null)
+    const stagedContent = snap.has(path)
+      ? snap.get(path)!
+      : row[3] === 1
+        ? headContent
+        : workContent
+    const oldContent = staged ? headContent : stagedContent
+    const newContent = staged ? stagedContent : workContent
+    if (oldContent === newContent) continue
+    const oldLabel = oldContent === null ? '/dev/null' : `a/${path}`
+    const newLabel = newContent === null ? '/dev/null' : `b/${path}`
+    out.push(`diff --git a/${path} b/${path}`, `--- ${oldLabel}`, `+++ ${newLabel}`)
+    const lines = diffLines(oldContent ?? '', newContent ?? '')
+    const adds = lines.some((l) => l.startsWith('+'))
+    const dels = lines.some((l) => l.startsWith('-'))
+    if (adds || dels) out.push(...lines)
+    out.push('')
   }
   if (!out.length) return { out: [], changed: false }
   return { out, changed: false }

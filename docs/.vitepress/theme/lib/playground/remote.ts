@@ -1,5 +1,5 @@
 import * as git from 'isomorphic-git'
-import type { MemoryFS } from './fs'
+import { short, type MemoryFS } from './fs'
 import type { Session } from './scenarios'
 import {
   NOT_A_REPO,
@@ -14,9 +14,6 @@ import {
 } from './scenarios'
 import type { CommandResult } from './commands'
 
-function short(sha: string): string {
-  return sha.slice(0, 7)
-}
 
 async function remoteLocation(session: Session): Promise<{ fs: MemoryFS; dir: string } | null> {
   const hasRemote = await session.remoteFs

@@ -21,12 +21,10 @@ import {
   writeRebaseConflicts,
   writeRebaseState,
   MatrixRow} from './scenarios'
-import { diffLines, type CommandResult } from './commands'
-import { applyMergedFiles, fullIdentity, readTreeFiles, syncIndex, threeWayMerge, updateHeadRef, writeTreeFromFiles } from './merge'
+import { short } from './fs'
+import { clearStagedSnapshot, diffLines, type CommandResult } from './commands'
+import { applyMergedFiles, fullIdentity, mergeSnapshot, readTreeFiles, splitLines, syncIndex, threeWayMerge, updateHeadRef, writeTreeFromFiles } from './merge'
 
-function short(sha: string): string {
-  return sha.slice(0, 7)
-}
 
 export async function runTag(session: Session, argv: string[]): Promise<CommandResult> {
   if (!(await isRepo(session.fs, session.dir))) {
@@ -120,8 +118,9 @@ export async function runReset(session: Session, argv: string[]): Promise<Comman
     }
   }
   await updateHeadRef(fs, dir, newOid, `reset: moving to ${target}`)
+  clearStagedSnapshot(session)
   if (soft) {
-    return { out: hard ? [`HEAD is now at ${short(newOid)}`] : [], changed: true }
+    return { out: [], changed: true }
   }
   const tree = (await git.readCommit({ fs: fs as never, dir, oid: newOid })).commit.tree
   if (hard) {
@@ -391,27 +390,6 @@ async function continueRebase(session: Session): Promise<CommandResult> {
   return replayRebase(session, ((await git.currentBranch({ fs: fs as never, dir })) as string | null) ?? 'HEAD', { onto, origHead }, queue as Awaited<ReturnType<typeof git.log>>)
 }
 
-async function mergeSnapshot(session: Session): Promise<Map<string, string | null>> {
-  const { fs, dir } = session
-  const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
-  const tree = (await git.readCommit({ fs: fs as never, dir, oid: headOid })).commit.tree
-  const files = new Map<string, string | null>(await readTreeFiles(fs, dir, tree))
-  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
-  for (const [path, h, , s] of rows) {
-    if (s === 0) {
-      if (h === 1) files.set(path, null)
-      continue
-    }
-    if (h === 1 && s === 1) continue
-    if (s === 2) {
-      const content = await fs.readFile(`${dir}/${path}`).catch(() => null)
-      files.set(path, content ? content.toString() : null)
-    } else {
-      files.set(path, null)
-    }
-  }
-  return files
-}
 
 export async function runReflog(session: Session, argv: string[]): Promise<CommandResult> {
   if (!(await isRepo(session.fs, session.dir))) {
@@ -433,12 +411,6 @@ export async function runReflog(session: Session, argv: string[]): Promise<Comma
   }
 }
 
-function splitLines(text: string | null): string[] {
-  if (text === null) return []
-  const lines = text.split('\n')
-  if (lines.length > 1 && lines[lines.length - 1] === '') lines.pop()
-  return lines
-}
 
 export async function runShow(session: Session, argv: string[]): Promise<CommandResult> {
   if (!(await isRepo(session.fs, session.dir))) {
@@ -583,7 +555,7 @@ export async function runBisect(session: Session, argv: string[]): Promise<Comma
     return { out: [], changed: true }
   }
 
-  if (!op) return { out: ['fatal: ' + "missing 'start', 'bad', 'good' or 'reset'"], changed: false }
+  if (!op) return { out: ["fatal: missing 'start', 'bad', 'good' or 'reset'"], changed: false }
 
   if (op === 'start') {
     if (await bisectInProgress(fs, dir)) {
@@ -610,7 +582,7 @@ export async function runBisect(session: Session, argv: string[]): Promise<Comma
   } else if (op === 'bad') {
     await bisectWrite(fs, dir, BISECT_BAD, [...(await bisectRead(fs, dir, BISECT_BAD)), target])
   } else {
-    return { out: ['fatal: ' + "unknown 'bisect' op; use start, good, bad or reset"], changed: false }
+    return { out: ["fatal: unknown 'bisect' op; use start, good, bad or reset"], changed: false }
   }
 
   const goodOids = await bisectRead(fs, dir, BISECT_GOOD)

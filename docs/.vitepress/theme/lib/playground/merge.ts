@@ -72,7 +72,7 @@ function diffRegions(base: string[], target: string[]): Region[] {
   return regions
 }
 
-function splitLines(text: string | null): string[] {
+export function splitLines(text: string | null): string[] {
   if (text === null) return []
   const lines = text.split('\n')
   if (lines.length > 1 && lines[lines.length - 1] === '') lines.pop()
@@ -278,4 +278,26 @@ export async function createMergeCommit(
   })
   await updateHeadRef(fs, dir, oid)
   return oid
+}
+
+export async function mergeSnapshot(session: { fs: MemoryFS; dir: string }): Promise<Map<string, string | null>> {
+  const { fs, dir } = session
+  const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+  const headTree = (await git.readCommit({ fs: fs as never, dir, oid: headOid })).commit.tree
+  const files = new Map<string, string | null>(await readTreeFiles(fs, dir, headTree))
+  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+  for (const [path, h, , s] of rows) {
+    if (s === 0) {
+      if (h === 1) files.set(path, null)
+      continue
+    }
+    if (h === 1 && s === 1) continue
+    if (s === 2) {
+      const content = await fs.readFile(`${dir}/${path}`).catch(() => null)
+      files.set(path, content ? content.toString() : null)
+    } else {
+      files.set(path, null)
+    }
+  }
+  return files
 }

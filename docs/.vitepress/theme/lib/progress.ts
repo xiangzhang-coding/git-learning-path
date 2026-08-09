@@ -15,7 +15,11 @@ export function loadProgress(): string[] {
 }
 
 export function setProgress(done: boolean, path: string): void {
-  const list = loadProgress()
-  const next = done ? [...list, path] : list.filter((p) => p !== path)
-  localStorage.setItem(PROGRESS_KEY, JSON.stringify(next))
+  try {
+    const list = loadProgress()
+    const next = done ? [...list, path] : list.filter((p) => p !== path)
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(next))
+  } catch {
+    // storage unavailable (private mode, quotas)
+  }
 }

@@ -60,3 +60,17 @@ test('mobile viewport has no horizontal overflow', async ({ page }) => {
   expect(overflow).toBe(false)
   await expect(page.locator('.theme-switcher')).toBeVisible()
 })
+
+test('stage 5 checklist persists ticks and clears', async ({ page }) => {
+  await page.goto('/git-learning-path/zh/stage/5/')
+  const list = page.locator('.checklist-list')
+  await expect(list.locator('li')).toHaveCount(10)
+  await list.locator('li').first().locator('input[type=checkbox]').check()
+  await expect(list.locator('li').first()).toHaveClass(/done/)
+  const saved = await page.evaluate(() => localStorage.getItem('gitpath-checklist-stage5'))
+  expect(saved).toContain('true')
+  await page.reload()
+  await expect(page.locator('.checklist-list li').first()).toHaveClass(/done/)
+  await page.locator('.checklist-reset').click()
+  await expect(page.locator('.checklist-list li').first()).not.toHaveClass(/done/)
+})

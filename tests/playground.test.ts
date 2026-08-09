@@ -89,8 +89,21 @@ describe('playground command engine', () => {
     await exec(session, 'git add hello.txt')
     const staged = await exec(session, 'git diff --staged')
     expect(staged).toContain('diff --git a/hello.txt b/hello.txt')
+    expect(staged.match(/diff --git/g)).toHaveLength(1)
     const unstaged = await exec(session, 'git diff')
     expect(unstaged).toBe('')
+  })
+
+  it('diff --staged shows the staged version, not the working tree', async () => {
+    const session = await Session.create('add-commit')
+    await exec(session, 'git add hello.txt')
+    await session.fs.writeFile('/repo/hello.txt', 'edited after add\n')
+    const staged = await exec(session, 'git diff --staged')
+    expect(staged).toContain('+world!')
+    expect(staged).not.toContain('edited after add')
+    const unstaged = await exec(session, 'git diff')
+    expect(unstaged).toContain('-world!')
+    expect(unstaged).toContain('+edited after add')
   })
 
   it('config sets and reads values in the repo', async () => {

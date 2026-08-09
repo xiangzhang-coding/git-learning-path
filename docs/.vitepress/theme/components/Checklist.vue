@@ -22,12 +22,20 @@ function load() {
 
 function toggle(i: number) {
   done.value[i] = !done.value[i]
-  localStorage.setItem(KEY, JSON.stringify(done.value))
+  try {
+    localStorage.setItem(KEY, JSON.stringify(done.value))
+  } catch {
+    // storage unavailable (private mode, quotas)
+  }
 }
 
 function reset() {
   done.value = props.tasks.map(() => false)
-  localStorage.removeItem(KEY)
+  try {
+    localStorage.removeItem(KEY)
+  } catch {
+    // storage unavailable (private mode, quotas)
+  }
 }
 
 onMounted(load)

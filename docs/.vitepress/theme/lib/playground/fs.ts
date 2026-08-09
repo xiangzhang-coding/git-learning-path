@@ -1,6 +1,12 @@
+export function short(sha: string): string {
+  return sha.slice(0, 7)
+}
+
 export class MemoryFS {
   files = new Map<string, Buffer>()
   dirs = new Set<string>()
+  private mtimes = new Map<string, number>()
+  private mtimeCounter = 0
 
   private static normalize(path: string): string {
     const parts = path.split('/').filter((p) => p && p !== '.')
@@ -38,6 +44,8 @@ export class MemoryFS {
       }
     }
     this.files.set(n, Buffer.isBuffer(data) ? data : Buffer.from(data))
+    this.mtimeCounter = Math.max(Date.now(), this.mtimeCounter + 1)
+    this.mtimes.set(n, this.mtimeCounter)
     return Promise.resolve()
   }
 
@@ -80,6 +88,7 @@ export class MemoryFS {
       err.code = 'ENOENT'
       throw err
     }
+    this.mtimes.delete(n)
     return Promise.resolve()
   }
 
@@ -103,15 +112,22 @@ export class MemoryFS {
     const content = this.files.get(from)
     if (content !== undefined) {
       this.files.delete(from)
+      this.mtimes.delete(from)
       return this.writeFile(to, content)
     }
     if (this.dirs.has(from + '/')) {
       const moved: [string, Buffer][] = []
+      const movedMtimes: [string, number][] = []
       for (const [key, value] of this.files) {
         if (key.startsWith(from + '/')) moved.push([to + key.slice(from.length), value])
       }
       for (const [key] of moved) this.files.delete(key)
       for (const [key, value] of moved) this.files.set(key, value)
+      for (const [key, value] of this.mtimes) {
+        if (key.startsWith(from + '/')) movedMtimes.push([to + key.slice(from.length), value])
+      }
+      for (const [key] of movedMtimes) this.mtimes.delete(key)
+      for (const [key, value] of movedMtimes) this.mtimes.set(key, value)
       return Promise.resolve()
     }
     const err = new Error(`ENOENT: no such file or directory, rename '${oldPath}'`) as NodeJS.ErrnoException
@@ -142,17 +158,18 @@ export class MemoryFS {
       err.code = 'ENOENT'
       throw err
     }
-    const now = new Date()
+    const mtimeMs = this.mtimes.get(n) ?? Date.now()
+    const mtime = new Date(mtimeMs)
     return {
       isDirectory: () => isDir,
       isFile: () => content !== undefined,
       isSymbolicLink: () => false,
       mode: isDir ? 0o40000 : 0o100644,
       size: content?.length ?? 0,
-      mtime: now,
-      ctime: now,
-      mtimeMs: now.getTime(),
-      ctimeMs: now.getTime(),
+      mtime,
+      ctime: mtime,
+      mtimeMs,
+      ctimeMs: mtimeMs,
       ino: 0,
       uid: 0,
       gid: 0,

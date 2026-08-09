@@ -31,8 +31,24 @@ function apply(theme: ThemeValue) {
   }
 }
 
+function readStoredTheme(): string | null {
+  try {
+    return localStorage.getItem(KEY)
+  } catch {
+    return null
+  }
+}
+
+function writeStoredTheme(theme: string): void {
+  try {
+    localStorage.setItem(KEY, theme)
+  } catch {
+    // storage unavailable (private mode, quotas)
+  }
+}
+
 onMounted(() => {
-  const saved = localStorage.getItem(KEY)
+  const saved = readStoredTheme()
   if (saved && themeValues.some((t) => t === saved)) {
     current.value = saved as ThemeValue
     apply(current.value)
@@ -81,7 +97,7 @@ function toggle() {
 
 function choose(value: ThemeValue) {
   current.value = value
-  localStorage.setItem(KEY, value)
+  writeStoredTheme(value)
   apply(value)
   open.value = false
 }

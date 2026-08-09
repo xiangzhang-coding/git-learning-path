@@ -125,7 +125,7 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
         break
       }
       case 'branchIs': {
-  const branch = ((await git.currentBranch({ fs: fs as never, dir })) as string | null) ?? null
+        const branch = ((await git.currentBranch({ fs: fs as never, dir })) as string | null) ?? null
         if (branch !== check.name) return { pass: false, detail: `branch is ${branch ?? 'none'}, expected ${check.name}` }
         break
       }

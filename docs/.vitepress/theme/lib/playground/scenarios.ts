@@ -614,7 +614,7 @@ export async function buildRepairScenario(fs: MemoryFS, name: ScenarioName): Pro
     await write(fs, dir, 'calc.js', 'function add(a, b) { return a + b; }\nfunction sub(a, b) { return a - b; }\n')
     await commitAll(fs, dir, 'feat: add subtract')
     await write(fs, dir, 'calc.js', 'function add(a, b) { return a - b; }\nfunction sub(a, b) { return a - b; }\n')
-    await commitAll(fs, dir, 'fix: typo in add')  // 引入 bug 的提交
+    await commitAll(fs, dir, 'fix: typo in add')
     await write(fs, dir, 'calc.js', 'function add(a, b) { return a - b; }\nfunction sub(a, b) { return a - b; }\nfunction mul(a, b) { return a * b; }\n')
     await commitAll(fs, dir, 'feat: add multiply')
     await write(fs, dir, 'calc.js', 'function add(a, b) { return a - b; }\nfunction sub(a, b) { return a - b; }\nfunction mul(a, b) { return a * b; }\nfunction div(a, b) { return a / b; }\n')
