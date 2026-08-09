@@ -955,3 +955,124 @@ html[data-theme='retro'] .vp-doc h3 {
     margin-left: 0;
   }
 }
+
+@keyframes gp-row-in {
+  0% {
+    background-color: color-mix(in srgb, var(--vp-c-brand-1) 22%, transparent);
+    transform: translateY(-3px);
+  }
+  100% {
+    background-color: transparent;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gp-dot-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--vp-c-brand-1) 22%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--vp-c-brand-1) 10%, transparent);
+  }
+}
+
+@keyframes gp-feedback-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gp-chip-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gp-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes gp-hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gp-dot-active {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--vp-c-brand-1) 55%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+}
+
+.playground-graph-row {
+  animation: gp-row-in 0.45s ease both;
+}
+
+.playground-graph-row.head .playground-graph-cell.is-dot {
+  animation:
+    gp-row-in 0.45s ease both,
+    gp-dot-breathe 2.6s ease-in-out 0.45s infinite;
+}
+
+.exercise-feedback {
+  animation: gp-feedback-in 0.25s ease both;
+}
+
+.theme-switcher-menu {
+  animation: gp-feedback-in 0.2s ease both;
+}
+
+.area-chip {
+  animation: gp-chip-in 0.25s ease both;
+}
+
+.back-to-top {
+  animation: gp-fade-in 0.25s ease both;
+}
+
+.VPHero {
+  animation: gp-hero-in 0.6s ease both;
+}
+
+.timeline-node {
+  transition: box-shadow 0.25s ease;
+}
+
+.timeline-node.active {
+  animation: gp-dot-active 0.5s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
