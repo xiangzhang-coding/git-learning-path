@@ -79,6 +79,8 @@ o  C ← feature committet noch einmal
 
 `git merge feature` muss den Zeiger `main` nur **direkt vorwärts** zu C bewegen — das ist fast-forward. Die Ausgabe zeigt `Fast-forward`, **es entsteht kein neuer Commit**, die Historie bleibt eine gerade Linie.
 
+<MergeVisual />
+
 ## Merge-Commit
 
 Wenn beide Branches jeweils committet haben (die Historie abgezweigt ist), gibt es keinen Weg des „Zeiger-Vorwärtsbewegens" — git muss den Inhalt beider Seiten zu einem neuen Commit zusammenführen:

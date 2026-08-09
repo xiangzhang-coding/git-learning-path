@@ -79,6 +79,9 @@ o  C ← feature commits again
 
 `git merge feature` only needs to move the `main` pointer **straight ahead** to C — that is a fast-forward. The output shows `Fast-forward`, **no new commit is created**, and history stays a single line.
 
+
+<MergeVisual />
+
 ## Merge commits
 
 If both branches committed independently (history forked), there is no "move the pointer ahead" path — git must combine both sides into a brand-new commit:

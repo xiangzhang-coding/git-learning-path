@@ -97,6 +97,9 @@ git switch -c <名前> # 作成して切り替える（最もよく使う）
 
 **HEAD** は特別なポインタで、「今どのブランチのどの commit にいるか」を表します。`git status` の先頭に表示される `On branch feature` が HEAD の答えです。ブランチの切り替えとは、この HEAD ポインタを動かすことです。
 
+
+<HeadVisual />
+
 ## 練習
 
 <Exercise />

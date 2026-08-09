@@ -79,6 +79,9 @@ o  C ← feature 再提交一次
 
 `git merge feature` 只需要把 `main` 指针**直接前移**到 C——这就是 fast-forward（快进）。输出会显示 `Fast-forward`，**不会产生新提交**，历史保持一条直线。
 
+
+<MergeVisual />
+
 ## 合并提交
 
 如果两个分支都各自提交了（历史分叉），就没有「指针前移」这条路可走，git 必须把两边的内容合成一个新提交：

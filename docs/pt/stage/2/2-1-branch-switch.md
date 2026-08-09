@@ -97,6 +97,8 @@ Ao trocar, se houver alterações não commitadas na área de trabalho, o git re
 
 **HEAD** é um ponteiro especial que marca em qual branch e em qual commit você está agora. O `On branch feature` no início do `git status` é a resposta do HEAD. Trocar de branch é mover esse ponteiro do HEAD.
 
+<HeadVisual />
+
 ## Exercícios
 
 <Exercise />

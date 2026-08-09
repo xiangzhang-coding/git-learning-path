@@ -86,6 +86,9 @@ git reset --soft <commit>   # only HEAD moves; index and working tree untouched
 
 `--hard` is the most used and the most dangerous: all commits in between and uncommitted changes vanish together (the working tree is overwritten). After `--hard`, the output `HEAD is now at <short hash> <message>` tells you where you are now.
 
+
+<ResetVisual />
+
 ## git reflog finds lost commits
 
 ```bash

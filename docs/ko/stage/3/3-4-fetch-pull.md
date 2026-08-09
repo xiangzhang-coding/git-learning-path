@@ -63,6 +63,9 @@ git log origin/main --oneline   # 원격에 무엇이 있는지
 git log main..origin/main       # 원격에 있고 로컬에는 없는 커밋
 ```
 
+
+<RemoteFlow />
+
 ## git pull = fetch + merge
 
 ```bash

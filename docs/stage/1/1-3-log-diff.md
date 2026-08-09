@@ -101,6 +101,9 @@ blame prefixes every line of a file with the **short hash and author of the comm
 
 Each commit saves a **complete snapshot**, not a diff. git hashes the content with SHA-1 — identical content yields identical hashes, which gives integrity checking and deduplication. This is also why "distributed" works: the full history is reconstructable from any clone.
 
+
+<SnapshotVisual />
+
 ## Exercises
 
 <Exercise />

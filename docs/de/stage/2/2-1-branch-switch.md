@@ -97,6 +97,8 @@ Wenn beim Wechseln noch nicht committete Änderungen im Working tree liegen, leh
 
 **HEAD** ist ein besonderer Zeiger, der festhält, auf welchem Branch und welchem Commit Sie gerade stehen. `On branch feature` am Anfang von `git status` ist die Antwort von HEAD. Einen Branch wechseln bedeutet, den Zeiger HEAD zu bewegen.
 
+<HeadVisual />
+
 ## Übungen
 
 <Exercise />

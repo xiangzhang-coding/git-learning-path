@@ -79,6 +79,8 @@ o  C ← feature cometió otra vez
 
 `git merge feature` solo necesita **adelantar el puntero** de `main` hasta C — eso es el fast-forward (avance rápido). La salida muestra `Fast-forward` y **no crea ningún commit nuevo**; la historia sigue una línea recta.
 
+<MergeVisual />
+
 ## Merge commit
 
 Si las dos ramas hicieron commits propios (la historia se bifurcó), no hay forma de «adelantar el puntero»: git tiene que combinar el contenido de ambos lados en un commit nuevo:

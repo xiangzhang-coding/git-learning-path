@@ -86,6 +86,8 @@ git reset --soft <commit>   # só move o HEAD; índice e área de trabalho ficam
 
 O `--hard` é o mais usado e o mais perigoso: todos os commits do meio e as alterações não commitadas somem juntos (a área de trabalho é sobrescrita). Depois do `--hard`, a saída `HEAD is now at <hash curto> <mensagem>` mostra onde você está agora.
 
+<ResetVisual />
+
 ## git reflog: recuperar commits perdidos
 
 ```bash

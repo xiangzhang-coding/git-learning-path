@@ -101,6 +101,8 @@ O blame adiciona um prefixo a cada linha do arquivo — **o hash curto do commit
 
 Cada commit salva um **snapshot completo**, não um diff. O git gera o hash do conteúdo com SHA-1 — conteúdo idêntico gera hash idêntico, o que permite verificar a integridade e evitar duplicação no armazenamento. É também por isso que "distribuído" funciona: qualquer clone tem o histórico completo e reconstruível.
 
+<SnapshotVisual />
+
 ## Exercícios
 
 <Exercise />

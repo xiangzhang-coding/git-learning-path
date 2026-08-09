@@ -63,6 +63,9 @@ git log origin/main --oneline   # リモート側には何があるか
 git log main..origin/main       # リモートにあってローカルにないコミット
 ```
 
+
+<RemoteFlow />
+
 ## git pull = fetch + merge
 
 ```bash

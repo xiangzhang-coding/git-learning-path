@@ -101,6 +101,8 @@ blame ajoute un préfixe à chaque ligne du fichier : **le hash court du dernier
 
 Chaque commit enregistre un **instantané complet**, pas un diff. git hache le contenu avec SHA-1 : contenu identique, hash identique — le hash permet donc de vérifier l'intégrité et de dédupliquer le stockage. C'est aussi ce qui rend le « distribué » possible : l'historique de n'importe quel clone est complet et entièrement reconstruisible.
 
+<SnapshotVisual />
+
 ## Exercices
 
 <Exercise />

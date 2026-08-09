@@ -86,6 +86,8 @@ git reset --soft <commit>   # solo mueve HEAD; índice y working tree intactos
 
 `--hard` es el más usado y el más peligroso: todos los commits y cambios sin commitear intermedios desaparecen (el working tree se sobrescribe directamente). Tras el `--hard`, el mensaje `HEAD is now at <hash corto> <mensaje>` te dice dónde estás.
 
+<ResetVisual />
+
 ## git reflog recupera commits perdidos
 
 ```bash

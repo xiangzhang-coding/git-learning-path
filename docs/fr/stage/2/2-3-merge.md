@@ -79,6 +79,8 @@ o  C ← feature committe encore
 
 `git merge feature` n'a qu'à **déplacer directement** le pointeur `main` jusqu'à C — c'est la fusion fast-forward. La sortie affiche `Fast-forward`, **aucun nouveau commit** n'est créé, et l'historique reste une ligne droite.
 
+<MergeVisual />
+
 ## Le merge commit
 
 Si les deux branches ont committé chacune (historique divergé), il n'y a plus de chemin « avancer le pointeur » : git doit composer un nouveau commit avec le contenu des deux côtés :

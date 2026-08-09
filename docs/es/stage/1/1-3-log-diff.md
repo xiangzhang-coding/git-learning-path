@@ -101,6 +101,8 @@ blame añade un prefijo a cada línea del archivo: **el hash corto del commit qu
 
 Cada commit guarda una **instantánea completa**, no una diferencia. Git calcula el hash SHA-1 del contenido: a mismo contenido, mismo hash — por eso el hash permite verificar la integridad y deduplicar el almacenamiento. Es también la base de lo «distribuido»: el historial de cualquier clon está completo y es reconstruible.
 
+<SnapshotVisual />
+
 ## Ejercicios
 
 <Exercise />

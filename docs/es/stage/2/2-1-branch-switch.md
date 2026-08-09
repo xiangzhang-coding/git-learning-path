@@ -97,6 +97,8 @@ Si el working tree tiene cambios sin commitear, git se niega a cambiar y te pide
 
 **HEAD** es un puntero especial que marca «en qué rama y en qué commit estás». El `On branch feature` que aparece al principio de `git status` es la respuesta de HEAD. Cambiar de rama es mover el puntero de HEAD.
 
+<HeadVisual />
+
 ## Ejercicios
 
 <Exercise />

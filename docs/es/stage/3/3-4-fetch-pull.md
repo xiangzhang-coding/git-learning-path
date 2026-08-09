@@ -63,6 +63,8 @@ git log origin/main --oneline   # qué hay del lado del remoto
 git log main..origin/main       # commits que tiene el remoto y tú no
 ```
 
+<RemoteFlow />
+
 ## git pull: fetch + merge
 
 ```bash

@@ -97,6 +97,9 @@ If the working tree has uncommitted changes, git refuses to switch and asks you 
 
 **HEAD** is a special pointer that marks "which branch, and which commit on it, you are on right now". The `On branch feature` line at the top of `git status` is HEAD's answer. Switching branches means moving the HEAD pointer.
 
+
+<HeadVisual />
+
 ## Exercises
 
 <Exercise />

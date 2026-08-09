@@ -97,6 +97,9 @@ git switch -c <이름>   # 생성과 동시에 전환(가장 자주 사용)
 
 **HEAD**는 "지금 어느 브랜치의 어느 commit에 있는지"를 표시하는 특수 포인터입니다. `git status` 첫 줄의 `On branch feature`가 바로 HEAD의 답입니다. 브랜치 전환은 HEAD 포인터를 옮기는 일입니다.
 
+
+<HeadVisual />
+
 ## 연습
 
 <Exercise />

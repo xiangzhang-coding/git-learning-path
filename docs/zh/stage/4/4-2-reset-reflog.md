@@ -86,6 +86,9 @@ git reset --soft <提交>   # 只动 HEAD，索引和工作区都不动
 
 `--hard` 最常用也最危险：中间的所有提交和未提交改动一起消失（工作区直接被覆盖）。`--hard` 后输出 `HEAD is now at <短哈希> <消息>` 告诉你现在在哪。
 
+
+<ResetVisual />
+
 ## git reflog 找回丢失的提交
 
 ```bash

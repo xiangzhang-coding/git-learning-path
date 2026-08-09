@@ -28,6 +28,15 @@ export interface Labels {
   checklistReset: string
   themeLabel: string
   theme: Record<'system' | 'light' | 'dark' | 'terminal' | 'retro', string>
+  visualReplay: string
+  visualPause: string
+  visualPlay: string
+  visualStep: string
+  resetVisual: Record<string, string>
+  remoteVisual: Record<string, string>
+  mergeVisual: Record<string, string>
+  snapshotVisual: Record<string, string>
+  headVisual: Record<string, string>
 }
 
 export const LABELS: Record<string, Labels> = {
@@ -57,6 +66,15 @@ export const LABELS: Record<string, Labels> = {
     checklistReset: 'Clear checklist',
     themeLabel: 'Theme',
     theme: { 'system': 'System', 'light': 'Light', 'dark': 'Dark', 'terminal': 'Terminal', 'retro': 'Retro' },
+  visualReplay: "Replay",
+  visualPause: "Pause",
+  visualPlay: "Play",
+  visualStep: "Step",
+  resetVisual: { 'title': "git reset moves three layers", 'head': "HEAD", 'index': "index", 'work': "working tree", 'hard': "--hard", 'mixed': "mixed (default)", 'soft': "--soft", 'move': "moves", 'reset': "resets", 'keep': "keeps", 'stepHard': "HEAD, index and working tree all go back to the target commit", 'stepMixed': "HEAD and index move back; the working tree keeps your changes", 'stepSoft': "only HEAD moves; index and working tree stay put" },
+  remoteVisual: { 'title': "How fetch, pull and push move commits", 'local': "local repo", 'remote': "origin (remote)", 'push': "push", 'pull': "pull", 'fetch': "fetch", 'pushDesc': "uploads local commits to the remote", 'pullDesc': "downloads remote commits and merges them", 'fetchDesc': "downloads remote commits without touching your work", 'tracking': "tracking branch origin/main" },
+  mergeVisual: { 'title': "Three ways a merge can end", 'ff': "fast-forward", 'merge': "merge commit", 'conflict': "conflict", 'ffDesc': "no fork: the branch pointer simply moves forward", 'mergeDesc': "a new commit joins both branches, keeping the fork", 'conflictDesc': "both sides changed the same lines — resolve manually", 'main': "main", 'feature': "feature" },
+  snapshotVisual: { 'title': "Every commit saves a full snapshot", 'snapshot': "snapshot", 'diff': "diff", 'commit': "commit", 'snapDesc': "each commit stores the complete state of all files", 'diffDesc': "a diff only records what changed", 'file': "file" },
+  headVisual: { 'title': "HEAD marks where you are", 'head': "HEAD", 'switch': "switch", 'switchDesc': "switching branches moves HEAD to the new branch pointer", 'branch': "branch" },
   },
   zh: {
     correct: '正确',
@@ -83,6 +101,15 @@ export const LABELS: Record<string, Labels> = {
     checklistReset: '清空清单',
     themeLabel: '主题',
     theme: { 'system': '跟随系统', 'light': '浅色', 'dark': '深色', 'terminal': '终端', 'retro': '复古' },
+  visualReplay: "重播",
+  visualPause: "暂停",
+  visualPlay: "播放",
+  visualStep: "手动逐步",
+  resetVisual: { 'title': "git reset 移动三个层", 'head': "HEAD", 'index': "索引（暂存区）", 'work': "工作区", 'hard': "--hard", 'mixed': "mixed（默认）", 'soft': "--soft", 'move': "移动", 'reset': "重置", 'keep': "保留", 'stepHard': "HEAD、索引、工作区全部回到目标提交", 'stepMixed': "HEAD 和索引回退，工作区保留你的改动", 'stepSoft': "只移动 HEAD，索引与工作区不动" },
+  remoteVisual: { 'title': "fetch、pull、push 如何移动提交", 'local': "本地仓库", 'remote': "origin（远程）", 'push': "push", 'pull': "pull", 'fetch': "fetch", 'pushDesc': "把本地提交上传到远程", 'pullDesc': "下载远程提交并合并", 'fetchDesc': "下载远程提交，不碰你的工作", 'tracking': "跟踪分支 origin/main" },
+  mergeVisual: { 'title': "合并的三种结局", 'ff': "快进合并", 'merge': "合并提交", 'conflict': "冲突", 'ffDesc': "没有分叉：分支指针直接前移", 'mergeDesc': "新提交连接两条分支，保留分叉", 'conflictDesc': "双方改了同一处——需要手动解决", 'main': "main", 'feature': "feature" },
+  snapshotVisual: { 'title': "每次提交保存完整快照", 'snapshot': "快照", 'diff': "差异", 'commit': "提交", 'snapDesc': "每次提交保存全部文件的完整状态", 'diffDesc': "差异只记录变化的部分", 'file': "文件" },
+  headVisual: { 'title': "HEAD 标记你的位置", 'head': "HEAD", 'switch': "switch", 'switchDesc': "切换分支时，HEAD 移到新分支的指针上", 'branch': "分支" },
     cancel: '取消',
   },
   ja: {
@@ -110,6 +137,15 @@ export const LABELS: Record<string, Labels> = {
     checklistReset: 'チェックリストをクリア',
     themeLabel: 'テーマ',
     theme: { 'system': 'システム', 'light': 'ライト', 'dark': 'ダーク', 'terminal': 'ターミナル', 'retro': 'レトロ' },
+  visualReplay: "リプレイ",
+  visualPause: "一時停止",
+  visualPlay: "再生",
+  visualStep: "手動ステップ",
+  resetVisual: { 'title': "git reset が3つの層を動かす", 'head': "HEAD", 'index': "インデックス", 'work': "ワークツリー", 'hard': "--hard", 'mixed': "mixed（既定）", 'soft': "--soft", 'move': "移動", 'reset': "リセット", 'keep': "保持", 'stepHard': "HEAD・インデックス・ワークツリーがすべて対象コミットへ戻る", 'stepMixed': "HEAD とインデックスが戻り、ワークツリーの変更は残る", 'stepSoft': "HEAD だけが動き、インデックスとワークツリーはそのまま" },
+  remoteVisual: { 'title': "fetch・pull・push がコミットをどう動かすか", 'local': "ローカル", 'remote': "origin（リモート）", 'push': "push", 'pull': "pull", 'fetch': "fetch", 'pushDesc': "ローカルのコミットをリモートへ送る", 'pullDesc': "リモートのコミットを取得してマージする", 'fetchDesc': "リモートのコミットを取得するだけで作業には触れない", 'tracking': "追跡ブランチ origin/main" },
+  mergeVisual: { 'title': "マージの3つの結末", 'ff': "ファストフォワード", 'merge': "マージコミット", 'conflict': "コンフリクト", 'ffDesc': "分岐なし：ブランチポインタがそのまま前進する", 'mergeDesc': "新コミットが両ブランチをつなぎ、分岐を残す", 'conflictDesc': "両方が同じ行を変更——手動で解決が必要", 'main': "main", 'feature': "feature" },
+  snapshotVisual: { 'title': "コミットは完全なスナップショットを保存する", 'snapshot': "スナップショット", 'diff': "差分", 'commit': "コミット", 'snapDesc': "各コミットは全ファイルの完全な状態を保存する", 'diffDesc': "差分は変更分だけを記録する", 'file': "ファイル" },
+  headVisual: { 'title': "HEAD は現在位置を示す", 'head': "HEAD", 'switch': "switch", 'switchDesc': "ブランチを切り替えると HEAD が新しいブランチのポインタへ移る", 'branch': "ブランチ" },
     cancel: 'キャンセル',
   },
   ko: {
@@ -137,6 +173,15 @@ export const LABELS: Record<string, Labels> = {
     checklistReset: '체크리스트 지우기',
     themeLabel: '테마',
     theme: { 'system': '시스템', 'light': '라이트', 'dark': '다크', 'terminal': '터미널', 'retro': '레트로' },
+  visualReplay: "다시 보기",
+  visualPause: "일시정지",
+  visualPlay: "재생",
+  visualStep: "수동 단계",
+  resetVisual: { 'title': "git reset이 세 계층을 움직임", 'head': "HEAD", 'index': "인덱스", 'work': "작업 트리", 'hard': "--hard", 'mixed': "mixed(기본)", 'soft': "--soft", 'move': "이동", 'reset': "초기화", 'keep': "유지", 'stepHard': "HEAD·인덱스·작업 트리가 모두 대상 커밋으로 돌아감", 'stepMixed': "HEAD와 인덱스가 되돌아가고 작업 트리 변경은 유지됨", 'stepSoft': "HEAD만 움직이고 인덱스와 작업 트리는 그대로" },
+  remoteVisual: { 'title': "fetch·pull·push가 커밋을 어떻게 옮기는가", 'local': "로컬 저장소", 'remote': "origin(원격)", 'push': "push", 'pull': "pull", 'fetch': "fetch", 'pushDesc': "로컬 커밋을 원격으로 올림", 'pullDesc': "원격 커밋을 내려받아 병합함", 'fetchDesc': "원격 커밋만 내려받고 작업은 건드리지 않음", 'tracking': "추적 브랜치 origin/main" },
+  mergeVisual: { 'title': "병합의 세 가지 결말", 'ff': "패스트포워드", 'merge': "병합 커밋", 'conflict': "충돌", 'ffDesc': "분기 없음: 브랜치 포인터가 그대로 전진", 'mergeDesc': "새 커밋이 두 브랜치를 잇고 분기를 유지", 'conflictDesc': "양쪽이 같은 줄을 수정——수동 해결 필요", 'main': "main", 'feature': "feature" },
+  snapshotVisual: { 'title': "모든 커밋은 전체 스냅샷을 저장한다", 'snapshot': "스냅샷", 'diff': "차이", 'commit': "커밋", 'snapDesc': "각 커밋은 모든 파일의 완전한 상태를 저장한다", 'diffDesc': "차이는 변경된 부분만 기록한다", 'file': "파일" },
+  headVisual: { 'title': "HEAD는 현재 위치를 가리킨다", 'head': "HEAD", 'switch': "switch", 'switchDesc': "브랜치를 전환하면 HEAD가 새 브랜치 포인터로 이동한다", 'branch': "브랜치" },
     cancel: '취소',
   },
   de: {
@@ -164,6 +209,15 @@ export const LABELS: Record<string, Labels> = {
     checklistReset: 'Liste zurücksetzen',
     themeLabel: 'Theme',
     theme: { 'system': 'System', 'light': 'Hell', 'dark': 'Dunkel', 'terminal': 'Terminal', 'retro': 'Retro' },
+  visualReplay: "Wiederholen",
+  visualPause: "Pause",
+  visualPlay: "Abspielen",
+  visualStep: "Schritt",
+  resetVisual: { 'title': "git reset bewegt drei Ebenen", 'head': "HEAD", 'index': "Index", 'work': "Arbeitsverzeichnis", 'hard': "--hard", 'mixed': "mixed (Standard)", 'soft': "--soft", 'move': "bewegt", 'reset': "setzt zurück", 'keep': "behält", 'stepHard': "HEAD, Index und Arbeitsverzeichnis gehen alle zum Ziel-Commit zurück", 'stepMixed': "HEAD und Index gehen zurück; das Arbeitsverzeichnis behält deine Änderungen", 'stepSoft': "nur HEAD bewegt sich; Index und Arbeitsverzeichnis bleiben" },
+  remoteVisual: { 'title': "Wie fetch, pull und push Commits bewegen", 'local': "lokales Repo", 'remote': "origin (remote)", 'push': "push", 'pull': "pull", 'fetch': "fetch", 'pushDesc': "lädt lokale Commits zum Remote hoch", 'pullDesc': "lädt Remote-Commits herunter und merged sie", 'fetchDesc': "lädt Remote-Commits herunter, ohne deine Arbeit anzufassen", 'tracking': "Tracking-Branch origin/main" },
+  mergeVisual: { 'title': "Drei Ausgänge eines Merge", 'ff': "Fast-Forward", 'merge': "Merge-Commit", 'conflict': "Konflikt", 'ffDesc': "keine Gabelung: der Branch-Zeiger rückt einfach vor", 'mergeDesc': "ein neuer Commit verbindet beide Branches und behält die Gabelung", 'conflictDesc': "beide Seiten änderten dieselben Zeilen — manuell auflösen", 'main': "main", 'feature': "feature" },
+  snapshotVisual: { 'title': "Jeder Commit speichert eine vollständige Momentaufnahme", 'snapshot': "Snapshot", 'diff': "Diff", 'commit': "Commit", 'snapDesc': "jeder Commit speichert den vollständigen Zustand aller Dateien", 'diffDesc': "ein Diff zeichnet nur die Änderungen auf", 'file': "Datei" },
+  headVisual: { 'title': "HEAD markiert deinen Standort", 'head': "HEAD", 'switch': "switch", 'switchDesc': "Beim Wechseln bewegt sich HEAD zum neuen Branch-Zeiger", 'branch': "Branch" },
     cancel: 'Abbrechen',
   },
   fr: {
@@ -191,6 +245,15 @@ export const LABELS: Record<string, Labels> = {
     checklistReset: 'Effacer la liste',
     themeLabel: 'Thème',
     theme: { 'system': 'Système', 'light': 'Clair', 'dark': 'Sombre', 'terminal': 'Terminal', 'retro': 'Rétro' },
+  visualReplay: "Rejouer",
+  visualPause: "Pause",
+  visualPlay: "Lire",
+  visualStep: "Étape",
+  resetVisual: { 'title': "git reset déplace trois niveaux", 'head': "HEAD", 'index': "index", 'work': "répertoire de travail", 'hard': "--hard", 'mixed': "mixed (par défaut)", 'soft': "--soft", 'move': "déplace", 'reset': "réinitialise", 'keep': "conserve", 'stepHard': "HEAD, l'index et le répertoire de travail reviennent tous au commit cible", 'stepMixed': "HEAD et l'index reculent ; le répertoire de travail conserve vos modifications", 'stepSoft': "seul HEAD bouge ; index et répertoire de travail restent" },
+  remoteVisual: { 'title': "Comment fetch, pull et push déplacent les commits", 'local': "dépôt local", 'remote': "origin (distant)", 'push': "push", 'pull': "pull", 'fetch': "fetch", 'pushDesc': "envoie les commits locaux vers le distant", 'pullDesc': "télécharge les commits distants et les fusionne", 'fetchDesc': "télécharge les commits distants sans toucher à votre travail", 'tracking': "branche de suivi origin/main" },
+  mergeVisual: { 'title': "Trois issues possibles pour une fusion", 'ff': "fast-forward", 'merge': "commit de fusion", 'conflict': "conflit", 'ffDesc': "pas de divergence : le pointeur de branche avance simplement", 'mergeDesc': "un nouveau commit relie les deux branches en gardant la divergence", 'conflictDesc': "les deux côtés ont modifié les mêmes lignes — à résoudre manuellement", 'main': "main", 'feature': "feature" },
+  snapshotVisual: { 'title': "Chaque commit enregistre un instantané complet", 'snapshot': "instantané", 'diff': "diff", 'commit': "commit", 'snapDesc': "chaque commit stocke l'état complet de tous les fichiers", 'diffDesc': "un diff ne consigne que ce qui a changé", 'file': "fichier" },
+  headVisual: { 'title': "HEAD marque votre position", 'head': "HEAD", 'switch': "switch", 'switchDesc': "changer de branche déplace HEAD vers le pointeur de la nouvelle branche", 'branch': "branche" },
     cancel: 'Annuler',
   },
   es: {
@@ -218,6 +281,15 @@ export const LABELS: Record<string, Labels> = {
     checklistReset: 'Borrar lista',
     themeLabel: 'Tema',
     theme: { 'system': 'Sistema', 'light': 'Claro', 'dark': 'Oscuro', 'terminal': 'Terminal', 'retro': 'Retro' },
+  visualReplay: "Repetir",
+  visualPause: "Pausa",
+  visualPlay: "Reproducir",
+  visualStep: "Paso",
+  resetVisual: { 'title': "git reset mueve tres capas", 'head': "HEAD", 'index': "índice", 'work': "árbol de trabajo", 'hard': "--hard", 'mixed': "mixed (por defecto)", 'soft': "--soft", 'move': "mueve", 'reset': "reinicia", 'keep': "conserva", 'stepHard': "HEAD, índice y árbol de trabajo vuelven al commit objetivo", 'stepMixed': "HEAD e índice retroceden; el árbol de trabajo conserva tus cambios", 'stepSoft': "solo se mueve HEAD; índice y árbol de trabajo se quedan" },
+  remoteVisual: { 'title': "Cómo mueven commits fetch, pull y push", 'local': "repositorio local", 'remote': "origin (remoto)", 'push': "push", 'pull': "pull", 'fetch': "fetch", 'pushDesc': "sube los commits locales al remoto", 'pullDesc': "descarga los commits remotos y los fusiona", 'fetchDesc': "descarga los commits remotos sin tocar tu trabajo", 'tracking': "rama de seguimiento origin/main" },
+  mergeVisual: { 'title': "Tres desenlaces de una fusión", 'ff': "fast-forward", 'merge': "commit de fusión", 'conflict': "conflicto", 'ffDesc': "sin bifurcación: el puntero de la rama simplemente avanza", 'mergeDesc': "un commit nuevo une ambas ramas conservando la bifurcación", 'conflictDesc': "ambos lados cambiaron las mismas líneas — resuélvelo manualmente", 'main': "main", 'feature': "feature" },
+  snapshotVisual: { 'title': "Cada commit guarda una instantánea completa", 'snapshot': "instantánea", 'diff': "diff", 'commit': "commit", 'snapDesc': "cada commit almacena el estado completo de todos los archivos", 'diffDesc': "un diff solo registra lo que cambió", 'file': "archivo" },
+  headVisual: { 'title': "HEAD marca dónde estás", 'head': "HEAD", 'switch': "switch", 'switchDesc': "cambiar de rama mueve HEAD al puntero de la nueva rama", 'branch': "rama" },
     cancel: 'Cancelar',
   },
   pt: {
@@ -245,6 +317,15 @@ export const LABELS: Record<string, Labels> = {
     checklistReset: 'Limpar lista',
     themeLabel: 'Tema',
     theme: { 'system': 'Sistema', 'light': 'Claro', 'dark': 'Escuro', 'terminal': 'Terminal', 'retro': 'Retrô' },
+  visualReplay: "Repetir",
+  visualPause: "Pausar",
+  visualPlay: "Reproduzir",
+  visualStep: "Etapa",
+  resetVisual: { 'title': "git reset move três camadas", 'head': "HEAD", 'index': "índice", 'work': "árvore de trabalho", 'hard': "--hard", 'mixed': "mixed (padrão)", 'soft': "--soft", 'move': "move", 'reset': "reinicia", 'keep': "mantém", 'stepHard': "HEAD, índice e árvore de trabalho voltam ao commit alvo", 'stepMixed': "HEAD e índice retrocedem; a árvore de trabalho mantém suas mudanças", 'stepSoft': "apenas HEAD se move; índice e árvore de trabalho ficam" },
+  remoteVisual: { 'title': "Como fetch, pull e push movem commits", 'local': "repositório local", 'remote': "origin (remoto)", 'push': "push", 'pull': "pull", 'fetch': "fetch", 'pushDesc': "envia commits locais ao remoto", 'pullDesc': "baixa commits remotos e os mescla", 'fetchDesc': "baixa commits remotos sem tocar no seu trabalho", 'tracking': "branch de rastreamento origin/main" },
+  mergeVisual: { 'title': "Três desfechos de um merge", 'ff': "fast-forward", 'merge': "commit de merge", 'conflict': "conflito", 'ffDesc': "sem bifurcação: o ponteiro da branch apenas avança", 'mergeDesc': "um novo commit une as duas branches mantendo a bifurcação", 'conflictDesc': "os dois lados mudaram as mesmas linhas — resolva manualmente", 'main': "main", 'feature': "feature" },
+  snapshotVisual: { 'title': "Todo commit salva uma foto completa", 'snapshot': "foto", 'diff': "diff", 'commit': "commit", 'snapDesc': "cada commit armazena o estado completo de todos os arquivos", 'diffDesc': "um diff só registra o que mudou", 'file': "arquivo" },
+  headVisual: { 'title': "HEAD marca onde você está", 'head': "HEAD", 'switch': "switch", 'switchDesc': "trocar de branch move HEAD para o ponteiro da nova branch", 'branch': "branch" },
     cancel: 'Cancelar',
   },
   ru: {
@@ -272,6 +353,15 @@ export const LABELS: Record<string, Labels> = {
     checklistReset: 'Очистить список',
     themeLabel: 'Тема',
     theme: { 'system': 'Система', 'light': 'Светлая', 'dark': 'Тёмная', 'terminal': 'Терминал', 'retro': 'Ретро' },
+  visualReplay: "Повторить",
+  visualPause: "Пауза",
+  visualPlay: "Смотреть",
+  visualStep: "Шаг",
+  resetVisual: { 'title': "git reset двигает три слоя", 'head': "HEAD", 'index': "индекс", 'work': "рабочее дерево", 'hard': "--hard", 'mixed': "mixed (по умолчанию)", 'soft': "--soft", 'move': "двигает", 'reset': "сбрасывает", 'keep': "сохраняет", 'stepHard': "HEAD, индекс и рабочее дерево возвращаются к целевому коммиту", 'stepMixed': "HEAD и индекс откатываются; рабочее дерево сохраняет изменения", 'stepSoft': "двигается только HEAD; индекс и рабочее дерево остаются" },
+  remoteVisual: { 'title': "Как fetch, pull и push перемещают коммиты", 'local': "локальный репозиторий", 'remote': "origin (удалённый)", 'push': "push", 'pull': "pull", 'fetch': "fetch", 'pushDesc': "отправляет локальные коммиты на удалённый", 'pullDesc': "скачивает удалённые коммиты и сливает их", 'fetchDesc': "скачивает удалённые коммиты, не трогая вашу работу", 'tracking': "отслеживаемая ветка origin/main" },
+  mergeVisual: { 'title': "Три исхода слияния", 'ff': "fast-forward", 'merge': "merge-коммит", 'conflict': "конфликт", 'ffDesc': "нет расхождения: указатель ветки просто продвигается", 'mergeDesc': "новый коммит соединяет обе ветки, сохраняя расхождение", 'conflictDesc': "обе стороны изменили одни и те же строки — решается вручную", 'main': "main", 'feature': "feature" },
+  snapshotVisual: { 'title': "Каждый коммит сохраняет полный снимок", 'snapshot': "снимок", 'diff': "diff", 'commit': "коммит", 'snapDesc': "каждый коммит хранит полное состояние всех файлов", 'diffDesc': "diff записывает только изменения", 'file': "файл" },
+  headVisual: { 'title': "HEAD отмечает ваше местоположение", 'head': "HEAD", 'switch': "switch", 'switchDesc': "переключение ветки перемещает HEAD к указателю новой ветки", 'branch': "ветка" },
     cancel: 'Отмена',
   }
 }

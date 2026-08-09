@@ -97,6 +97,8 @@ Si le working tree contient des modifications non commitées au moment de bascul
 
 **HEAD** est un pointeur spécial qui marque « sur quelle branche, sur quel commit vous êtes en ce moment ». Le `On branch feature` en tête de `git status` est la réponse de HEAD. Changer de branche, c'est déplacer le pointeur HEAD.
 
+<HeadVisual />
+
 ## Exercices
 
 <Exercise />

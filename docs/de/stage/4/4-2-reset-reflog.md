@@ -86,6 +86,8 @@ git reset --soft <Commit>   # nur HEAD, Index und Arbeitsverzeichnis bleiben
 
 `--hard` ist der gebräuchlichste und zugleich gefährlichste Modus: Alle Commits dazwischen und uncommittete Änderungen verschwinden (das Arbeitsverzeichnis wird direkt überschrieben). Nach `--hard` sagt die Ausgabe `HEAD is now at <Kurz-Hash> <Nachricht>`, wo Sie jetzt stehen.
 
+<ResetVisual />
+
 ## git reflog: verlorene Commits finden
 
 ```bash

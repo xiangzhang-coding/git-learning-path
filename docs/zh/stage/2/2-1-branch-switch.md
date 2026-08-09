@@ -97,6 +97,9 @@ git switch -c <名字>   # 创建并切换（最常用）
 
 **HEAD** 是一个特殊指针，标记「你现在在哪个分支的哪个 commit 上」。`git status` 开头的 `On branch feature` 就是 HEAD 的答案。切换分支，就是移动 HEAD 这个指针。
 
+
+<HeadVisual />
+
 ## 练习
 
 <Exercise />

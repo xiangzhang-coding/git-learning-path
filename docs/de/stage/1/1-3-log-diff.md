@@ -101,6 +101,8 @@ blame versieht jede Zeile einer Datei mit einem Präfix: **kurzer Hash des Commi
 
 Jeder Commit speichert einen **vollständigen Snapshot** statt eines Diffs. git hasht den Inhalt mit SHA-1 — bei gleichem Inhalt ist der Hash gleich, daher kann der Hash selbst die Integrität prüfen und Speicher deduplizieren. Genau das macht „verteilt“ erst möglich: In jedem Klon ist die Historie vollständig rekonstruierbar.
 
+<SnapshotVisual />
+
 ## Übungen
 
 <Exercise />

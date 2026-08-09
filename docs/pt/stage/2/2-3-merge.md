@@ -79,6 +79,8 @@ o  C ← feature commita de novo
 
 O `git merge feature` só precisa **avançar o ponteiro de `main`** até C — isso é o fast-forward. A saída mostra `Fast-forward`, **não gera commit novo** e o histórico permanece uma linha reta.
 
+<MergeVisual />
+
 ## Merge commit
 
 Se os dois branches commitaram cada um (o histórico se bifurcou), não existe o caminho de avançar o ponteiro: o git precisa combinar o conteúdo dos dois lados em um commit novo:

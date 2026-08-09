@@ -63,6 +63,9 @@ git log origin/main --oneline   # what's on the remote
 git log main..origin/main       # commits the remote has that you don't
 ```
 
+
+<RemoteFlow />
+
 ## git pull = fetch + merge
 
 ```bash

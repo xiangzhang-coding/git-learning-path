@@ -63,6 +63,8 @@ git log origin/main --oneline   # что есть на remote
 git log main..origin/main       # коммиты, которые есть на remote, но нет локально
 ```
 
+<RemoteFlow />
+
 ## git pull = fetch + merge
 
 ```bash
