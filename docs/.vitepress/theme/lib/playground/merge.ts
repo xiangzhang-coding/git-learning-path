@@ -1,6 +1,6 @@
 import * as git from 'isomorphic-git'
 import type { MemoryFS } from './fs'
-import { AUTHOR, listWorkdirFiles } from './scenarios'
+import { AUTHOR, appendReflog, listWorkdirFiles } from './scenarios'
 
 export interface ThreeWayResult {
   text: string[]
@@ -238,11 +238,11 @@ export async function applyMergedFiles(
   await syncIndex(fs, dir)
 }
 
-function fullIdentity(name: string, email: string): { name: string; email: string; timestamp: number; timezoneOffset: number } {
+export function fullIdentity(name: string, email: string): { name: string; email: string; timestamp: number; timezoneOffset: number } {
   return { name, email, timestamp: Math.floor(Date.now() / 1000), timezoneOffset: -new Date().getTimezoneOffset() }
 }
 
-export async function updateHeadRef(fs: MemoryFS, dir: string, oid: string): Promise<void> {
+export async function updateHeadRef(fs: MemoryFS, dir: string, oid: string, reflogMsg?: string): Promise<void> {
   const head = await fs.readFile(`${dir}/.git/HEAD`)
   const text = head.toString()
   const match = text.match(/^ref: (refs\/heads\/.+)$/m)
@@ -251,6 +251,7 @@ export async function updateHeadRef(fs: MemoryFS, dir: string, oid: string): Pro
   } else {
     await fs.writeFile(`${dir}/.git/HEAD`, `${oid}\n`)
   }
+  if (reflogMsg) await appendReflog(fs, dir, reflogMsg)
 }
 
 export async function createMergeCommit(
