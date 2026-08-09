@@ -102,6 +102,9 @@
   border: 1px solid var(--vp-c-border);
   border-radius: 8px;
   box-shadow: var(--vp-shadow-3);
+  background: color-mix(in srgb, var(--vp-c-bg) 78%, transparent);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
 }
 
 html[data-theme='terminal'] {
