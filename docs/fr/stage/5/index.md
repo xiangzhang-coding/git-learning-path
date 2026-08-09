@@ -1,6 +1,6 @@
-# Étape 5 — Écosystème GitHub
+# Chapitre 5 — Écosystème GitHub
 
-Le fil conducteur de cette étape : **la boucle de collaboration autour de GitHub**. fork crée votre copie, upstream relie le dépôt de l'auteur ; le PR est la porte d'entrée des commits vers la branche principale, l'issue porte la discussion, la release publie les versions, Actions et Pages automatisent les tests et le déploiement. Cette étape s'entraîne sur le vrai GitHub — chaque concept s'accompagne d'une tâche pratique.
+Le fil conducteur de ce chapitre : **la boucle de collaboration autour de GitHub**. fork crée votre copie, upstream relie le dépôt de l'auteur ; le PR est la porte d'entrée des commits vers la branche principale, l'issue porte la discussion, la release publie les versions, Actions et Pages automatisent les tests et le déploiement. Ce chapitre s'entraîne sur le vrai GitHub — chaque concept s'accompagne d'une tâche pratique.
 
 ## Cours
 
@@ -10,7 +10,7 @@ Le fil conducteur de cette étape : **la boucle de collaboration autour de GitHu
 - 5-4 [Releases et versions](/fr/stage/5/5-4-releases) : version sémantique, push de tag, publication d'une Release
 - 5-5 [GitHub Actions et Pages](/fr/stage/5/5-5-actions-pages) : automatisation des workflow, déploiement avec Pages
 
-## Fonctionnalités clés de l'étape
+## Fonctionnalités clés du chapitre
 
 | Fonctionnalité | Rôle |
 | --- | --- |

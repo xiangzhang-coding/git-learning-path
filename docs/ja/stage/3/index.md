@@ -1,6 +1,6 @@
-# 段階 3 — リモートでの共同作業
+# 章 3 — リモートでの共同作業
 
-この段階の原理の主線：**2 つのリポジトリとトラッキングブランチ**。remote はもう 1 つのリポジトリのアドレスです。clone はそれを複製し、fetch は「リモートのミラー」（origin/main）を更新し、push はローカルのコミットを送り、pull = fetch + merge です。
+この章の原理の主線：**2 つのリポジトリとトラッキングブランチ**。remote はもう 1 つのリポジトリのアドレスです。clone はそれを複製し、fetch は「リモートのミラー」（origin/main）を更新し、push はローカルのコミットを送り、pull = fetch + merge です。
 
 ## コース
 
@@ -9,7 +9,7 @@
 - 3-3 [git push でコミットをプッシュ](/ja/stage/3/3-3-push)：ローカルのコミットを送信、non-fast-forward は拒否
 - 3-4 [git fetch と git pull](/ja/stage/3/3-4-fetch-pull)：fetch は見るだけで何も変えず、pull = fetch + merge
 
-## この段階の新コマンド
+## この章の新コマンド
 
 | コマンド | 役割 |
 | --- | --- |

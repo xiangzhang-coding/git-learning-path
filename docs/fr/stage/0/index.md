@@ -1,6 +1,6 @@
-# Étape 0 — Concepts et environnement
+# Chapitre 0 — Concepts et environnement
 
-Le fil de principe de cette étape : **pourquoi le contrôle de version existe**. D'abord les concepts, ensuite les mains.
+Le fil de principe de ce chapitre : **pourquoi le contrôle de version existe**. D'abord les concepts, ensuite les mains.
 
 <StageProgress
   :lessons="[

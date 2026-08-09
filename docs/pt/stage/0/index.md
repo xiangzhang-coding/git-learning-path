@@ -1,6 +1,6 @@
-# Etapa 0 — Conceitos e ambiente
+# Capítulo 0 — Conceitos e ambiente
 
-O fio condutor dos princípios desta etapa: **por que o controle de versão existe**. Primeiro os conceitos, depois as mãos.
+O fio condutor dos princípios deste capítulo: **por que o controle de versão existe**. Primeiro os conceitos, depois as mãos.
 
 <StageProgress
   :lessons="[

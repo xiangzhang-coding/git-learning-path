@@ -1,6 +1,6 @@
-# Stufe 1 — Lokale Grundlagen
+# Kapitel 1 — Lokale Grundlagen
 
-Der Prinzipfaden dieser Stufe: **Snapshot und SHA**. Alle Befehle dieser Stufe verschieben im Kern Inhalte zwischen den drei Bereichen.
+Der Prinzipfaden dieses Kapitels: **Snapshot und SHA**. Alle Befehle dieses Kapitels verschieben im Kern Inhalte zwischen den drei Bereichen.
 
 <StageProgress
   :lessons="[

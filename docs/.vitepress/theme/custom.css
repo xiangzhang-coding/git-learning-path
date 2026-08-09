@@ -832,3 +832,44 @@ html[data-theme='retro'] .vp-doc h3 {
     width: 8rem;
   }
 }
+
+.gh-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--vp-c-text-2);
+  border-radius: 8px;
+  transition: color 0.25s, background-color 0.25s;
+}
+
+.gh-link:hover {
+  color: var(--vp-c-brand-1);
+  background-color: var(--vp-c-default-soft);
+}
+
+.back-to-top {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  color: var(--vp-c-brand-1);
+  background: var(--vp-c-bg-elv);
+  border: 1px solid var(--vp-c-border);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  transition: color 0.25s, border-color 0.25s, transform 0.25s;
+}
+
+.back-to-top:hover {
+  border-color: var(--vp-c-brand-1);
+  transform: translateY(-2px);
+}
+

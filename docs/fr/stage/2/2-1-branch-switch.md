@@ -89,7 +89,7 @@ git switch -c <nom>  # crée et bascule (le plus courant)
 - `git switch feature` : HEAD se déplace sur `feature`, les fichiers du working tree sont remplacés par l'instantané pointé par cette branche
 - `git switch -c feature` : crée une nouvelle branche et bascule immédiatement dessus, équivaut à `git branch feature` + `git switch feature`
 
-**Ancienne syntaxe** : `git checkout <nom>` et `git checkout -b <nom>` sont les anciennes commandes équivalentes ; `git switch` est la commande récente recommandée, et la zone de pratique supporte les deux. `git checkout` sert aussi à « restaurer des fichiers », rôle repris par `git restore` (étape 1).
+**Ancienne syntaxe** : `git checkout <nom>` et `git checkout -b <nom>` sont les anciennes commandes équivalentes ; `git switch` est la commande récente recommandée, et la zone de pratique supporte les deux. `git checkout` sert aussi à « restaurer des fichiers », rôle repris par `git restore` (chapitre 1).
 
 Si le working tree contient des modifications non commitées au moment de basculer, git refuse et vous demande de committer ou de mettre de côté (stash) — car en changeant d'instantané, vos modifications n'auraient nulle part où aller.
 

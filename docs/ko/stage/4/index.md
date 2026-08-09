@@ -1,6 +1,6 @@
-# 단계 4 — 수정과 심화
+# 챕터 4 — 수정과 심화
 
-이 단계의 원리 축: **refs와 reflog**. reset은 브랜치 포인터를 움직이고, revert/cherry-pick은 새 커밋을 만들고, rebase는 역사를 다시 쓰며 — reflog는 HEAD의 모든 이동을 기록해서 어떤「후회」든 되찾을 수 있게 합니다.
+이 챕터의 원리 축: **refs와 reflog**. reset은 브랜치 포인터를 움직이고, revert/cherry-pick은 새 커밋을 만들고, rebase는 역사를 다시 쓰며 — reflog는 HEAD의 모든 이동을 기록해서 어떤「후회」든 되찾을 수 있게 합니다.
 
 ## 강의
 
@@ -9,7 +9,7 @@
 - 4-3 [git revert와 git cherry-pick](/ko/stage/4/4-3-revert-cherry-pick): 역방향 취소와 커밋 복사
 - 4-4 [git rebase로 커밋 재생](/ko/stage/4/4-4-rebase): 역사 선형화, 충돌과 중단
 
-## 이 단계의 새 명령
+## 이 챕터의 새 명령
 
 | 명령 | 역할 |
 | --- | --- |

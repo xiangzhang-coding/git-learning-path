@@ -52,7 +52,7 @@ exercises:
 
 ## tag を打って push する
 
-公開前にローカルでタグを打ちます（段階 4 で学習済み）：
+公開前にローカルでタグを打ちます（章 4 で学習済み）：
 
 ```bash
 git tag -a v1.0.0 -m "v1.0.0: first release"

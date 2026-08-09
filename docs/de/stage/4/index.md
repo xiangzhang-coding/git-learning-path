@@ -1,6 +1,6 @@
-# Stufe 4 — Reparieren und Fortgeschrittenes
+# Kapitel 4 — Reparieren und Fortgeschrittenes
 
-Der Prinzipfaden dieser Stufe: **refs und reflog**. reset verschiebt Branch-Zeiger, revert/cherry-pick erzeugen neue Commits, rebase schreibt Historie um — und das reflog zeichnet jede Bewegung von HEAD auf, sodass sich jedes „Ups" zurückholen lässt.
+Der Prinzipfaden dieses Kapitels: **refs und reflog**. reset verschiebt Branch-Zeiger, revert/cherry-pick erzeugen neue Commits, rebase schreibt Historie um — und das reflog zeichnet jede Bewegung von HEAD auf, sodass sich jedes „Ups" zurückholen lässt.
 
 ## Lektionen
 
@@ -9,7 +9,7 @@ Der Prinzipfaden dieser Stufe: **refs und reflog**. reset verschiebt Branch-Zeig
 - 4-3 [git revert und git cherry-pick](/de/stage/4/4-3-revert-cherry-pick): Rückgängig machen und Commits kopieren
 - 4-4 [git rebase: Commits neu aufspielen](/de/stage/4/4-4-rebase): Historie linearisieren, Konflikte und Abbruch
 
-## Neue Befehle dieser Stufe
+## Neue Befehle dieses Kapitels
 
 | Befehl | Wirkung |
 | --- | --- |

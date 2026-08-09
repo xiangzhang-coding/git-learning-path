@@ -29,7 +29,7 @@ exercises:
         name: feature
       - type: branchIs
         name: feature
-    explanation: git switch -c feature는 "feature 브랜치 생성 + 전환" 두 단계를 합친 것입니다. HEAD가 이제 feature를 가리킵니다.
+    explanation: git switch -c feature는 "feature 브랜치 생성 + 전환" 두 동작을 합친 것입니다. HEAD가 이제 feature를 가리킵니다.
     anchor: "#git-switch로-브랜치-전환"
   - id: 2-1-e4
     question: 아래 연습장에서 main 브랜치로 전환하세요.
@@ -89,7 +89,7 @@ git switch -c <이름>   # 생성과 동시에 전환(가장 자주 사용)
 - `git switch feature`: HEAD가 `feature`로 이동하고, 작업 트리 파일은 해당 브랜치 포인터가 가리키는 스냅샷으로 바뀝니다
 - `git switch -c feature`: 새 브랜치를 만들고 즉시 전환합니다. `git branch feature` + `git switch feature`와 같습니다
 
-**예전 문법**: `git checkout <이름>`와 `git checkout -b <이름>`는 같은 동작을 하는 옛 명령어입니다. `git switch`가 새로 권장되는 명령어이며, 연습장은 둘 다 지원합니다. `git checkout`에는 '파일 복원' 용도도 있었지만 이제 `git restore`(단계 1에서 학습)가 담당합니다.
+**예전 문법**: `git checkout <이름>`와 `git checkout -b <이름>`는 같은 동작을 하는 옛 명령어입니다. `git switch`가 새로 권장되는 명령어이며, 연습장은 둘 다 지원합니다. `git checkout`에는 '파일 복원' 용도도 있었지만 이제 `git restore`(챕터 1에서 학습)가 담당합니다.
 
 전환할 때 작업 트리에 커밋되지 않은 변경이 있으면 git은 거부하고 커밋이나 stash를 먼저 하라고 안내합니다. 스냅샷이 바뀌면 변경이 놓일 자리가 없기 때문입니다.
 

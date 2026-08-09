@@ -1,6 +1,6 @@
-# Etapa 5 — Ecosistema GitHub
+# Capítulo 5 — Ecosistema GitHub
 
-El hilo de principios de esta etapa: **el circuito de colaboración en torno a GitHub**. fork crea tu copia, upstream conecta con el autor original; el PR es la puerta por la que los commits entran en main, la issue acoge la discusión, la release publica versiones, y Actions y Pages automatizan las pruebas y el despliegue. Esta etapa se practica en GitHub real — cada concepto viene con tareas para hacer a mano.
+El hilo de principios de este capítulo: **el circuito de colaboración en torno a GitHub**. fork crea tu copia, upstream conecta con el autor original; el PR es la puerta por la que los commits entran en main, la issue acoge la discusión, la release publica versiones, y Actions y Pages automatizan las pruebas y el despliegue. Este capítulo se practica en GitHub real — cada concepto viene con tareas para hacer a mano.
 
 ## Lecciones
 
@@ -10,7 +10,7 @@ El hilo de principios de esta etapa: **el circuito de colaboración en torno a G
 - 5-4 [Releases y versionado](/es/stage/5/5-4-releases): versionado semántico, subir tags, publicar Releases
 - 5-5 [GitHub Actions y Pages](/es/stage/5/5-5-actions-pages): automatizar con workflows, desplegar con Pages
 
-## Funciones clave de esta etapa
+## Funciones clave de este capítulo
 
 | Función | Qué hace |
 | --- | --- |

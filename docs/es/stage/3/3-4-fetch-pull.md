@@ -73,7 +73,7 @@ pull es la combinación de dos pasos: primero hace fetch (actualiza el espejo) y
 
 - **El local no tiene commits nuevos**: fusión fast-forward, el working tree se actualiza directamente y la historia se mantiene en línea recta
 - **El local también tiene commits nuevos**: se produce un merge commit y las historias de las dos ramas se fusionan
-- **Ambos lados tocaron el mismo sitio**: conflicto — el proceso de resolución es idéntico al de la etapa 2 (editar → add → commit)
+- **Ambos lados tocaron el mismo sitio**: conflicto — el proceso de resolución es idéntico al del capítulo 2 (editar → add → commit)
 
 ## Cuándo usar cada uno
 

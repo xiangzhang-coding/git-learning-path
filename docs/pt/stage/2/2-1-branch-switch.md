@@ -89,7 +89,7 @@ git switch -c <nome>  # cria e troca (o mais usado)
 - `git switch feature`: o HEAD vai para `feature` e os arquivos da área de trabalho são substituídos pelo snapshot apontado por esse branch
 - `git switch -c feature`: cria um novo branch e troca imediatamente, equivalente a `git branch feature` + `git switch feature`
 
-**Sintaxe antiga**: `git checkout <nome>` e `git checkout -b <nome>` são os comandos antigos equivalentes; `git switch` é o comando novo recomendado, e a zona de prática suporta ambos. `git checkout` também tinha o uso de «restaurar arquivos», hoje coberto por `git restore` (etapa 1).
+**Sintaxe antiga**: `git checkout <nome>` e `git checkout -b <nome>` são os comandos antigos equivalentes; `git switch` é o comando novo recomendado, e a zona de prática suporta ambos. `git checkout` também tinha o uso de «restaurar arquivos», hoje coberto por `git restore` (capítulo 1).
 
 Ao trocar, se houver alterações não commitadas na área de trabalho, o git recusa e pede para você commitar ou guardar com stash — porque, ao trocar de snapshot, as alterações não teriam onde ficar.
 

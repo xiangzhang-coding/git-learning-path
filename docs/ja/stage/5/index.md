@@ -1,6 +1,6 @@
-# 段階 5 — GitHub エコシステム
+# 章 5 — GitHub エコシステム
 
-この段階の原理の主線：**GitHub をめぐる協働のループ**。fork は自分のコピーを作り、upstream は原作者とつなぎます。PR は変更が本流に入る門、issue は議論を担い、release はバージョンを公開し、Actions と Pages はテストとデプロイを自動化します。この段階では実際の GitHub で練習します——どの概念にも実践タスクが付いています。
+この章の原理の主線：**GitHub をめぐる協働のループ**。fork は自分のコピーを作り、upstream は原作者とつなぎます。PR は変更が本流に入る門、issue は議論を担い、release はバージョンを公開し、Actions と Pages はテストとデプロイを自動化します。この章では実際の GitHub で練習します——どの概念にも実践タスクが付いています。
 
 ## コース
 
@@ -10,7 +10,7 @@
 - 5-4 [Releases とバージョン公開](/ja/stage/5/5-4-releases)：セマンティックバージョニング、tag の push、Release の公開
 - 5-5 [GitHub Actions と Pages](/ja/stage/5/5-5-actions-pages)：workflow の自動化、Pages のデプロイ
 
-## この段階のコア機能
+## この章のコア機能
 
 | 機能 | 役割 |
 | --- | --- |

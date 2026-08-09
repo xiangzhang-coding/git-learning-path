@@ -1,6 +1,6 @@
-# 段階 4 — 修正と応用
+# 章 4 — 修正と応用
 
-この段階の原理の主線：**refs と reflog**。reset はブランチのポインタを移動し、revert/cherry-pick は新しいコミットを生み、rebase は履歴を書き換えます——そして reflog は HEAD の移動をすべて記録するので、どんな「後悔」も取り戻せます。
+この章の原理の主線：**refs と reflog**。reset はブランチのポインタを移動し、revert/cherry-pick は新しいコミットを生み、rebase は履歴を書き換えます——そして reflog は HEAD の移動をすべて記録するので、どんな「後悔」も取り戻せます。
 
 ## コース
 
@@ -9,7 +9,7 @@
 - 4-3 [git revert と git cherry-pick](/ja/stage/4/4-3-revert-cherry-pick)：逆方向の取り消しとコミットのコピー
 - 4-4 [git rebase でコミットを重ね直す](/ja/stage/4/4-4-rebase)：履歴を一直線に、コンフリクトと中止
 
-## この段階の新コマンド
+## この章の新コマンド
 
 | コマンド | 役割 |
 | --- | --- |

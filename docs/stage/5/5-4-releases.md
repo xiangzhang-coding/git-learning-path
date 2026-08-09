@@ -52,7 +52,7 @@ The rules are simple: a major bump explains "why your program suddenly broke", a
 
 ## creating and pushing tags
 
-Before publishing, create the tag locally (learned in Stage 4):
+Before publishing, create the tag locally (learned in Chapter 4):
 
 ```bash
 git tag -a v1.0.0 -m "v1.0.0: first release"

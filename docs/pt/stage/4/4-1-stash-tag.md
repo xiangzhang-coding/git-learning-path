@@ -92,7 +92,7 @@ git tag -a v1.0 -m "descrição" # tag anotada: com texto de descrição
 git tag                   # lista todas as tags
 ```
 
-Ao publicar uma versão, você precisa de um nome que "aponte para sempre para este commit" — a **tag** é uma marca fixada no commit. Diferente do branch, a tag não se move com os commits novos. Depois você pode voltar àquela versão com `git switch <tag>` (nesse momento o HEAD fica em estado detached, assunto das próximas lições da etapa 4).
+Ao publicar uma versão, você precisa de um nome que "aponte para sempre para este commit" — a **tag** é uma marca fixada no commit. Diferente do branch, a tag não se move com os commits novos. Depois você pode voltar àquela versão com `git switch <tag>` (nesse momento o HEAD fica em estado detached, assunto das próximas lições do capítulo 4).
 **Alternar para uma tag e o detached HEAD**: `git switch <tag>` faz o HEAD apontar para o commit da tag — mas nesse momento o HEAD não está pendurado em nenhum branch; isso é o detached HEAD (cabeça desanexada). Ao commitar nesse estado, o novo commit não pertence a nenhum branch e, depois de trocar de branch, você pode não conseguir recuperá-lo. Então, só para olhar não há problema; se quiser commitar, crie antes um branch novo com `git switch -c <nome do novo branch>`.
 
 ## Exercícios

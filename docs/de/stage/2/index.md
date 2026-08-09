@@ -1,6 +1,6 @@
-# Stufe 2 — Branches und Merges
+# Kapitel 2 — Branches und Merges
 
-Der Prinzipfaden dieser Stufe: **Commit-Graph und HEAD**. Ein Branch ist nur ein Zeiger auf einen Commit, HEAD markiert Ihre aktuelle Position; alle Branch-Operationen (switch, merge, conflict) bewegen Zeiger auf dem Commit-Graph oder führen Abzweigungen wieder zusammen.
+Der Prinzipfaden dieses Kapitels: **Commit-Graph und HEAD**. Ein Branch ist nur ein Zeiger auf einen Commit, HEAD markiert Ihre aktuelle Position; alle Branch-Operationen (switch, merge, conflict) bewegen Zeiger auf dem Commit-Graph oder führen Abzweigungen wieder zusammen.
 
 ## Lektionen
 
@@ -9,7 +9,7 @@ Der Prinzipfaden dieser Stufe: **Commit-Graph und HEAD**. Ein Branch ist nur ein
 - 2-3 [git merge führt Branches zusammen](/de/stage/2/2-3-merge): Fast-forward-Merge und Merge-Commit
 - 2-4 [Merge-Konflikte lösen](/de/stage/2/2-4-merge-conflict): Konfliktmarker und der Ablauf der Lösung
 
-## Neue Befehle dieser Stufe
+## Neue Befehle dieses Kapitels
 
 | Befehl | Wirkung |
 | --- | --- |

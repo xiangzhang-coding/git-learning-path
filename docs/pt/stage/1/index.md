@@ -1,6 +1,6 @@
-# Etapa 1 — Fundamentos locais
+# Capítulo 1 — Fundamentos locais
 
-A linha de princípios desta etapa: **snapshot e SHA**. Todos os comandos desta etapa, no fundo, movem conteúdo entre as três áreas.
+A linha de princípios deste capítulo: **snapshot e SHA**. Todos os comandos deste capítulo, no fundo, movem conteúdo entre as três áreas.
 
 <StageProgress
   :lessons="[

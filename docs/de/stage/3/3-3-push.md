@@ -60,7 +60,7 @@ To /origin
 
 ## Fast-forward-Update und Tracking-Branch
 
-push bringt den Remote-Branch im Kern **per Fast-forward** auf den Stand des lokalen Branches (der Begriff Fast-forward stammt aus Stufe 2, vom merge). Nach dem push rückt auch der lokale Tracking-Branch `origin/main` vor — er ist die Spiegelung „wo das Remote gerade steht" und stimmt jetzt wieder mit dem Remote überein.
+push bringt den Remote-Branch im Kern **per Fast-forward** auf den Stand des lokalen Branches (der Begriff Fast-forward stammt aus Kapitel 2, vom merge). Nach dem push rückt auch der lokale Tracking-Branch `origin/main` vor — er ist die Spiegelung „wo das Remote gerade steht" und stimmt jetzt wieder mit dem Remote überein.
 
 **Upstream**: Nach dem erfolgreichen push entsteht eine Upstream-Beziehung zwischen lokalem und Remote-Branch — der Remote-Branch wird zum Upstream des lokalen Branches. Von da an wissen `git push` / `git pull` auch ohne Argumente, mit welchem Remote-Branch synchronisiert wird.
 

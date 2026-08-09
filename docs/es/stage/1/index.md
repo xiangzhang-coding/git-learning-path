@@ -1,6 +1,6 @@
-# Etapa 1 — Fundamentos locales
+# Capítulo 1 — Fundamentos locales
 
-El hilo de principios de esta etapa: **instantáneas y SHA**. Todo lo que hacen los comandos de esta etapa es, en el fondo, mover contenido entre las tres áreas.
+El hilo de principios de este capítulo: **instantáneas y SHA**. Todo lo que hacen los comandos de este capítulo es, en el fondo, mover contenido entre las tres áreas.
 
 <StageProgress
   :lessons="[

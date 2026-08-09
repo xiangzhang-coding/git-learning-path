@@ -1,6 +1,6 @@
-# 阶段 3 — 远程协作
+# 章节 3 — 远程协作
 
-本阶段的原理主线：**两份仓库与跟踪分支**。remote 是另一份仓库的地址；clone 复制它，fetch 更新「远程的镜像」（origin/main），push 把本地提交送过去，pull = fetch + merge。
+本章节的原理主线：**两份仓库与跟踪分支**。remote 是另一份仓库的地址；clone 复制它，fetch 更新「远程的镜像」（origin/main），push 把本地提交送过去，pull = fetch + merge。
 
 ## 课程
 
@@ -9,7 +9,7 @@
 - 3-3 [git push 推送提交](/zh/stage/3/3-3-push)：发送本地提交，非快进拒绝
 - 3-4 [git fetch 与 git pull](/zh/stage/3/3-4-fetch-pull)：fetch 只看不动，pull = fetch + merge
 
-## 本阶段新命令
+## 本章节新命令
 
 | 命令 | 作用 |
 | --- | --- |

@@ -69,11 +69,11 @@ git log main..origin/main       # les commits que le remote a et que le local n'
 git pull             # équivaut à git fetch + git merge origin/main
 ```
 
-pull est la combinaison des deux étapes : d'abord fetch (mettre à jour l'image), puis fusionner `origin/main` dans la branche courante.
+pull est la combinaison des deux opérations : d'abord fetch (mettre à jour l'image), puis fusionner `origin/main` dans la branche courante.
 
 - **Le local n'a pas de nouveau commit** : fusion en fast-forward, le working tree est mis à jour directement, l'historique reste une ligne droite
 - **Le local a aussi de nouveaux commits** : un merge commit est créé, l'historique des deux branches est réuni
-- **Les deux côtés ont modifié le même endroit** : conflit — le déroulement de résolution est exactement celui de l'étape 2 (éditer → add → commit)
+- **Les deux côtés ont modifié le même endroit** : conflit — le déroulement de résolution est exactement celui du chapitre 2 (éditer → add → commit)
 
 ## Quand utiliser quoi
 

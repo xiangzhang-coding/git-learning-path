@@ -1,6 +1,6 @@
-# Stufe 3 — Remote-Zusammenarbeit
+# Kapitel 3 — Remote-Zusammenarbeit
 
-Der Prinzipfaden dieser Stufe: **zwei Repositorys und Tracking-Branches**. Ein remote ist die Adresse eines anderen Repositorys; clone kopiert es, fetch aktualisiert die „Spiegelung des Remotes" (origin/main), push sendet die lokalen Commits dorthin, pull = fetch + merge.
+Der Prinzipfaden dieses Kapitels: **zwei Repositorys und Tracking-Branches**. Ein remote ist die Adresse eines anderen Repositorys; clone kopiert es, fetch aktualisiert die „Spiegelung des Remotes" (origin/main), push sendet die lokalen Commits dorthin, pull = fetch + merge.
 
 ## Lektionen
 
@@ -9,7 +9,7 @@ Der Prinzipfaden dieser Stufe: **zwei Repositorys und Tracking-Branches**. Ein r
 - 3-3 [git push überträgt Commits](/de/stage/3/3-3-push): Lokale Commits senden, Non-fast-forward wird abgelehnt
 - 3-4 [git fetch und git pull](/de/stage/3/3-4-fetch-pull): fetch sieht nur nach, pull = fetch + merge
 
-## Neue Befehle dieser Stufe
+## Neue Befehle dieses Kapitels
 
 | Befehl | Wirkung |
 | --- | --- |

@@ -1,6 +1,6 @@
-# Etapa 2 — Branches e merge
+# Capítulo 2 — Branches e merge
 
-A linha de princípios desta etapa: **grafo de commits e HEAD**. O branch é apenas um ponteiro para um commit, e o HEAD marca sua posição atual; toda operação com branches (switch, merge, conflito) move ponteiros pelo grafo de commits — ou volta a unir os caminhos bifurcados.
+A linha de princípios deste capítulo: **grafo de commits e HEAD**. O branch é apenas um ponteiro para um commit, e o HEAD marca sua posição atual; toda operação com branches (switch, merge, conflito) move ponteiros pelo grafo de commits — ou volta a unir os caminhos bifurcados.
 
 ## Lições
 
@@ -9,7 +9,7 @@ A linha de princípios desta etapa: **grafo de commits e HEAD**. O branch é ape
 - 2-3 [git merge: mesclando branches](/pt/stage/2/2-3-merge): fast-forward e merge commit
 - 2-4 [Resolvendo conflitos de merge](/pt/stage/2/2-4-merge-conflict): marcadores de conflito e o fluxo de resolução
 
-## Novos comandos desta etapa
+## Novos comandos deste capítulo
 
 | Comando | Efeito |
 | --- | --- |

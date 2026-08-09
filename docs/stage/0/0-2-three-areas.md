@@ -26,7 +26,7 @@ exercises:
       - Staging area → repository
       - It discards the changes
     correct: 1
-    explanation: commit packages the staged changes into one commit stored in the repository (the .git directory), creating a snapshot in history.
+    explanation: commit packages the chapterd changes into one commit stored in the repository (the .git directory), creating a snapshot in history.
     anchor: "#the-three-areas"
   - id: 0-2-e4
     question: What is the biggest benefit of the staging area?

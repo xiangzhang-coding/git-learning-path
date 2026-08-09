@@ -92,7 +92,7 @@ git tag -a v1.0 -m "descripción" # etiqueta anotada: con mensaje
 git tag                   # lista todas las etiquetas
 ```
 
-Cuando lanzas una versión necesitas un nombre que «apunte siempre a este commit» — **tag** es la marca clavada en el commit. Al contrario que branch, tag no se mueve con los commits nuevos. Después puedes volver a esa versión cuando quieras con `git switch <tag>` (en ese momento HEAD queda en estado detached — lo verás más adelante en esta etapa).
+Cuando lanzas una versión necesitas un nombre que «apunte siempre a este commit» — **tag** es la marca clavada en el commit. Al contrario que branch, tag no se mueve con los commits nuevos. Después puedes volver a esa versión cuando quieras con `git switch <tag>` (en ese momento HEAD queda en estado detached — lo verás más adelante en este capítulo).
 **Cambiar a una etiqueta y el detached HEAD**: `git switch <tag>` lleva HEAD al commit de la etiqueta, pero en ese momento HEAD no cuelga de ninguna rama: eso es el detached HEAD (cabeza separada). Si commiteas en este estado, el commit nuevo no pertenece a ninguna rama y, una vez que cambies, puede que no lo encuentres. Así que con solo mirar no hay problema; si quieres commitear, crea primero una rama nueva con `git switch -c <nombre de la rama nueva>`.
 
 ## Ejercicios

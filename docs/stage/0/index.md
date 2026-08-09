@@ -1,6 +1,6 @@
-# Stage 0 — Concepts & Environment
+# Chapter 0 — Concepts & Environment
 
-The principle thread of this stage: **why version control exists**. Build the concepts first, then start typing.
+The principle thread of this chapter: **why version control exists**. Build the concepts first, then start typing.
 
 <StageProgress
   :lessons="[

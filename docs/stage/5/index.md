@@ -1,6 +1,6 @@
-# Stage 5 — GitHub Ecosystem
+# Chapter 5 — GitHub Ecosystem
 
-The principle thread of this stage: **the collaboration loop around GitHub**. A fork gives you your own copy, upstream connects you to the original author; a PR is the door through which commits enter the mainline, issues carry discussion, releases publish versions, and Actions with Pages automate testing and deployment. This stage is practiced on real GitHub — every concept comes with hands-on tasks.
+The principle thread of this chapter: **the collaboration loop around GitHub**. A fork gives you your own copy, upstream connects you to the original author; a PR is the door through which commits enter the mainline, issues carry discussion, releases publish versions, and Actions with Pages automate testing and deployment. This chapter is practiced on real GitHub — every concept comes with hands-on tasks.
 
 ## Lessons
 
@@ -10,7 +10,7 @@ The principle thread of this stage: **the collaboration loop around GitHub**. A 
 - 5-4 [Releases and versioning](/stage/5/5-4-releases): semantic versioning, pushing tags, publishing Releases
 - 5-5 [GitHub Actions and Pages](/stage/5/5-5-actions-pages): workflow automation, Pages deployment
 
-## Core features of this stage
+## Core features of this chapter
 
 | Feature | Purpose |
 | --- | --- |

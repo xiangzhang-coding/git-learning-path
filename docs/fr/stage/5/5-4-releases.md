@@ -52,7 +52,7 @@ La règle est simple : une majeure qui monte explique « pourquoi votre programm
 
 ## Créer un tag et le pousser
 
-Avant de publier, créez le tag en local (vu à l'étape 4) :
+Avant de publier, créez le tag en local (vu au chapitre 4) :
 
 ```bash
 git tag -a v1.0.0 -m "v1.0.0: first release"

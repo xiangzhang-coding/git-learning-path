@@ -6,79 +6,85 @@ import { LANGS, LOCALE_KEYS, stageLessons, type LocaleKey } from './theme/lib/st
 
 const stageTitles: Record<number, Record<LocaleKey, string>> = {
   0: {
-    root: 'Stage 0 — Concepts & Environment',
-    zh: '阶段 0 — 概念与环境',
-    ja: '段階 0 — 概念と環境',
-    ko: '단계 0 — 개념과 환경',
-    de: 'Stufe 0 — Konzepte & Umgebung',
-    fr: 'Étape 0 — Concepts et environnement',
-    es: 'Etapa 0 — Conceptos y entorno',
-    pt: 'Etapa 0 — Conceitos e ambiente',
-    ru: 'Этап 0 — Понятия и окружение'
+    root: 'Chapter 0 — Concepts & Environment',
+    zh: '章节 0 — 概念与环境',
+    ja: '章 0 — 概念と環境',
+    ko: '챕터 0 — 개념과 환경',
+    de: 'Kapitel 0 — Konzepte & Umgebung',
+    fr: 'Chapitre 0 — Concepts et environnement',
+    es: 'Capítulo 0 — Conceptos y entorno',
+    pt: 'Capítulo 0 — Conceitos e ambiente',
+    ru: 'Глава 0 — Понятия и окружение'
   },
   1: {
-    root: 'Stage 1 — Local Basics',
-    zh: '阶段 1 — 本地基础',
-    ja: '段階 1 — ローカル基礎',
-    ko: '단계 1 — 로컬 기초',
-    de: 'Stufe 1 — Lokale Grundlagen',
-    fr: 'Étape 1 — Les bases locales',
-    es: 'Etapa 1 — Conceptos básicos locales',
-    pt: 'Etapa 1 — Noções básicas locais',
-    ru: 'Этап 1 — Локальные основы'
+    root: 'Chapter 1 — Local Basics',
+    zh: '章节 1 — 本地基础',
+    ja: '章 1 — ローカル基礎',
+    ko: '챕터 1 — 로컬 기초',
+    de: 'Kapitel 1 — Lokale Grundlagen',
+    fr: 'Chapitre 1 — Les bases locales',
+    es: 'Capítulo 1 — Conceptos básicos locales',
+    pt: 'Capítulo 1 — Noções básicas locais',
+    ru: 'Глава 1 — Локальные основы'
   },
   2: {
-    root: 'Stage 2 — Branches & Merging',
-    zh: '阶段 2 — 分支与合并',
-    ja: '段階 2 — ブランチとマージ',
-    ko: '단계 2 — 브랜치와 병합',
-    de: 'Stufe 2 — Branches & Merging',
-    fr: 'Étape 2 — Branches et fusions',
-    es: 'Etapa 2 — Ramas y fusión',
-    pt: 'Etapa 2 — Branches e merge',
-    ru: 'Этап 2 — Ветки и слияния'
+    root: 'Chapter 2 — Branches & Merging',
+    zh: '章节 2 — 分支与合并',
+    ja: '章 2 — ブランチとマージ',
+    ko: '챕터 2 — 브랜치와 병합',
+    de: 'Kapitel 2 — Branches & Merging',
+    fr: 'Chapitre 2 — Branches et fusions',
+    es: 'Capítulo 2 — Ramas y fusión',
+    pt: 'Capítulo 2 — Branches e merge',
+    ru: 'Глава 2 — Ветки и слияния'
   },
   3: {
-    root: 'Stage 3 — Remote Collaboration',
-    zh: '阶段 3 — 远程协作',
-    ja: '段階 3 — リモート協働',
-    ko: '단계 3 — 원격 협업',
-    de: 'Stufe 3 — Remote-Zusammenarbeit',
-    fr: 'Étape 3 — Collaboration à distance',
-    es: 'Etapa 3 — Colaboración remota',
-    pt: 'Etapa 3 — Colaboração remota',
-    ru: 'Этап 3 — Удалённая работа'
+    root: 'Chapter 3 — Remote Collaboration',
+    zh: '章节 3 — 远程协作',
+    ja: '章 3 — リモート協働',
+    ko: '챕터 3 — 원격 협업',
+    de: 'Kapitel 3 — Remote-Zusammenarbeit',
+    fr: 'Chapitre 3 — Collaboration à distance',
+    es: 'Capítulo 3 — Colaboración remota',
+    pt: 'Capítulo 3 — Colaboração remota',
+    ru: 'Глава 3 — Удалённая работа'
   },
   4: {
-    root: 'Stage 4 — Repair & Advanced',
-    zh: '阶段 4 — 修复与进阶',
-    ja: '段階 4 — 修復と応用',
-    ko: '단계 4 — 복구와 심화',
-    de: 'Stufe 4 — Reparieren & Fortgeschritten',
-    fr: 'Étape 4 — Réparation & avancé',
-    es: 'Etapa 4 — Reparación y avanzado',
-    pt: 'Etapa 4 — Reparo e avançado',
-    ru: 'Этап 4 — Восстановление и продвинутый'
+    root: 'Chapter 4 — Repair & Advanced',
+    zh: '章节 4 — 修复与进阶',
+    ja: '章 4 — 修復と応用',
+    ko: '챕터 4 — 복구와 심화',
+    de: 'Kapitel 4 — Reparieren & Fortgeschritten',
+    fr: 'Chapitre 4 — Réparation & avancé',
+    es: 'Capítulo 4 — Reparación y avanzado',
+    pt: 'Capítulo 4 — Reparo e avançado',
+    ru: 'Глава 4 — Восстановление и продвинутый'
   },
   5: {
-    root: 'Stage 5 — GitHub Ecosystem',
-    zh: '阶段 5 — GitHub 生态',
-    ja: '段階 5 — GitHub エコシステム',
-    ko: '단계 5 — GitHub 생태계',
-    de: 'Stufe 5 — GitHub-Ökosystem',
-    fr: 'Étape 5 — Écosystème GitHub',
-    es: 'Etapa 5 — Ecosistema GitHub',
-    pt: 'Etapa 5 — Ecossistema GitHub',
-    ru: 'Этап 5 — Экосистема GitHub'
+    root: 'Chapter 5 — GitHub Ecosystem',
+    zh: '章节 5 — GitHub 生态',
+    ja: '章 5 — GitHub エコシステム',
+    ko: '챕터 5 — GitHub 생태계',
+    de: 'Kapitel 5 — GitHub-Ökosystem',
+    fr: 'Chapitre 5 — Écosystème GitHub',
+    es: 'Capítulo 5 — Ecosistema GitHub',
+    pt: 'Capítulo 5 — Ecossistema GitHub',
+    ru: 'Глава 5 — Экосистема GitHub'
   }
 }
 
-const stageNavText: Record<number, Record<LocaleKey, string>> = Object.fromEntries(
-  Object.entries(stageTitles).map(([stage, titles]) => [
-    Number(stage),
-    Object.fromEntries(Object.entries(titles).map(([key, title]) => [key, title.split(' — ')[0].trim()]))
-  ])
-) as Record<number, Record<LocaleKey, string>>
+
+const curriculumTitle: Record<LocaleKey, string> = {
+  root: 'Curriculum',
+  zh: '课程',
+  ja: 'カリキュラム',
+  ko: '커리큘럼',
+  de: 'Kurs',
+  fr: 'Cours',
+  es: 'Curso',
+  pt: 'Currículo',
+  ru: 'Программа'
+}
 
 const glossaryTitle: Record<LocaleKey, string> = {
   root: 'Glossary',
@@ -122,11 +128,16 @@ function buildNav(): Record<string, DefaultTheme.NavItem[]> {
   for (const key of LOCALE_KEYS) {
     const prefix = localePrefix(key)
     out[`${prefix}/`] = [
-      ...stageOrder.map((stage) => ({
-        text: stageNavText[stage][key],
-        link: `${prefix}/stage/${stage}/`
-      })),
-      { text: glossaryTitle[key], link: `${prefix}/glossary` }
+      {
+        text: curriculumTitle[key],
+        items: [
+          ...stageOrder.map((stage) => ({
+            text: stageTitles[stage][key],
+            link: `${prefix}/stage/${stage}/`
+          })),
+          { text: glossaryTitle[key], link: `${prefix}/glossary` }
+        ]
+      }
     ]
   }
   return out
@@ -139,28 +150,28 @@ const locales = {
     lang: 'en',
     title: 'Git Learning Path',
     description:
-      'A six-stage course to master common Git and GitHub commands and the principles behind them.',
+      'A six-chapter course to master common Git and GitHub commands and the principles behind them.',
     themeConfig: { nav: nav['/'] }
   },
   zh: {
     label: '中文',
     lang: 'zh',
     title: 'Git 学习路径',
-    description: '六个阶段系统掌握 Git/GitHub 常用命令及其原理。',
+    description: '六个章节系统掌握 Git/GitHub 常用命令及其原理。',
     themeConfig: { nav: nav['/zh/'] }
   },
   ja: {
     label: '日本語',
     lang: 'ja',
     title: 'Git 学習パス',
-    description: '6 つの段階で Git/GitHub のよく使うコマンドとその原理を体系的に学ぶ。',
+    description: '6 つの章で Git/GitHub のよく使うコマンドとその原理を体系的に学ぶ。',
     themeConfig: { nav: nav['/ja/'] }
   },
   ko: {
     label: '한국어',
     lang: 'ko',
     title: 'Git 학습 경로',
-    description: '여섯 단계로 Git/GitHub 자주 쓰는 명령어와 그 원리를 체계적으로 익힌다.',
+    description: '여섯 챕터로 Git/GitHub 자주 쓰는 명령어와 그 원리를 체계적으로 익힌다.',
     themeConfig: { nav: nav['/ko/'] }
   },
   de: {
@@ -168,7 +179,7 @@ const locales = {
     lang: 'de',
     title: 'Git Lernpfad',
     description:
-      'In sechs Stufen die gängigen Git/GitHub-Befehle und ihre Prinzipien systematisch lernen.',
+      'In sechs Kapiteln die gängigen Git/GitHub-Befehle und ihre Prinzipien systematisch lernen.',
     themeConfig: { nav: nav['/de/'] }
   },
   fr: {
@@ -176,7 +187,7 @@ const locales = {
     lang: 'fr',
     title: 'Parcours Git',
     description:
-      'Six étapes pour maîtriser les commandes Git/GitHub courantes et les principes qui les sous-tendent.',
+      'Six chapitres pour maîtriser les commandes Git/GitHub courantes et les principes qui les sous-tendent.',
     themeConfig: { nav: nav['/fr/'] }
   },
   es: {
@@ -184,7 +195,7 @@ const locales = {
     lang: 'es',
     title: 'Ruta de aprendizaje de Git',
     description:
-      'Seis etapas para dominar los comandos habituales de Git/GitHub y sus principios.',
+      'Seis capítulos para dominar los comandos habituales de Git/GitHub y sus principios.',
     themeConfig: { nav: nav['/es/'] }
   },
   pt: {
@@ -192,7 +203,7 @@ const locales = {
     lang: 'pt',
     title: 'Trilha de aprendizado de Git',
     description:
-      'Seis etapas para dominar os comandos comuns do Git/GitHub e os princípios por trás deles.',
+      'Seis capítulos para dominar os comandos comuns do Git/GitHub e os princípios por trás deles.',
     themeConfig: { nav: nav['/pt/'] }
   },
   ru: {
@@ -200,7 +211,7 @@ const locales = {
     lang: 'ru',
     title: 'Путь изучения Git',
     description:
-      'Шесть этапов системного освоения распространённых команд Git/GitHub и их принципов.',
+      'Шесть глав системного освоения распространённых команд Git/GitHub и их принципов.',
     themeConfig: { nav: nav['/ru/'] }
   }
 }
@@ -252,7 +263,7 @@ export default defineConfig({
   lang: 'en',
   title: 'Git Learning Path',
   description:
-    'A six-stage course to master common Git and GitHub commands and the principles behind them.',
+    'A six-chapter course to master common Git and GitHub commands and the principles behind them.',
   base: BASE,
   cleanUrls: true,
   appearance: false,

@@ -1,6 +1,6 @@
-# Stufe 5 — GitHub-Ökosystem
+# Kapitel 5 — GitHub-Ökosystem
 
-Der Prinzipfaden dieser Stufe: **die Kollaborationsschleife rund um GitHub**. fork erstellt Ihre Kopie, upstream verbindet den Original-Autor; der PR ist die Tür, durch die Commits in den main gelangen, das issue trägt die Diskussion, das release veröffentlicht Versionen, Actions und Pages automatisieren Tests und Deployment. Diese Stufe üben Sie auf echtem GitHub — zu jedem Konzept gibt es eine Aufgabe zum Mitmachen.
+Der Prinzipfaden dieses Kapitels: **die Kollaborationsschleife rund um GitHub**. fork erstellt Ihre Kopie, upstream verbindet den Original-Autor; der PR ist die Tür, durch die Commits in den main gelangen, das issue trägt die Diskussion, das release veröffentlicht Versionen, Actions und Pages automatisieren Tests und Deployment. Dieses Kapitel üben Sie auf echtem GitHub — zu jedem Konzept gibt es eine Aufgabe zum Mitmachen.
 
 ## Lektionen
 
@@ -10,7 +10,7 @@ Der Prinzipfaden dieser Stufe: **die Kollaborationsschleife rund um GitHub**. fo
 - 5-4 [Releases und Versionierung](/de/stage/5/5-4-releases): semantische Versionierung, tag pushen, Releases veröffentlichen
 - 5-5 [GitHub Actions und Pages](/de/stage/5/5-5-actions-pages): workflow-Automatisierung, Pages-Deployment
 
-## Kernfunktionen dieser Stufe
+## Kernfunktionen dieses Kapitels
 
 | Funktion | Wirkung |
 | --- | --- |

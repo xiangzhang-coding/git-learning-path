@@ -1,6 +1,6 @@
-# Stage 3 — Remote Collaboration
+# Chapter 3 — Remote Collaboration
 
-The principle thread of this stage: **two repositories and the tracking branch**. A remote is the address of another repository; clone copies it, fetch updates "the remote's mirror" (origin/main), push sends your local commits over, and pull = fetch + merge.
+The principle thread of this chapter: **two repositories and the tracking branch**. A remote is the address of another repository; clone copies it, fetch updates "the remote's mirror" (origin/main), push sends your local commits over, and pull = fetch + merge.
 
 ## Lessons
 
@@ -9,7 +9,7 @@ The principle thread of this stage: **two repositories and the tracking branch**
 - 3-3 [git push pushes commits](/stage/3/3-3-push): send local commits, non-fast-forward rejection
 - 3-4 [git fetch and git pull](/stage/3/3-4-fetch-pull): fetch looks but doesn't touch, pull = fetch + merge
 
-## New commands in this stage
+## New commands in this chapter
 
 | Command | What it does |
 | --- | --- |

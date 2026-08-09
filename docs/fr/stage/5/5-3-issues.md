@@ -49,7 +49,7 @@ Sur la page du dépôt : Issues → New issue. Une bonne description d'issue con
 ## Labels et milestones
 
 - **label (étiquette)** : classe les issues, par exemple bug, enhancement, good first issue. Le filtrage par label est le principal moyen pour un mainteneur d'organiser son travail.
-- **milestone (étape de version)** : regroupe un ensemble d'issues vers le même objectif de version, comme v1.2.0. La milestone affiche une progression (x/y issues terminées).
+- **milestone (jalon de version)** : regroupe un ensemble d'issues vers le même objectif de version, comme v1.2.0. La milestone affiche une progression (x/y issues terminées).
 
 ## Fermer une issue avec un PR
 

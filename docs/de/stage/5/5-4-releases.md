@@ -52,7 +52,7 @@ Die Regel ist einfach: Eine erhöhte Hauptversion erklärt, „warum dein Progra
 
 ## tag erstellen und pushen
 
-Vor der Veröffentlichung erstellen Sie lokal einen tag (aus Stufe 4 bekannt):
+Vor der Veröffentlichung erstellen Sie lokal einen tag (aus Kapitel 4 bekannt):
 
 ```bash
 git tag -a v1.0.0 -m "v1.0.0: first release"

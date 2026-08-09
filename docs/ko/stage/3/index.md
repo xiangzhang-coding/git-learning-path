@@ -1,6 +1,6 @@
-# 단계 3 — 원격 협업
+# 챕터 3 — 원격 협업
 
-이 단계의 원리 축: **두 개의 저장소와 추적 브랜치**. remote는 다른 저장소의 주소이며, clone이 그것을 복사하고, fetch가「원격의 미러」(origin/main)를 갱신하며, push가 로컬 커밋을 보내고, pull = fetch + merge입니다.
+이 챕터의 원리 축: **두 개의 저장소와 추적 브랜치**. remote는 다른 저장소의 주소이며, clone이 그것을 복사하고, fetch가「원격의 미러」(origin/main)를 갱신하며, push가 로컬 커밋을 보내고, pull = fetch + merge입니다.
 
 ## 강의
 
@@ -9,7 +9,7 @@
 - 3-3 [git push 커밋 푸시](/ko/stage/3/3-3-push): 로컬 커밋 전송, non-fast-forward 거부
 - 3-4 [git fetch와 git pull](/ko/stage/3/3-4-fetch-pull): fetch는 보기만 하고 움직이지 않음, pull = fetch + merge
 
-## 이 단계의 새 명령
+## 이 챕터의 새 명령
 
 | 명령 | 역할 |
 | --- | --- |
