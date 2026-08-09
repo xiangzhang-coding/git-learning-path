@@ -6,10 +6,11 @@ import { labelsFor, langOfLocaleIndex } from '../lib/labels'
 const { localeIndex } = useData()
 const labels = computed(() => labelsFor(langOfLocaleIndex(localeIndex.value)))
 
+const SHOW_AFTER = 480
 const visible = ref(false)
 
 function onScroll() {
-  visible.value = window.scrollY > 480
+  visible.value = window.scrollY > SHOW_AFTER
 }
 
 function toTop() {

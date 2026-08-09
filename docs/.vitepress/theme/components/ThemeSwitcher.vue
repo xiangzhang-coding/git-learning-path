@@ -14,6 +14,10 @@ const themes = computed(() => themeValues.map((value) => ({ value, label: labels
 const current = ref<ThemeValue>('system')
 const open = ref(false)
 const wrapEl = ref<HTMLElement | null>(null)
+let media: MediaQueryList | null = null
+const onMediaChange = () => {
+  if (current.value === 'system') apply('system')
+}
 
 function apply(theme: ThemeValue) {
   const root = document.documentElement
@@ -33,16 +37,14 @@ onMounted(() => {
     current.value = saved as ThemeValue
     apply(current.value)
   }
-  window
-    .matchMedia('(prefers-color-scheme: dark)')
-    .addEventListener('change', () => {
-      if (current.value === 'system') apply('system')
-    })
+  media = window.matchMedia('(prefers-color-scheme: dark)')
+  media.addEventListener('change', onMediaChange)
   document.addEventListener('click', onDocumentClick)
   document.addEventListener('keydown', onKeydown)
 })
 
 onBeforeUnmount(() => {
+  media?.removeEventListener('change', onMediaChange)
   document.removeEventListener('click', onDocumentClick)
   document.removeEventListener('keydown', onKeydown)
 })
@@ -55,7 +57,22 @@ function onDocumentClick(e: Event) {
 }
 
 function onKeydown(e: KeyboardEvent) {
-  if (e.key === 'Escape' && open.value) open.value = false
+  if (!open.value) return
+  const keys = ['ArrowDown', 'ArrowUp', 'Home', 'End']
+  if (!keys.includes(e.key)) {
+    if (e.key === 'Escape') open.value = false
+    return
+  }
+  e.preventDefault()
+  const items = [...wrapEl.value!.querySelectorAll<HTMLButtonElement>('.theme-switcher-menu button')]
+  if (!items.length) return
+  const currentIdx = items.indexOf(document.activeElement as HTMLButtonElement)
+  let next: number
+  if (e.key === 'Home') next = 0
+  else if (e.key === 'End') next = items.length - 1
+  else if (e.key === 'ArrowDown') next = currentIdx === -1 ? 0 : (currentIdx + 1) % items.length
+  else next = currentIdx === -1 ? items.length - 1 : (currentIdx - 1 + items.length) % items.length
+  items[next].focus()
 }
 
 function toggle() {

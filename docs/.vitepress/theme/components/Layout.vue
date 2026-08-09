@@ -15,6 +15,7 @@ const REPO_URL = 'https://github.com/xiangzhang-coding/git-learning-path'
 watch(
   () => localeIndex.value,
   (index) => {
+    if (typeof document === 'undefined') return
     const lang = langOfLocaleIndex(index)
     document.cookie = `gitpath_lang=${lang}; path=/; max-age=31536000; samesite=lax`
   },

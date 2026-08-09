@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "private": true,
-  "description": "A six-stage static course site to master common Git/GitHub commands and the principles behind them",
+  "description": "A six-chapter static course site to master common Git/GitHub commands and the principles behind them",
   "scripts": {
     "dev": "vitepress dev docs",
     "build": "vitepress build docs && pagefind --site docs/.vitepress/dist",
