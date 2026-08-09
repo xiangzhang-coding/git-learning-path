@@ -40,6 +40,7 @@ exercises:
     checks:
       - type: branchIs
         name: feature
+      - type: rebaseAborted
       - type: statusClean
     explanation: 양쪽이 같은 곳을 수정하면 충돌이 나며, --abort는 rebase 이전의 상태로 전부 되돌립니다.
     anchor: "#rebase-충돌과-중단"

@@ -41,6 +41,7 @@ exercises:
       - type: branchIs
         name: feature
       - type: statusClean
+      - type: rebaseAborted
     explanation: 双方改了同一处时会冲突；--abort 把一切恢复到 rebase 之前。
     anchor: "#rebase-冲突与中止"
 ---

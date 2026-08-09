@@ -40,6 +40,7 @@ exercises:
     checks:
       - type: branchIs
         name: feature
+      - type: rebaseAborted
       - type: statusClean
     explanation: Quando os dois lados alteram o mesmo trecho, há conflito; o --abort devolve tudo ao estado anterior ao rebase.
     anchor: "#conflitos-no-rebase-e-abort"

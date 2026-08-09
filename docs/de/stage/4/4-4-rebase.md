@@ -40,6 +40,7 @@ exercises:
     checks:
       - type: branchIs
         name: feature
+      - type: rebaseAborted
       - type: statusClean
     explanation: Wenn beide Seiten dieselbe Stelle geändert haben, gibt es einen Konflikt; --abort stellt alles auf den Stand vor dem rebase zurück.
     anchor: "#rebase-konflikte-und-abbruch"

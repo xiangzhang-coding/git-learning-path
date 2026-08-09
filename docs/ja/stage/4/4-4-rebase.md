@@ -40,6 +40,7 @@ exercises:
     checks:
       - type: branchIs
         name: feature
+      - type: rebaseAborted
       - type: statusClean
     explanation: 両方が同じ場所を変更するとコンフリクトします。--abort は rebase 前の状態にすべてを戻します。
     anchor: "#rebase-のコンフリクトと中止"

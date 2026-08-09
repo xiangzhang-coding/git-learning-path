@@ -40,6 +40,7 @@ exercises:
     checks:
       - type: branchIs
         name: feature
+      - type: rebaseAborted
       - type: statusClean
     explanation: when both sides changed the same spot a conflict happens; --abort restores everything to how it was before the rebase.
     anchor: "#rebase-conflicts-and-abort"

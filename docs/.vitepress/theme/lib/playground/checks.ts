@@ -1,6 +1,6 @@
 import * as git from 'isomorphic-git'
 import type { Session } from './scenarios'
-import { isRepo, listWorkdirFiles, mergeInProgress, readBranchOid, readFileFromRef, resolveAnyRef } from './scenarios'
+import { isRepo, listWorkdirFiles, mergeInProgress, readBranchOid, readFileFromRef, readReflog, resolveAnyRef } from './scenarios'
 import type { GraphCommit } from './graph'
 import { commitGraph } from './graph'
 
@@ -22,6 +22,7 @@ export type Check =
   | { type: 'tagExists'; name: string }
   | { type: 'headAt'; ref: string }
   | { type: 'workdirModified'; path: string }
+  | { type: 'rebaseAborted' }
 
 export interface CheckResult {
   pass: boolean
@@ -179,6 +180,14 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
         const row = rows.find((r) => r[0] === check.path)
         if (!row || row[2] === row[3]) {
           return { pass: false, detail: `"${check.path}" is not modified in the working tree` }
+        }
+        break
+      }
+      case 'rebaseAborted': {
+        const entries = await readReflog(fs, dir)
+        const last = entries[entries.length - 1]
+        if (!last || !last.msg.startsWith('rebase (abort)')) {
+          return { pass: false, detail: 'no rebase was aborted' }
         }
         break
       }

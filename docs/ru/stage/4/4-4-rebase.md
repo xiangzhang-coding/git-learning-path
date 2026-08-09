@@ -40,6 +40,7 @@ exercises:
     checks:
       - type: branchIs
         name: feature
+      - type: rebaseAborted
       - type: statusClean
     explanation: Когда обе стороны меняли одно и то же, возникает конфликт; --abort возвращает всё к состоянию до rebase.
     anchor: "#конфликты-rebase-и-прерывание-abort"

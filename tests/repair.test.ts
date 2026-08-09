@@ -266,3 +266,16 @@ describe('stage-4 scenarios', () => {
     })
   }
 })
+
+describe('rebaseAborted check', () => {
+  it('passes only after an abort, not after switching', async () => {
+    const session = await Session.create('rebase-conflict')
+    await exec(session, 'git switch feature')
+    const before = await runChecks(session, [{ type: 'rebaseAborted' }])
+    expect(before.pass).toBe(false)
+    await exec(session, 'git rebase main')
+    await exec(session, 'git rebase --abort')
+    const after = await runChecks(session, [{ type: 'rebaseAborted' }])
+    expect(after.pass).toBe(true)
+  })
+})
