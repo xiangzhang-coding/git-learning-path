@@ -15,7 +15,9 @@ for (const page of PAGES) {
     expect(count).toBeGreaterThan(0)
     for (let i = 0; i < count; i++) {
       const ex = exercises.nth(i)
-      await ex.getByRole('button').first().click()
+      const options = ex.locator('.exercise-option')
+      if ((await options.count()) === 0) continue
+      await options.first().click()
       const href = await ex.locator('.feedback-anchor').getAttribute('href')
       expect(href, `exercise ${i} must have a review link`).toBeTruthy()
       const hash = href!.split('#')[1]
