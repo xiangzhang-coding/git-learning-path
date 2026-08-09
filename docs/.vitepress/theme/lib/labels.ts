@@ -30,7 +30,7 @@ export const LABELS: Record<string, Labels> = {
   en: {
     correct: 'Correct',
     wrong: 'Wrong',
-    review: 'Review this section →',
+    review: 'Review this lesson →',
     done: 'Lesson complete ✓',
     mark: 'Mark lesson complete',
     commitLabel: 'commit',
@@ -122,7 +122,7 @@ export const LABELS: Record<string, Labels> = {
   de: {
     correct: 'Richtig',
     wrong: 'Falsch',
-    review: 'Abschnitt dieser Lektion wiederholen →',
+    review: 'Diese Lektion wiederholen →',
     done: 'Lektion abgeschlossen ✓',
     mark: 'Lektion abschließen',
     commitLabel: 'Commit',
@@ -145,7 +145,7 @@ export const LABELS: Record<string, Labels> = {
   fr: {
     correct: 'Correct',
     wrong: 'Incorrect',
-    review: 'Revoir la section de cette leçon →',
+    review: 'Revoir cette leçon →',
     done: 'Leçon terminée ✓',
     mark: 'Marquer la leçon comme terminée',
     commitLabel: 'commit',
@@ -168,7 +168,7 @@ export const LABELS: Record<string, Labels> = {
   es: {
     correct: 'Correcto',
     wrong: 'Incorrecto',
-    review: 'Repasar esta sección →',
+    review: 'Repasar esta lección →',
     done: 'Lección completada ✓',
     mark: 'Marcar lección como completada',
     commitLabel: 'commit',
@@ -191,7 +191,7 @@ export const LABELS: Record<string, Labels> = {
   pt: {
     correct: 'Correto',
     wrong: 'Incorreto',
-    review: 'Rever esta seção →',
+    review: 'Rever esta lição →',
     done: 'Lição concluída ✓',
     mark: 'Marcar lição como concluída',
     commitLabel: 'commit',
@@ -214,7 +214,7 @@ export const LABELS: Record<string, Labels> = {
   ru: {
     correct: 'Верно',
     wrong: 'Неверно',
-    review: 'Повторить раздел урока →',
+    review: 'Повторить этот урок →',
     done: 'Урок завершён ✓',
     mark: 'Отметить урок завершённым',
     commitLabel: 'коммит',

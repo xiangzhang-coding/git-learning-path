@@ -185,13 +185,6 @@ export async function commitGraph(fs: MemoryFS, dir: string): Promise<GraphCommi
         connections.push({ from: col, to: pos })
       }
     }
-    for (const { from, to } of connections) {
-      const lo = Math.min(from, to)
-      const hi = Math.max(from, to)
-      for (let k = lo; k <= hi; k++) {
-        if (lanes[k] === null) lanes[k] = commit.oid
-      }
-    }
 
     lanes[col] = commit.parent.length ? commit.parent[0] : null
     for (const p of commit.parent.slice(1)) {

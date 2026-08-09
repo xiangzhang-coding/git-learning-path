@@ -19,8 +19,8 @@ import {
   rebaseQueue,
   resolveAnyRef,
   writeRebaseConflicts,
-  writeRebaseState
-} from './scenarios'
+  writeRebaseState,
+  MatrixRow} from './scenarios'
 import type { CommandResult } from './commands'
 import { applyMergedFiles, fullIdentity, readTreeFiles, syncIndex, threeWayMerge, updateHeadRef, writeTreeFromFiles } from './merge'
 
@@ -63,11 +63,13 @@ export async function runStash(session: Session, argv: string[]): Promise<Comman
   const { fs, dir } = session
   const op = argv.find((a) => !a.startsWith('-'))
   if (op === 'list') {
-    const entries = (await git.stash({ fs: fs as never, dir, op: 'list' })) as unknown as string[]
+    const listed = await git.stash({ fs: fs as never, dir, op: 'list' })
+    const entries = Array.isArray(listed) ? listed.map(String) : []
     return { out: entries, changed: false }
   }
   if (op === 'pop' || op === 'apply') {
-    const before = (await git.stash({ fs: fs as never, dir, op: 'list' })) as unknown as string[]
+    const listed = await git.stash({ fs: fs as never, dir, op: 'list' })
+    const before = Array.isArray(listed) ? listed.map(String) : []
     if (!before.length) {
       return { out: ['No stash entries found.'], changed: false }
     }
@@ -75,14 +77,14 @@ export async function runStash(session: Session, argv: string[]): Promise<Comman
     const refIdx = idxArg ? Number(idxArg.match(/^stash@\{(\d+)\}$/)![1]) : undefined
     await git.stash({ fs: fs as never, dir, op: op === 'apply' ? 'apply' : 'pop', refIdx })
     await syncIndex(fs, dir)
-    if (op === 'pop') return { out: ['Dropped stash@{0}'], changed: true }
+    if (op === 'pop') return { out: [`Dropped stash@{${refIdx ?? 0}}`], changed: true }
     return { out: [], changed: true }
   }
   if (op === 'drop' || op === 'clear') {
     await git.stash({ fs: fs as never, dir, op })
     return { out: [], changed: true }
   }
-  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
   const dirty = rows.filter(([, h, w, s]) => h === 1 && !(w === 1 && s === 1))
   if (!dirty.length) return { out: ['No local changes to save'], changed: false }
   const branch = ((await git.currentBranch({ fs: fs as never, dir })) as string | null) ?? 'HEAD'
@@ -130,15 +132,13 @@ export async function runReset(session: Session, argv: string[]): Promise<Comman
       changed: true
     }
   }
-  const kept = new Map<string, string | null>()
-  for (const file of await listWorkdirFiles(fs, dir)) {
-    const content = await fs.readFile(`${dir}/${file}`).catch(() => null)
-    kept.set(file, content ? content.toString() : null)
+  const treeFiles = await readTreeFiles(fs, dir, tree)
+  for (const path of treeFiles.keys()) {
+    await git.resetIndex({ fs: fs as never, dir, filepath: path, ref: newOid })
   }
-  await applyMergedFiles(fs, dir, await readTreeFiles(fs, dir, tree))
-  for (const [file, content] of kept) {
-    if (content === null) await fs.unlink(`${dir}/${file}`).catch(() => {})
-    else await fs.writeFile(`${dir}/${file}`, content)
+  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
+  for (const [path] of rows) {
+    if (!treeFiles.has(path)) await git.remove({ fs: fs as never, dir, filepath: path })
   }
   return { out: [], changed: true }
 }
@@ -269,7 +269,7 @@ export async function runRebase(session: Session, argv: string[]): Promise<Comma
   }
   const target = argv.find((a) => !a.startsWith('-'))
   if (!target) return { out: ['fatal: no upstream specified'], changed: false }
-  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
   const dirty = rows.filter(([, h, w, s]) => h === 1 && !(w === 1 && s === 1))
   if (dirty.length) {
     return {
@@ -347,7 +347,7 @@ async function continueRebase(session: Session): Promise<CommandResult> {
     return { out: ['fatal: No rebase in progress?'], changed: false }
   }
   const conflicts = await rebaseConflicts(fs, dir)
-  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
   const unresolved: string[] = []
   for (const path of conflicts) {
     const row = rows.find((r) => r[0] === path)
@@ -396,7 +396,7 @@ async function mergeSnapshot(session: Session): Promise<Map<string, string | nul
   const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
   const tree = (await git.readCommit({ fs: fs as never, dir, oid: headOid })).commit.tree
   const files = new Map<string, string | null>(await readTreeFiles(fs, dir, tree))
-  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as [string, number, number, number][]
+  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
   for (const [path, h, , s] of rows) {
     if (s === 0) {
       if (h === 1) files.set(path, null)
@@ -427,8 +427,6 @@ export async function runReflog(session: Session, argv: string[]): Promise<Comma
     entries = await readReflog(fs, dir)
   }
   const reversed = [...entries].reverse()
-  const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
-  void headOid
   return {
     out: reversed.map((e, i) => `${short(e.newOid)} HEAD@{${i}}: ${e.msg}`),
     changed: false

@@ -1,4 +1,5 @@
 import type { Check } from './playground/checks'
+import { CHECK_TYPES } from './playground/checks'
 import type { ScenarioName } from './playground/scenarios'
 
 export interface Exercise {
@@ -62,6 +63,17 @@ export function validateExercises(exercises: unknown): string[] {
       }
       if (!Array.isArray(e.checks) || !e.checks.length) {
         problems.push(`${label}: task needs checks`)
+      } else {
+        e.checks.forEach((check, j) => {
+          if (!check || typeof check !== 'object') {
+            problems.push(`${label}: checks[${j}] is not an object`)
+            return
+          }
+          const checkType = (check as { type?: unknown }).type
+          if (typeof checkType !== 'string' || !(CHECK_TYPES as readonly string[]).includes(checkType)) {
+            problems.push(`${label}: checks[${j}] has unknown type "${String(checkType)}"`)
+          }
+        })
       }
       if (typeof e.goal !== 'string' || !e.goal.trim()) {
         problems.push(`${label}: task needs a goal`)

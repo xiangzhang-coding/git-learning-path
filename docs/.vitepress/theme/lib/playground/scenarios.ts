@@ -152,6 +152,8 @@ export async function copyObjects(from: MemoryFS, fromDir: string, to: MemoryFS,
   }
 }
 
+export type MatrixRow = [string, number, number, number]
+
 export async function headBranchOf(fs: MemoryFS, dir: string): Promise<string | null> {
   try {
     const raw = await fs.readFile(`${dir}/.git/HEAD`)
@@ -239,7 +241,7 @@ export async function initReflog(fs: MemoryFS, dir: string): Promise<void> {
     await fs.readFile(REFLOG_PATH(dir))
     return
   } catch {
-    void dir
+    // no reflog yet
   }
   try {
     const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
@@ -252,7 +254,7 @@ export async function initReflog(fs: MemoryFS, dir: string): Promise<void> {
       `${'0'.repeat(40)} ${headOid} ${AUTHOR.name} <${AUTHOR.email}> ${ts} ${tz}\tcommit (initial): ${headMsg}\n`
     )
   } catch {
-    void dir
+    // no commits yet
   }
 }
 

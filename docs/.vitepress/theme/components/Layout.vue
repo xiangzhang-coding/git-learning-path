@@ -13,7 +13,7 @@ watch(
   () => localeIndex.value,
   (index) => {
     const lang = langOfLocaleIndex(index)
-    document.cookie = `gitpath_lang=${lang === 'en' ? '' : lang}; path=/; max-age=31536000; samesite=lax`
+    document.cookie = `gitpath_lang=${lang}; path=/; max-age=31536000; samesite=lax`
   },
   { immediate: true }
 )
