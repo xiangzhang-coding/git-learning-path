@@ -25,6 +25,7 @@ export interface Labels {
   save: string
   cancel: string
   backToTop: string
+  checklistReset: string
   themeLabel: string
   theme: Record<'system' | 'light' | 'dark' | 'terminal' | 'retro', string>
 }
@@ -53,6 +54,7 @@ export const LABELS: Record<string, Labels> = {
     save: 'Save',
     cancel: 'Cancel',
     backToTop: 'Back to top',
+    checklistReset: 'Clear checklist',
     themeLabel: 'Theme',
     theme: { 'system': 'System', 'light': 'Light', 'dark': 'Dark', 'terminal': 'Terminal', 'retro': 'Retro' },
   },
@@ -78,6 +80,7 @@ export const LABELS: Record<string, Labels> = {
     typeCommandLabel: '输入 git 命令…',
     save: '保存',
     backToTop: '回到顶部',
+    checklistReset: '清空清单',
     themeLabel: '主题',
     theme: { 'system': '跟随系统', 'light': '浅色', 'dark': '深色', 'terminal': '终端', 'retro': '复古' },
     cancel: '取消',
@@ -104,6 +107,7 @@ export const LABELS: Record<string, Labels> = {
     typeCommandLabel: 'git コマンドを入力…',
     save: '保存',
     backToTop: 'トップへ戻る',
+    checklistReset: 'チェックリストをクリア',
     themeLabel: 'テーマ',
     theme: { 'system': 'システム', 'light': 'ライト', 'dark': 'ダーク', 'terminal': 'ターミナル', 'retro': 'レトロ' },
     cancel: 'キャンセル',
@@ -130,6 +134,7 @@ export const LABELS: Record<string, Labels> = {
     typeCommandLabel: 'git 명령어 입력…',
     save: '저장',
     backToTop: '맨 위로',
+    checklistReset: '체크리스트 지우기',
     themeLabel: '테마',
     theme: { 'system': '시스템', 'light': '라이트', 'dark': '다크', 'terminal': '터미널', 'retro': '레트로' },
     cancel: '취소',
@@ -156,6 +161,7 @@ export const LABELS: Record<string, Labels> = {
     typeCommandLabel: 'Git-Befehl eingeben…',
     save: 'Speichern',
     backToTop: 'Nach oben',
+    checklistReset: 'Liste zurücksetzen',
     themeLabel: 'Theme',
     theme: { 'system': 'System', 'light': 'Hell', 'dark': 'Dunkel', 'terminal': 'Terminal', 'retro': 'Retro' },
     cancel: 'Abbrechen',
@@ -182,6 +188,7 @@ export const LABELS: Record<string, Labels> = {
     typeCommandLabel: 'Saisissez une commande git…',
     save: 'Enregistrer',
     backToTop: 'Retour en haut',
+    checklistReset: 'Effacer la liste',
     themeLabel: 'Thème',
     theme: { 'system': 'Système', 'light': 'Clair', 'dark': 'Sombre', 'terminal': 'Terminal', 'retro': 'Rétro' },
     cancel: 'Annuler',
@@ -208,6 +215,7 @@ export const LABELS: Record<string, Labels> = {
     typeCommandLabel: 'Escribe un comando git…',
     save: 'Guardar',
     backToTop: 'Volver arriba',
+    checklistReset: 'Borrar lista',
     themeLabel: 'Tema',
     theme: { 'system': 'Sistema', 'light': 'Claro', 'dark': 'Oscuro', 'terminal': 'Terminal', 'retro': 'Retro' },
     cancel: 'Cancelar',
@@ -234,6 +242,7 @@ export const LABELS: Record<string, Labels> = {
     typeCommandLabel: 'Digite um comando git…',
     save: 'Salvar',
     backToTop: 'Voltar ao topo',
+    checklistReset: 'Limpar lista',
     themeLabel: 'Tema',
     theme: { 'system': 'Sistema', 'light': 'Claro', 'dark': 'Escuro', 'terminal': 'Terminal', 'retro': 'Retrô' },
     cancel: 'Cancelar',
@@ -260,6 +269,7 @@ export const LABELS: Record<string, Labels> = {
     typeCommandLabel: 'Введите команду git…',
     save: 'Сохранить',
     backToTop: 'Наверх',
+    checklistReset: 'Очистить список',
     themeLabel: 'Тема',
     theme: { 'system': 'Система', 'light': 'Светлая', 'dark': 'Тёмная', 'terminal': 'Терминал', 'retro': 'Ретро' },
     cancel: 'Отмена',

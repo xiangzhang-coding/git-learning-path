@@ -32,6 +32,24 @@ exercises:
         contentContains: "const a = 3"
     explanation: Tras el commit, el historial pasa a tener 5 commits; la primera línea de git log --oneline es tu nuevo commit.
     anchor: "#git-log-muestra-el-historial"
+  - id: 1-3-e4
+    question: ¿Qué muestra git show <commit>?
+    options:
+      - "Los detalles completos del commit: autor, fecha, mensaje y el diff de los cambios"
+      - La lista de todos los archivos del repositorio
+      - El gráfico de commits de la rama actual
+    correct: 0
+    explanation: "git show despliega un commit: la cabecera muestra autor y fecha, y debajo viene el diff con su commit padre — la forma estándar de ver «qué cambió exactamente ese commit»."
+    anchor: "#git-show-inspecciona-un-commit"
+  - id: 1-3-e5
+    question: ¿Para qué sirve git blame <archivo>?
+    options:
+      - Anota línea por línea qué commit y qué autor modificó por última vez cada línea
+      - Elimina las líneas vacías del archivo
+      - Compara las diferencias entre dos archivos
+    correct: 0
+    explanation: "blame responsabiliza por línea: cada línea lleva como prefijo «el hash corto del commit que la modificó por última vez + el autor» — muy útil para saber «quién cambió esta línea y por qué»."
+    anchor: "#git-blame-rastrea-el-origen-de-cada-linea"
 ---
 
 # git log y git diff
@@ -40,6 +58,8 @@ exercises:
 
 - Ver el historial de commits con git log
 - Ver el contenido de los cambios con git diff
+- Ver los detalles de un commit con git show
+- Rastrear el origen de cada línea con git blame
 - Conocer el hash corto y el modelo de instantáneas
 
 ## git log muestra el historial
@@ -59,6 +79,23 @@ git diff --staged    # staging area vs HEAD (cambios añadidos sin commitear)
 ```
 
 En la salida, las líneas que empiezan por `-` son las eliminadas y las que empiezan por `+` son las nuevas. Revisar con diff qué cambiaste antes de commitear es un hábito estándar.
+
+## git show inspecciona un commit
+
+```bash
+git show <commit>    # ver los detalles de un commit
+git show HEAD      # el commit más reciente
+```
+
+`git show` despliega un commit: la cabecera muestra el hash, el autor, la fecha y el mensaje del commit, y debajo viene el diff con su commit padre — responde justo a «¿qué cambió este commit?». Combinándolo con los hashes de git log, puedes revisar cualquier cambio del pasado.
+
+## git blame rastrea el origen de cada línea
+
+```bash
+git blame <archivo>   # anota el origen de cada línea
+```
+
+blame añade un prefijo a cada línea del archivo: **el hash corto del commit que la modificó por última vez + el autor**. Cuando quieres saber «quién cambió esta línea y en qué commit se introdujo», blame te lo dice al instante — es el punto de partida habitual para rastrear bugs en producción.
 
 ## El modelo de instantáneas
 

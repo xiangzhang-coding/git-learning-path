@@ -279,3 +279,107 @@ describe('rebaseAborted check', () => {
     expect(after.pass).toBe(true)
   })
 })
+
+describe('git show', () => {
+  it('shows a commit and its changes', async () => {
+    const session = await Session.create('history')
+    const out = await exec(session, 'git show HEAD')
+    expect(out).toContain('commit ')
+    expect(out).toContain('Author:')
+    expect(out).toContain('feat: add module b')
+    expect(out).toContain('diff --git a/src/b.js b/src/b.js')
+  })
+
+  it('rejects an unknown revision', async () => {
+    const session = await Session.create('history')
+    const out = await exec(session, 'git show nope')
+    expect(out).toContain("fatal: bad revision 'nope'")
+  })
+})
+
+describe('git blame', () => {
+  it('attributes each line to a commit', async () => {
+    const session = await Session.create('history')
+    const out = await exec(session, 'git blame src/a.js')
+    const lines = out.split('\n')
+    expect(lines).toHaveLength(1)
+    expect(lines[0]).toMatch(/^[0-9a-f]{7} \(/)
+    expect(lines[0]).toContain('const a = 2')
+  })
+
+  it('attributes the initial content to the root commit', async () => {
+    const session = await Session.create('history')
+    const out = await exec(session, 'git blame README.md')
+    expect(out).toContain('# Project')
+  })
+})
+
+describe('git clean', () => {
+  it('dry run lists untracked files without deleting', async () => {
+    const session = await Session.create('clean')
+    const out = await exec(session, 'git clean -n')
+    expect(out).toContain('Would remove scratch.txt')
+    expect(out).toContain('Would remove todo.tmp')
+    const exists = await session.fs
+      .stat('/repo/scratch.txt')
+      .then(() => true)
+      .catch(() => false)
+    expect(exists).toBe(true)
+  })
+
+  it('refuses to delete without -f', async () => {
+    const session = await Session.create('clean')
+    const out = await exec(session, 'git clean')
+    expect(out).toContain('fatal: clean.requireForce is true')
+  })
+
+  it('deletes untracked files with -f', async () => {
+    const session = await Session.create('clean')
+    const out = await exec(session, 'git clean -f')
+    expect(out).toContain('Removing scratch.txt')
+    const status = await exec(session, 'git status')
+    expect(status).toContain('nothing to commit')
+  })
+})
+
+describe('git bisect', () => {
+  it('locates the first bad commit across a linear history', async () => {
+    const session = await Session.create('bisect')
+    await exec(session, 'git bisect start')
+    await exec(session, 'git bisect bad')
+    await exec(session, 'git bisect good HEAD~3')
+    for (let i = 0; i < 8; i++) {
+      const done = await session.fs
+        .readFile('/repo/.git/BISECT_DONE')
+        .then((b) => b.toString().trim())
+        .catch(() => '')
+      if (done) break
+      const content = (await session.fs.readFile('/repo/calc.js')).toString()
+      const buggy = content.includes('return a - b')
+      await exec(session, buggy ? 'git bisect bad' : 'git bisect good')
+    }
+    const doneFile = (await session.fs.readFile('/repo/.git/BISECT_DONE')).toString().trim()
+    const log = await exec(session, 'git log --oneline')
+    const bugCommit = log.split('\n').find((l) => l.includes('typo in add'))
+    expect(bugCommit).toBeDefined()
+    expect(doneFile.startsWith(bugCommit!.split(' ')[0])).toBe(true)
+  })
+
+  it('waits for a good revision before bisecting', async () => {
+    const session = await Session.create('bisect')
+    await exec(session, 'git bisect start')
+    const out = await exec(session, 'git bisect bad')
+    expect(out).toContain('waiting for good commit')
+  })
+
+  it('reset ends the bisect and restores the branch', async () => {
+    const session = await Session.create('bisect')
+    await exec(session, 'git bisect start')
+    await exec(session, 'git bisect bad')
+    await exec(session, 'git bisect good HEAD~3')
+    const out = await exec(session, 'git bisect reset')
+    expect(out).toBe('')
+    const status = await exec(session, 'git status')
+    expect(status).toContain('On branch main')
+  })
+})

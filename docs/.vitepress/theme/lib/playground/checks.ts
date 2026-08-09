@@ -23,7 +23,9 @@ export const CHECK_TYPES = [
   'tagExists',
   'headAt',
   'workdirModified',
-  'rebaseAborted'
+  'rebaseAborted',
+  'workdirClean',
+  'bisectDone'
 ] as const
 
 export type CheckType = (typeof CHECK_TYPES)[number]
@@ -47,6 +49,8 @@ export type Check =
   | { type: 'headAt'; ref: string }
   | { type: 'workdirModified'; path: string }
   | { type: 'rebaseAborted' }
+  | { type: 'workdirClean' }
+  | { type: 'bisectDone' }
 
 export interface CheckResult {
   pass: boolean
@@ -205,6 +209,20 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
         if (!row || row[2] === row[3]) {
           return { pass: false, detail: `"${check.path}" is not modified in the working tree` }
         }
+        break
+      }
+      case 'workdirClean': {
+        const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
+        const leftover = rows.filter(([, h, w, s]) => !(h === 1 && w === 1 && s === 1))
+        if (leftover.length) return { pass: false, detail: 'working tree still has untracked or modified files' }
+        break
+      }
+      case 'bisectDone': {
+        const done = await fs
+          .readFile(`${dir}/.git/BISECT_DONE`)
+          .then((buf) => buf.toString().trim())
+          .catch(() => '')
+        if (!done) return { pass: false, detail: 'bisect has not located the first bad commit' }
         break
       }
       case 'rebaseAborted': {

@@ -32,6 +32,24 @@ exercises:
         contentContains: "const a = 3"
     explanation: The history now has 5 commits; the first line of git log --oneline is your new commit.
     anchor: "#git-log-views-history"
+  - id: 1-3-e4
+    question: What does git show <commit> display?
+    options:
+      - "The commit's full details: author, date, message, and the diff of changes"
+      - A list of all files in the repository
+      - The commit graph of the current branch
+    correct: 0
+    explanation: "git show expands one commit: the header carries the author and date, below it the diff against its parent — the standard way to see what a single commit changed."
+    anchor: "#git-show-inspects-a-commit"
+  - id: 1-3-e5
+    question: What is git blame <file> for?
+    options:
+      - Annotating each line with the commit and author that last changed it
+      - Removing empty lines from a file
+      - Comparing the differences between two files
+    correct: 0
+    explanation: 'blame works line by line: each line is prefixed with the short hash and author of the commit that last touched it — great for answering "who changed this line and why".'
+    anchor: "#git-blame-traces-lines"
 ---
 
 # git log and git diff
@@ -40,6 +58,8 @@ exercises:
 
 - View history with git log
 - View changes with git diff
+- Inspect a single commit with git show
+- Trace the source of each line with git blame
 - Know the short hash and the snapshot model
 
 ## git log views history
@@ -59,6 +79,23 @@ git diff --staged    # staging area vs HEAD (added, not yet committed)
 ```
 
 Lines starting with `-` were removed, lines starting with `+` were added. Reviewing your diff before committing is the standard habit.
+
+## git show inspects a commit
+
+```bash
+git show <commit>    # details of a single commit
+git show HEAD       # the most recent commit
+```
+
+`git show` expands one commit: the header shows the hash, author, date, and message, and below it the diff against its parent — exactly the answer to "what did this commit change". Combined with hashes from git log, you can trace any change back through history.
+
+## git blame traces lines
+
+```bash
+git blame <file>     # annotate each line with its origin
+```
+
+blame prefixes every line of a file with the **short hash and author of the commit that last changed it**. When you need to know "who changed this line, and in which commit", blame answers immediately — a common starting point when investigating bugs.
 
 ## The snapshot model
 

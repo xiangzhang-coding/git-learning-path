@@ -21,7 +21,7 @@ import {
   writeRebaseConflicts,
   writeRebaseState,
   MatrixRow} from './scenarios'
-import type { CommandResult } from './commands'
+import { diffLines, type CommandResult } from './commands'
 import { applyMergedFiles, fullIdentity, readTreeFiles, syncIndex, threeWayMerge, updateHeadRef, writeTreeFromFiles } from './merge'
 
 function short(sha: string): string {
@@ -430,5 +430,218 @@ export async function runReflog(session: Session, argv: string[]): Promise<Comma
   return {
     out: reversed.map((e, i) => `${short(e.newOid)} HEAD@{${i}}: ${e.msg}`),
     changed: false
+  }
+}
+
+function splitLines(text: string | null): string[] {
+  if (text === null) return []
+  const lines = text.split('\n')
+  if (lines.length > 1 && lines[lines.length - 1] === '') lines.pop()
+  return lines
+}
+
+export async function runShow(session: Session, argv: string[]): Promise<CommandResult> {
+  if (!(await isRepo(session.fs, session.dir))) {
+    return { out: [NOT_A_REPO], changed: false }
+  }
+  const { fs, dir } = session
+  const target = argv.find((a) => !a.startsWith('-'))
+  const oid = await resolveAnyRef(fs, dir, target ?? 'HEAD')
+  if (!oid) return { out: [`fatal: bad revision '${target ?? 'HEAD'}'`], changed: false }
+  const commit = await git.readCommit({ fs: fs as never, dir, oid })
+  const date = new Date(commit.commit.author.timestamp * 1000).toISOString().replace('T', ' ').slice(0, 19)
+  const lines: string[] = [
+    `commit ${oid}`,
+    `Author: ${commit.commit.author.name} <${commit.commit.author.email}>`,
+    `Date:   ${date}`,
+    '',
+    `    ${commit.commit.message.split('\n')[0]}`
+  ]
+  const parent = commit.commit.parent[0]
+  if (!parent) {
+    lines.push('', 'root commit')
+    return { out: lines, changed: false }
+  }
+  const parentFiles = await readTreeFiles(fs, dir, (await git.readCommit({ fs: fs as never, dir, oid: parent })).commit.tree)
+  const files = await readTreeFiles(fs, dir, commit.commit.tree)
+  const paths = [...new Set([...parentFiles.keys(), ...files.keys()])].filter(
+    (p) => parentFiles.get(p) !== files.get(p)
+  )
+  if (!paths.length) {
+    lines.push('', 'no changes')
+  } else {
+    for (const path of paths.sort()) {
+      lines.push('', `diff --git a/${path} b/${path}`)
+      lines.push(...diffLines(parentFiles.get(path) ?? '', files.get(path) ?? ''))
+    }
+  }
+  return { out: lines, changed: false }
+}
+
+export async function runBlame(session: Session, argv: string[]): Promise<CommandResult> {
+  if (!(await isRepo(session.fs, session.dir))) {
+    return { out: [NOT_A_REPO], changed: false }
+  }
+  const { fs, dir } = session
+  const file = argv.find((a) => !a.startsWith('-'))
+  if (!file) return { out: ['fatal: no file specified'], changed: false }
+  const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+  const lines = splitLines(await readFileFromRef(fs, dir, headOid, file))
+  if (!lines.length) return { out: [`fatal: no such path '${file}' in HEAD`], changed: false }
+  const info: ({ oid: string; author: string } | null)[] = new Array(lines.length).fill(null)
+  const history = await git.log({ fs: fs as never, dir, depth: 50 })
+  for (const entry of [...history].reverse()) {
+    const version = splitLines(await readFileFromRef(fs, dir, entry.oid, file))
+    const present = new Set(version)
+    for (let i = 0; i < lines.length; i++) {
+      if (present.has(lines[i])) {
+        info[i] = { oid: entry.oid, author: entry.commit.author.name }
+      }
+    }
+  }
+  const fallback = { oid: headOid, author: 'unknown' }
+  return {
+    out: lines.map((line, i) => {
+      const hit = info[i] ?? fallback
+      return `${short(hit.oid)} (${hit.author}) ${line}`
+    }),
+    changed: false
+  }
+}
+
+export async function runClean(session: Session, argv: string[]): Promise<CommandResult> {
+  if (!(await isRepo(session.fs, session.dir))) {
+    return { out: [NOT_A_REPO], changed: false }
+  }
+  const { fs, dir } = session
+  const dryRun = argv.includes('-n') || argv.includes('--dry-run')
+  const force = argv.includes('-f') || argv.includes('--force')
+  const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
+  const untracked = rows.filter(([, h, , s]) => h === 0 && s === 0).map((r) => r[0]).sort()
+  if (!untracked.length) return { out: ['nothing to clean'], changed: false }
+  if (dryRun) {
+    return { out: untracked.map((p) => `Would remove ${p}`), changed: false }
+  }
+  if (!force) {
+    return { out: ['fatal: clean.requireForce is true and -f was not given'], changed: false }
+  }
+  for (const p of untracked) {
+    await fs.unlink(`${dir}/${p}`).catch(() => {})
+  }
+  return { out: untracked.map((p) => `Removing ${p}`), changed: true }
+}
+
+const BISECT_START = '.git/BISECT_START'
+const BISECT_GOOD = '.git/BISECT_GOOD'
+const BISECT_BAD = '.git/BISECT_BAD'
+const BISECT_ORIG = '.git/BISECT_ORIG'
+const BISECT_DONE = '.git/BISECT_DONE'
+
+async function bisectRead(fs: MemoryFS, dir: string, path: string): Promise<string[]> {
+  return fs
+    .readFile(`${dir}/${path}`)
+    .then((buf) => buf.toString().split('\n').filter(Boolean))
+    .catch(() => [])
+}
+
+async function bisectWrite(fs: MemoryFS, dir: string, path: string, values: string[]): Promise<void> {
+  if (!values.length) {
+    await fs.unlink(`${dir}/${path}`).catch(() => {})
+  } else {
+    await fs.writeFile(`${dir}/${path}`, values.join('\n') + '\n')
+  }
+}
+
+export async function bisectInProgress(fs: MemoryFS, dir: string): Promise<boolean> {
+  return (await bisectRead(fs, dir, BISECT_START)).length > 0
+}
+
+export async function runBisect(session: Session, argv: string[]): Promise<CommandResult> {
+  if (!(await isRepo(session.fs, session.dir))) {
+    return { out: [NOT_A_REPO], changed: false }
+  }
+  const { fs, dir } = session
+  const op = argv.find((a) => !a.startsWith('-'))
+  const ref = argv.find((a) => !a.startsWith('-') && a !== op)
+  const resolve = async (): Promise<string | null> =>
+    ref ? await resolveAnyRef(fs, dir, ref) : await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
+
+  if (op === 'reset') {
+    if (!(await bisectInProgress(fs, dir)) && !(await bisectRead(fs, dir, BISECT_DONE)).length) {
+      return { out: ['fatal: Bisect not in progress?'], changed: false }
+    }
+    const orig = (await bisectRead(fs, dir, BISECT_ORIG))[0]
+    if (orig) {
+      await updateHeadRef(fs, dir, orig, 'bisect (reset): returning to HEAD')
+      await applyMergedFiles(fs, dir, await readTreeFiles(fs, dir, (await git.readCommit({ fs: fs as never, dir, oid: orig })).commit.tree))
+    }
+    await bisectWrite(fs, dir, BISECT_START, [])
+    await bisectWrite(fs, dir, BISECT_GOOD, [])
+    await bisectWrite(fs, dir, BISECT_BAD, [])
+    await bisectWrite(fs, dir, BISECT_ORIG, [])
+    await bisectWrite(fs, dir, BISECT_DONE, [])
+    return { out: [], changed: true }
+  }
+
+  if (!op) return { out: ['fatal: ' + "missing 'start', 'bad', 'good' or 'reset'"], changed: false }
+
+  if (op === 'start') {
+    if (await bisectInProgress(fs, dir)) {
+      return { out: ['fatal: bisect is already in progress; use "git bisect reset" first'], changed: false }
+    }
+    const bad = await resolve()
+    if (!bad) return { out: [`fatal: bad revision '${ref ?? 'HEAD'}'`], changed: false }
+    await bisectWrite(fs, dir, BISECT_BAD, [bad])
+    await bisectWrite(fs, dir, BISECT_ORIG, [await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })])
+    await bisectWrite(fs, dir, BISECT_START, [bad])
+    await bisectWrite(fs, dir, BISECT_DONE, [])
+    return { out: ['status: waiting for both good and bad commits'], changed: false }
+  }
+
+  if (!(await bisectInProgress(fs, dir))) {
+    return { out: ['fatal: Bisect not in progress? Try "git bisect start"'], changed: false }
+  }
+
+  const target = await resolve()
+  if (!target) return { out: [`fatal: bad revision '${ref ?? 'HEAD'}'`], changed: false }
+
+  if (op === 'good') {
+    await bisectWrite(fs, dir, BISECT_GOOD, [...(await bisectRead(fs, dir, BISECT_GOOD)), target])
+  } else if (op === 'bad') {
+    await bisectWrite(fs, dir, BISECT_BAD, [...(await bisectRead(fs, dir, BISECT_BAD)), target])
+  } else {
+    return { out: ['fatal: ' + "unknown 'bisect' op; use start, good, bad or reset"], changed: false }
+  }
+
+  const goodOids = await bisectRead(fs, dir, BISECT_GOOD)
+  const badOids = await bisectRead(fs, dir, BISECT_BAD)
+  if (!goodOids.length) {
+    return { out: ['status: waiting for good commit(s), bad commit known'], changed: false }
+  }
+  const bad = badOids[badOids.length - 1]
+  const goodSet = new Set<string>()
+  for (const g of goodOids) {
+    for (const c of await git.log({ fs: fs as never, dir, ref: g, depth: 100 })) goodSet.add(c.oid)
+  }
+  const badHistory = await git.log({ fs: fs as never, dir, ref: bad, depth: 100 })
+  const candidates = badHistory.map((c) => c.oid).filter((oid) => !goodSet.has(oid))
+
+  if (candidates.length <= 1) {
+    await bisectWrite(fs, dir, BISECT_DONE, candidates.length ? [candidates[0]] : [bad])
+    const first = candidates[0] ?? bad
+    return {
+      out: [`${first} is the first bad commit`, 'bisect run complete; run "git bisect reset" to finish'],
+      changed: true
+    }
+  }
+
+  const mid = candidates[Math.floor(candidates.length / 2)]
+  await updateHeadRef(fs, dir, mid, `bisect: checkout ${short(mid)}`)
+  await applyMergedFiles(fs, dir, await readTreeFiles(fs, dir, (await git.readCommit({ fs: fs as never, dir, oid: mid })).commit.tree))
+  const left = candidates.length - 1
+  const steps = Math.max(1, Math.ceil(Math.log2(left + 1)))
+  return {
+    out: [`Bisecting: ${left} revisions left to test after this (roughly ${steps} steps)`],
+    changed: true
   }
 }

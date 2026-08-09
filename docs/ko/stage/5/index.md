@@ -2,6 +2,23 @@
 
 이 챕터의 원리 축: **GitHub를 중심으로 한 협업 루프**. fork가 내 사본을 만들고 upstream이 원작자를 이어 줍니다. PR은 커밋이 main으로 들어가는 문이고, issue가 토론을 담당하며, release가 버전을 출시하고, Actions와 Pages가 테스트와 배포를 자동화합니다. 이 챕터는 실제 GitHub에서 연습합니다 — 모든 개념에 직접 해보기 과제가 붙습니다.
 
+## 실천 체크리스트
+
+실제 GitHub에서 아래의 전체 과정을 완료하고, 체크해서 진행 상황을 기록하세요:
+
+<Checklist :tasks="[
+  { text: '자주 쓰는 오픈소스 저장소를 fork하세요', link: '/ko/stage/5/5-1-fork-upstream' },
+  { text: '내 fork를 clone하고 upstream을 추가한 뒤 한 번 동기화하세요', link: '/ko/stage/5/5-1-fork-upstream' },
+  { text: '기능 브랜치를 push하고 실제 PR을 여세요', link: '/ko/stage/5/5-2-pull-request' },
+  { text: 'PR에서 review 토론을 한 번 경험하세요', link: '/ko/stage/5/5-2-pull-request' },
+  { text: 'issue를 열고 label과 milestone을 만드세요', link: '/ko/stage/5/5-3-issues' },
+  { text: 'issue와 연결된 PR을 올리세요(fixes #번호)', link: '/ko/stage/5/5-3-issues' },
+  { text: 'v0.1.0 태그를 붙이고 첫 번째 Release를 만드세요', link: '/ko/stage/5/5-4-releases' },
+  { text: '패치 버전을 출시하고 세 부분으로 된 설명을 쓰세요', link: '/ko/stage/5/5-4-releases' },
+  { text: '정적 페이지를 Pages에 배포하는 workflow를 작성하세요', link: '/ko/stage/5/5-5-actions-pages' },
+  { text: '일부러 빌드 단계를 틀리게 작성해 Actions 실패 로그를 확인하세요', link: '/ko/stage/5/5-5-actions-pages' }
+]" />
+
 ## 강의
 
 - 5-1 [fork와 upstream 동기화](/ko/stage/5/5-1-fork-upstream): fork로 사본을 만들고 upstream으로 상위 업데이트 받기

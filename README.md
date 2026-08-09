@@ -1,6 +1,6 @@
 # Git 学习路径（Git Learning Path）
 
-一个基于 VitePress 的静态课程站：分六个章节由浅入深地教授 Git/GitHub **常用命令**及其原理，支持 8 种语言、站内**练手区**（浏览器内执行 git 命令并实时绘制提交图）与即时反馈**练习**，部署于 GitHub Pages。
+一个基于 VitePress 的静态课程站：分六个章节由浅入深地教授 Git/GitHub **常用命令**及其原理，支持 9 种语言版本（英文 + 8）、站内**练手区**（浏览器内执行 git 命令并实时绘制提交图）与即时反馈**练习**，部署于 GitHub Pages。
 
 在线地址：https://xiangzhang-coding.github.io/git-learning-path/
 
@@ -19,7 +19,7 @@ npm run build    # 构建 + PageFind 索引（产物在 docs/.vitepress/dist）
 ```
 docs/
 ├─ .vitepress/
-│  ├─ config.ts            # i18n 8 语言配置、主题、导航
+│  ├─ config.ts            # i18n 9 语言版本配置、主题、导航
 │  └─ theme/               # 主题系统（跟随系统/明亮/暗色终端/复古终端）、搜索、语言跟随
 ├─ adr/                    # 架构决策记录
 ├─ index.md                # 英文首页（root locale）

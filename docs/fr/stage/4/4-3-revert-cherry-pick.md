@@ -45,6 +45,24 @@ exercises:
         contentContains: feature work
     explanation: "Après cherry-pick, la branche feature reste intacte et main possède en plus un commit au contenu identique."
     anchor: "#git-cherry-pick-copier-un-commit"
+  - id: 4-3-e5
+    question: À quoi sert git bisect ?
+    options:
+      - "Localiser par recherche dichotomique le premier commit qui a introduit le bug"
+      - Fusionner l'historique de deux branches
+      - Annuler le dernier commit
+    correct: 0
+    explanation: "bisect marque les commits « bad » et « good », puis checkout régulièrement le point médian pour que vous confirmiez : par dichotomie, il identifie rapidement « à partir de quel commit les choses ont commencé à mal tourner »."
+    anchor: "#git-bisect-localise-le-mauvais-commit"
+  - id: 4-3-e6
+    question: Dans la zone d'entraînement ci-dessous, utilise bisect pour localiser le commit qui a introduit le bug.
+    type: task
+    scenario: bisect
+    goal: "Exécute git bisect start, git bisect bad, git bisect good HEAD~3 ; à chaque fois que git te place sur un commit intermédiaire, examine la fonction add de calc.js — si elle est correcte, fais git bisect good, si elle a un bug, fais git bisect bad, jusqu'à ce que le commit fautif soit identifié."
+    checks:
+      - type: bisectDone
+    explanation: "bisect va localiser « fix: typo in add » — la fonction add commence à faillir à partir de ce commit ; une fois terminé, tu peux utiliser git bisect reset pour revenir à la branche d'origine."
+    anchor: "#git-bisect-localise-le-mauvais-commit"
 ---
 
 # git revert et git cherry-pick
@@ -53,6 +71,7 @@ exercises:
 
 - annuler un commit existant avec git revert
 - copier un commit avec git cherry-pick
+- localiser le mauvais commit par dichotomie avec git bisect
 - comprendre que les deux ne réécrivent pas l'historique
 
 ## git revert : annuler un commit
@@ -92,6 +111,18 @@ o  A ---- B (main) ---- B' (fix cherry-pické)
 | Résultat | un nouveau commit neutralise l'ancien | un nouveau commit réplique l'ancien |
 
 Les deux ne réécrivent pas l'historique existant, et les deux s'arrêtent en cas de conflit, en attendant votre résolution.
+
+## git bisect localise le mauvais commit
+
+```bash
+git bisect start          # démarrer
+git bisect bad            # le HEAD actuel est mauvais
+git bisect good <commit>  # marquer un commit connu comme bon
+# boucle : checkout au point médian → tester → git bisect good / git bisect bad
+git bisect reset          # terminer, revenir à la branche d'origine
+```
+
+« Une fonctionnalité est cassée, mais on ne sait pas à partir de quel commit » — éplucher l'historique à la main est trop inefficace. bisect utilise la **dichotomie** : après avoir marqué un commit « bad » et un commit « good », git checkout automatiquement le commit situé à mi-chemin entre les deux ; vous le testez, vous dites good ou bad, et la plage se réduit de moitié. Quelques itérations suffisent pour verrouiller le premier commit qui a introduit le bug.
 
 ## Exercices
 

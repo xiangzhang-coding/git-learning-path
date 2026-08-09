@@ -39,6 +39,24 @@ exercises:
         messageContains: break hello
     explanation: Das reflog zeigt die komplette Geschichte von HEAD — mit dem Hash von vor dem reset stellt reset --hard den Zustand wieder her.
     anchor: "#git-reflog-verlorene-commits-finden"
+  - id: 4-2-e5
+    question: Welche Wirkung hat git clean?
+    options:
+      - Ungetrackte Dateien löschen (nur mit -f wird wirklich gelöscht, -n ist die Vorschau)
+      - Die gesamte Commit-Historie leeren
+      - Änderungen getrackter Dateien rückgängig machen
+    correct: 0
+    explanation: clean behandelt nur ungetrackte Dateien; standardmäßig verweigert es das direkte Löschen (clean.requireForce), -n ist die Vorschau, -f führt aus — die gelöschten Dateien lassen sich mit git nicht wiederherstellen.
+    anchor: "#git-clean-entfernt-ungetrackte-dateien"
+  - id: 4-2-e6
+    question: Entfernen Sie im untenstehenden Übungsbereich alle ungetrackten Dateien.
+    type: task
+    scenario: clean
+    goal: Zeigen Sie zuerst mit git clean -n die Vorschau und löschen Sie dann mit git clean -f die ungetrackten Dateien (scratch.txt und todo.tmp).
+    checks:
+      - type: workdirClean
+    explanation: clean -f entfernt die ungetrackten Dateien; die Aufgabe ist gelöst, sobald das Arbeitsverzeichnis nur noch committete Dateien enthält.
+    anchor: "#git-clean-entfernt-ungetrackte-dateien"
 ---
 
 # git reset und reflog
@@ -48,6 +66,7 @@ exercises:
 - Mit git reset HEAD und den Arbeitszustand verschieben
 - Den Unterschied zwischen --hard / mixed / --soft kennen
 - Mit git reflog per reset verworfene Commits wiederfinden
+- Mit git clean ungetrackte Dateien entfernen
 
 ## git reset: HEAD verschieben
 
@@ -81,6 +100,18 @@ git reflog
 ```
 
 Die per reset verworfenen Commits sind **nicht gelöscht**, es zeigt nur kein Branch mehr auf sie. Im reflog finden Sie ihren Hash und holen sie mit `git reset --hard <Hash>` vollständig zurück. Das ist Gits „Wiederherstellungs-Trick": Solange die Operation lokal stattfand, ist fast alles wiederherstellbar.
+
+## git clean entfernt ungetrackte Dateien
+
+```bash
+git clean -n       # Vorschau: Dateien auflisten, die gelöscht würden
+git clean -f       # ausführen: ungetrackte Dateien löschen
+```
+
+Unter „Untracked files" in `git status` stehen alle ungetrackten Dateien — lokal entstandene Dateien, auf die git keinen Zugriff hat (temporäre Dateien, Build-Artefakte). `git clean` räumt sie weg. Zwei Dinge sind zu beachten:
+
+- Standardmäßig verweigert git die Ausführung (`clean.requireForce`) — erst mit `-f` wird wirklich gelöscht; zuerst mit `-n` prüfen, was gelöscht würde
+- **Von clean gelöschte Dateien kann git nicht wiederherstellen** (sie wurden nie committet, auch das reflog kann sie nicht retten) — vor dem Ausführen unbedingt sicher sein
 
 ## Übungen
 

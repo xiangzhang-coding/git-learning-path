@@ -61,7 +61,9 @@ const QUICK: Record<ScenarioName, string[]> = {
   revert: ['git status', 'git log --oneline', 'git revert HEAD', 'git log --oneline'],
   'cherry-pick': ['git status', 'git log --oneline', 'git cherry-pick feature', 'git log --oneline'],
   rebase: ['git status', 'git log --oneline', 'git rebase main', 'git log --oneline'],
-  'rebase-conflict': ['git status', 'git log --oneline', 'git rebase main', 'git rebase --abort']
+  'rebase-conflict': ['git status', 'git log --oneline', 'git rebase main', 'git rebase --abort'],
+  clean: ['git status', 'git clean -n', 'git clean -f', 'git status'],
+  bisect: ['git log --oneline', 'git bisect start', 'git bisect bad', 'git bisect good HEAD~2']
 }
 
 function laneCells(row: GraphCommit): { char: string; isDot: boolean }[] {

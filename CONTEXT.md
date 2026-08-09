@@ -1,6 +1,6 @@
 # Git 学习路径（Git Learning Path）
 
-一个基于 VitePress 的静态课程站：分六个章节由浅入深地教授 Git/GitHub 常用命令及其原理，支持 8 种语言、站内练手区与即时反馈练习，部署于 GitHub Pages。
+一个基于 VitePress 的静态课程站：分六个章节由浅入深地教授 Git/GitHub 常用命令及其原理，支持 9 种语言版本（英文 + 8）、站内练手区与即时反馈练习，部署于 GitHub Pages。
 
 ## Language
 

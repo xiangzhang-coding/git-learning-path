@@ -19,7 +19,7 @@ AUTHOR,
 } from './scenarios'
 import { applyMergedFiles, createMergeCommit, readTreeFiles, syncIndex, threeWayMerge, writeTreeFromFiles, updateHeadRef } from './merge'
 import { runCd, runClone, runFetch, runPush, runRemote } from './remote'
-import { runCherryPick, runRebase, runReflog, runReset, runRevert, runStash, runTag } from './repair'
+import { runBisect, runBlame, runCherryPick, runClean, runRebase, runReflog, runReset, runRevert, runShow, runStash, runTag } from './repair'
 import {
   appendReflog,
   rebaseConflicts,
@@ -158,7 +158,7 @@ async function unresolvedConflicts(fs: MemoryFS, dir: string, listed: string[]):
 
 const MAX_DIFF_CELLS = 4_000_000
 
-function diffLines(oldContent: string, newContent: string): string[] {
+export function diffLines(oldContent: string, newContent: string): string[] {
   const oldLines = oldContent.split('\n')
   const newLines = newContent.split('\n')
   const n = oldLines.length
@@ -863,6 +863,14 @@ export async function runGit(session: Session, input: string): Promise<CommandRe
         return await runRebase(session, rest)
       case 'reflog':
         return await runReflog(session, rest)
+      case 'show':
+        return await runShow(session, rest)
+      case 'blame':
+        return await runBlame(session, rest)
+      case 'clean':
+        return await runClean(session, rest)
+      case 'bisect':
+        return await runBisect(session, rest)
       case 'help':
         return {
           out: [
@@ -892,6 +900,10 @@ export async function runGit(session: Session, input: string): Promise<CommandRe
             '  git cherry-pick <ref>',
             '  git rebase <branch> | --continue | --abort',
             '  git reflog',
+            '  git show [<ref>]',
+            '  git blame <file>',
+            '  git clean [-n | -f]',
+            '  git bisect start|good <ref>|bad [<ref>]|reset',
             '  cd <dir>'
           ],
           changed: false
