@@ -9,6 +9,7 @@ import LessonProgress from './components/LessonProgress.vue'
 import MergeVisual from './components/MergeVisual.vue'
 import Playground from './components/Playground.vue'
 import RemoteFlow from './components/RemoteFlow.vue'
+import VisualControls from './components/VisualControls.vue'
 import ResetVisual from './components/ResetVisual.vue'
 import SnapshotVisual from './components/SnapshotVisual.vue'
 import StageProgress from './components/StageProgress.vue'
@@ -25,6 +26,7 @@ export default {
     app.component('HeadVisual', HeadVisual)
     app.component('MergeVisual', MergeVisual)
     app.component('RemoteFlow', RemoteFlow)
+    app.component('VisualControls', VisualControls)
     app.component('ResetVisual', ResetVisual)
     app.component('SnapshotVisual', SnapshotVisual)
     app.component('LessonProgress', LessonProgress)

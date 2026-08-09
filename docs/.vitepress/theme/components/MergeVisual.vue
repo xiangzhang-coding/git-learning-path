@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useData } from 'vitepress'
 import { labelsFor, langOfLocaleIndex } from '../lib/labels'
 import { usePlayback } from '../lib/usePlayback'
+import VisualControls from './VisualControls.vue'
 
 const { localeIndex } = useData()
 const labels = computed(() => labelsFor(langOfLocaleIndex(localeIndex.value)))
@@ -26,29 +27,55 @@ function select(i: number) {
   <figure class="teach-visual merge-visual">
     <figcaption class="teach-visual-title">{{ t.title }}</figcaption>
     <div class="merge-stage" :data-end="end">
-      <div class="merge-line main-line">
-        <span class="merge-node" :class="{ lit: end === 'ff', dimmed: end === 'conflict' }">A</span>
-        <span class="merge-link"></span>
-        <span class="merge-node" :class="{ lit: end === 'ff', dimmed: end === 'conflict' }">B</span>
-        <span class="merge-link" :class="{ lit: end === 'ff' }"></span>
-        <span class="merge-node tip" :class="{ lit: end === 'ff' }">C</span>
-        <span class="merge-branch-label">{{ t.main }}</span>
+      <div v-if="end === 'ff'" class="merge-line main-line">
+        <span class="merge-node lit">A</span>
+        <span class="merge-link lit"></span>
+        <span class="merge-node lit">B</span>
+        <span class="merge-link lit"></span>
+        <span class="merge-node lit">C</span>
+        <span class="merge-link lit"></span>
+        <span class="merge-node lit tip">D</span>
+        <span class="merge-branch-label">{{ t.main }} = {{ t.feature }}</span>
       </div>
-      <div class="merge-line feature-line">
-        <span class="merge-node dimmed">A</span>
-        <span class="merge-link"></span>
-        <span class="merge-node" :class="{ conflict: end === 'conflict', lit: end === 'merge' }">
-          {{ end === 'conflict' ? '✕' : 'C' }}
-        </span>
-        <span class="merge-link" :class="{ lit: end === 'merge' }"></span>
-        <span class="merge-node merge-point" :class="{ lit: end === 'merge' }">M</span>
-        <span class="merge-branch-label">{{ t.feature }}</span>
-      </div>
+      <template v-else>
+        <div class="merge-line main-line">
+          <span class="merge-node">A</span>
+          <span class="merge-link"></span>
+          <span class="merge-node fork">B</span>
+          <span class="merge-link"></span>
+          <span class="merge-node" :class="{ lit: end === 'merge' }">C</span>
+          <span class="merge-link" :class="{ lit: end === 'merge' }"></span>
+          <span class="merge-node tip merge-point" :class="end === 'merge' ? 'lit' : 'conflict'">
+            {{ end === 'conflict' ? '✕' : 'M' }}
+          </span>
+          <span class="merge-branch-label">{{ t.main }}</span>
+        </div>
+        <div class="merge-line feature-line">
+          <span class="merge-node dimmed">A</span>
+          <span class="merge-link"></span>
+          <span class="merge-node dimmed fork">B</span>
+          <span class="merge-link"></span>
+          <span class="merge-node dimmed">D</span>
+          <span class="merge-link" :class="{ lit: end === 'merge' }"></span>
+          <span class="merge-node dimmed tip" :class="{ lit: end === 'merge' }">E</span>
+          <span class="merge-branch-label">{{ t.feature }}</span>
+        </div>
+      </template>
       <div v-if="end === 'conflict'" class="merge-conflict-mark">
         &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD<br />{{ t.main }}<br />=======<br />{{ t.feature }}<br />&gt;&gt;&gt;&gt;&gt;&gt;&gt;
       </div>
     </div>
-    <div class="teach-visual-controls">
+    <VisualControls
+      :play="labels.visualPlay"
+      :pause="labels.visualPause"
+      :replay="labels.visualReplay"
+      :step="labels.visualStep"
+      :playing="endIndex.playing.value"
+      :reduced="endIndex.reduced.value"
+      @toggle="endIndex.toggle"
+      @replay="endIndex.replay"
+      @next="endIndex.next"
+    >
       <button
         v-for="(e, i) in ends"
         :key="e"
@@ -60,17 +87,7 @@ function select(i: number) {
       >
         {{ t[e] }}
       </button>
-      <span class="teach-visual-spacer"></span>
-      <button type="button" class="teach-visual-btn" @click="endIndex.toggle">
-        {{ endIndex.playing ? labels.visualPause : labels.visualPlay }}
-      </button>
-      <button type="button" class="teach-visual-btn" @click="endIndex.replay">
-        {{ labels.visualReplay }}
-      </button>
-      <button v-if="endIndex.reduced" type="button" class="teach-visual-btn" @click="endIndex.next">
-        {{ labels.visualStep }}
-      </button>
-    </div>
+    </VisualControls>
     <p class="teach-visual-desc">{{ desc }}</p>
   </figure>
 </template>

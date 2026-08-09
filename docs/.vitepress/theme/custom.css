@@ -1305,11 +1305,12 @@ html[data-theme='retro'] .vp-doc h3 {
 }
 
 .merge-node.merge-point {
-  display: none;
+  font-weight: 600;
 }
 
-.merge-stage[data-end='merge'] .merge-node.merge-point {
-  display: inline-flex;
+.merge-node.fork {
+  border-color: var(--vp-c-text-3);
+  opacity: 0.7;
 }
 
 .merge-link {

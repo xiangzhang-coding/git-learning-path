@@ -168,6 +168,18 @@ export async function copyObjects(from: MemoryFS, fromDir: string, to: MemoryFS,
 
 export type MatrixRow = [string, number, number, number]
 
+export function dirtyRows(rows: MatrixRow[]): MatrixRow[] {
+  return rows.filter(([, h, w, s]) => !(h === 1 && w === 1 && s === 1))
+}
+
+export function trackedDirtyRows(rows: MatrixRow[]): MatrixRow[] {
+  return rows.filter(([, h, w, s]) => h !== 0 && !(w === 1 && s === 1))
+}
+
+export function untrackedRows(rows: MatrixRow[]): MatrixRow[] {
+  return rows.filter(([, h, , s]) => h === 0 && s === 0)
+}
+
 export async function headBranchOf(fs: MemoryFS, dir: string): Promise<string | null> {
   try {
     const raw = await fs.readFile(`${dir}/.git/HEAD`)
@@ -250,6 +262,12 @@ export async function readTrackingOid(
 
 const REFLOG_PATH = (dir: string): string => `${dir}/.git/logs/HEAD`
 
+export function reflogEntry(oldOid: string, newOid: string, msg: string): string {
+  const ts = Math.floor(Date.now() / 1000)
+  const tz = -new Date().getTimezoneOffset()
+  return `${oldOid} ${newOid} ${AUTHOR.name} <${AUTHOR.email}> ${ts} ${tz}\t${msg}\n`
+}
+
 export async function initReflog(fs: MemoryFS, dir: string): Promise<void> {
   try {
     await fs.readFile(REFLOG_PATH(dir))
@@ -261,12 +279,7 @@ export async function initReflog(fs: MemoryFS, dir: string): Promise<void> {
     const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
     const head = await git.readCommit({ fs: fs as never, dir, oid: headOid })
     const headMsg = head.commit.message.split('\n')[0]
-    const ts = Math.floor(Date.now() / 1000)
-    const tz = -new Date().getTimezoneOffset()
-    await fs.writeFile(
-      REFLOG_PATH(dir),
-      `${'0'.repeat(40)} ${headOid} ${AUTHOR.name} <${AUTHOR.email}> ${ts} ${tz}\tcommit (initial): ${headMsg}\n`
-    )
+    await fs.writeFile(REFLOG_PATH(dir), reflogEntry('0'.repeat(40), headOid, `commit (initial): ${headMsg}`))
   } catch {
     // no commits yet
   }
@@ -279,28 +292,20 @@ export async function appendReflog(fs: MemoryFS, dir: string, msg: string): Prom
   } catch {
     existing = ''
   }
-  let oldOid: string
   const newOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
   if (!existing) {
     try {
       const head = await git.readCommit({ fs: fs as never, dir, oid: newOid })
       const headMsg = head.commit.message.split('\n')[0]
-      const ts = Math.floor(Date.now() / 1000)
-      const tz = -new Date().getTimezoneOffset()
-      existing = `${'0'.repeat(40)} ${newOid} ${AUTHOR.name} <${AUTHOR.email}> ${ts} ${tz}\tcommit (initial): ${headMsg}\n`
+      existing = reflogEntry('0'.repeat(40), newOid, `commit (initial): ${headMsg}`)
     } catch {
       existing = ''
     }
   }
   const lines = existing.split('\n').filter(Boolean)
   const last = lines[lines.length - 1]
-  oldOid = last ? last.split(' ')[1] : '0'.repeat(40)
-  const ts = Math.floor(Date.now() / 1000)
-  const tz = -new Date().getTimezoneOffset()
-  await fs.writeFile(
-    REFLOG_PATH(dir),
-    `${existing}${oldOid} ${newOid} ${AUTHOR.name} <${AUTHOR.email}> ${ts} ${tz}\t${msg}\n`
-  )
+  const oldOid = last ? last.split(' ')[1] : '0'.repeat(40)
+  await fs.writeFile(REFLOG_PATH(dir), `${existing}${reflogEntry(oldOid, newOid, msg)}`)
 }
 
 export interface ReflogEntry {

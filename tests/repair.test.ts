@@ -164,6 +164,17 @@ describe('git revert', () => {
     const status = await exec(session, 'git status')
     expect(status).toContain('nothing to commit')
   })
+
+  it('refuses to overwrite a locally modified tracked file', async () => {
+    const session = await Session.create('revert')
+    await session.fs.writeFile('/repo/hello.txt', 'local edit\n')
+    const log = await exec(session, 'git log --oneline')
+    const bad = log.split('\n')[0].split(' ')[0]
+    const out = await exec(session, `git revert ${bad}`)
+    expect(out).toContain('would be overwritten')
+    const content = await session.fs.readFile('/repo/hello.txt')
+    expect(content.toString()).toContain('local edit')
+  })
 })
 
 describe('git cherry-pick', () => {

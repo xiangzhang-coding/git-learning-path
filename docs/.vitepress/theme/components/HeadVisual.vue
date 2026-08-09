@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useData } from 'vitepress'
 import { labelsFor, langOfLocaleIndex } from '../lib/labels'
 import { usePlayback } from '../lib/usePlayback'
+import VisualControls from './VisualControls.vue'
 
 const { localeIndex } = useData()
 const labels = computed(() => labelsFor(langOfLocaleIndex(localeIndex.value)))
@@ -41,7 +42,17 @@ const current = computed(() => BRANCHES[view.step.value])
         {{ t.head }} →
       </div>
     </div>
-    <div class="teach-visual-controls">
+    <VisualControls
+      :play="labels.visualPlay"
+      :pause="labels.visualPause"
+      :replay="labels.visualReplay"
+      :step="labels.visualStep"
+      :playing="view.playing.value"
+      :reduced="view.reduced.value"
+      @toggle="view.toggle"
+      @replay="view.replay"
+      @next="view.next"
+    >
       <button
         v-for="(b, i) in BRANCHES"
         :key="b.name"
@@ -53,17 +64,7 @@ const current = computed(() => BRANCHES[view.step.value])
       >
         {{ t.switch }} {{ b.name }}
       </button>
-      <span class="teach-visual-spacer"></span>
-      <button type="button" class="teach-visual-btn" @click="view.toggle">
-        {{ view.playing ? labels.visualPause : labels.visualPlay }}
-      </button>
-      <button type="button" class="teach-visual-btn" @click="view.replay">
-        {{ labels.visualReplay }}
-      </button>
-      <button v-if="view.reduced" type="button" class="teach-visual-btn" @click="view.next">
-        {{ labels.visualStep }}
-      </button>
-    </div>
+    </VisualControls>
     <p class="teach-visual-desc">{{ t.switchDesc }}</p>
   </figure>
 </template>

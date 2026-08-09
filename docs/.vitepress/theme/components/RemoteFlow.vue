@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useData } from 'vitepress'
 import { labelsFor, langOfLocaleIndex } from '../lib/labels'
 import { usePlayback } from '../lib/usePlayback'
+import VisualControls from './VisualControls.vue'
 
 const { localeIndex } = useData()
 const labels = computed(() => labelsFor(langOfLocaleIndex(localeIndex.value)))
@@ -31,7 +32,7 @@ const moves = computed(() => act.value !== 'fetch')
       <div class="remote-repo local">
         <span class="remote-repo-name">{{ t.local }}</span>
         <div class="remote-commits">
-          <span class="remote-commit" :class="{ moving: direction === 'to-remote' && moves }">c1</span>
+          <span class="remote-commit">c1</span>
           <span class="remote-commit" :class="{ moving: direction === 'to-remote' && moves }">c2</span>
           <span class="remote-tracking" :class="{ fetching: act === 'fetch' }">{{ t.tracking }}</span>
         </div>
@@ -47,7 +48,17 @@ const moves = computed(() => act.value !== 'fetch')
         </div>
       </div>
     </div>
-    <div class="teach-visual-controls">
+    <VisualControls
+      :play="labels.visualPlay"
+      :pause="labels.visualPause"
+      :replay="labels.visualReplay"
+      :step="labels.visualStep"
+      :playing="actIndex.playing.value"
+      :reduced="actIndex.reduced.value"
+      @toggle="actIndex.toggle"
+      @replay="actIndex.replay"
+      @next="actIndex.next"
+    >
       <button
         v-for="a in acts"
         :key="a"
@@ -59,17 +70,7 @@ const moves = computed(() => act.value !== 'fetch')
       >
         {{ t[a] }}
       </button>
-      <span class="teach-visual-spacer"></span>
-      <button type="button" class="teach-visual-btn" @click="actIndex.toggle">
-        {{ actIndex.playing ? labels.visualPause : labels.visualPlay }}
-      </button>
-      <button type="button" class="teach-visual-btn" @click="actIndex.replay">
-        {{ labels.visualReplay }}
-      </button>
-      <button v-if="actIndex.reduced" type="button" class="teach-visual-btn" @click="actIndex.next">
-        {{ labels.visualStep }}
-      </button>
-    </div>
+    </VisualControls>
     <p class="teach-visual-desc">{{ desc }}</p>
   </figure>
 </template>

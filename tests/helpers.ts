@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { load as loadYaml } from 'js-yaml'
+import { LANGS } from '../docs/.vitepress/theme/lib/stages'
 
 export const DOCS_ROOT = path.join(import.meta.dirname, '..', 'docs')
 
@@ -30,7 +31,7 @@ export function markdownFilesUnder(dir: string): string[] {
   return out
 }
 
-export const LOCALES = ['zh', 'ja', 'ko', 'de', 'fr', 'es', 'pt', 'ru']
+export const LOCALES = [...LANGS]
 
 export function relativeUnder(dir: string, file: string): string {
   return path.relative(dir, file)

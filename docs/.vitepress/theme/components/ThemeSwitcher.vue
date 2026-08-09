@@ -2,9 +2,10 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useData } from 'vitepress'
 import { labelsFor, langOfLocaleIndex } from '../lib/labels'
+import { DARK_THEMES, isDarkTheme } from '../lib/themes'
 
 const KEY = 'gitpath-theme'
-const themeValues = ['system', 'light', 'dark', 'terminal', 'retro'] as const
+const themeValues = ['system', 'light', ...DARK_THEMES] as const
 type ThemeValue = (typeof themeValues)[number]
 
 const { localeIndex } = useData()
@@ -21,7 +22,7 @@ const onMediaChange = () => {
 
 function apply(theme: ThemeValue) {
   const root = document.documentElement
-  const isDark = theme === 'dark' || theme === 'terminal' || theme === 'retro'
+  const isDark = isDarkTheme(theme)
   const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
   root.classList.toggle('dark', theme === 'system' ? systemDark : isDark)
   if (theme === 'system') {

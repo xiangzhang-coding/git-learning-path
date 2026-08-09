@@ -1,5 +1,6 @@
 import * as git from 'isomorphic-git'
 import { short } from './fs'
+import { lcsTable } from './lcs'
 import type { MemoryFS } from './fs'
 import type { Session } from './scenarios'
 import {
@@ -16,9 +17,10 @@ AUTHOR,
   hasConflictMarkers,
   readFileFromRef,
   resolveAnyRef,
+  dirtyRows,
   startMerge
 } from './scenarios'
-import { applyMergedFiles, createMergeCommit, mergeSnapshot, readTreeFiles, syncIndex, threeWayMerge, writeTreeFromFiles, updateHeadRef } from './merge'
+import { applyMergedFiles, createMergeCommit, mergeSnapshot, readTreeFiles, syncIndex, threeWayMerge, wouldBeOverwritten, writeTreeFromFiles, updateHeadRef } from './merge'
 import { runCd, runClone, runFetch, runPush, runRemote } from './remote'
 import { runBisect, runBlame, runCherryPick, runClean, runRebase, runReflog, runReset, runRevert, runShow, runStash, runTag } from './repair'
 import {
@@ -53,7 +55,7 @@ async function branchName(fs: MemoryFS, dir: string): Promise<string> {
 
 async function fileStatuses(fs: MemoryFS, dir: string): Promise<MatrixRow[]> {
   const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
-  return rows.filter(([, head, workdir, stage]) => !(head === 1 && workdir === 1 && stage === 1))
+  return dirtyRows(rows)
 }
 
 function statusLabels(row: MatrixRow): string[] {
@@ -154,8 +156,6 @@ async function unresolvedConflicts(fs: MemoryFS, dir: string, listed: string[]):
   return out
 }
 
-const MAX_DIFF_CELLS = 4_000_000
-
 const stagedSnapshots = new WeakMap<MemoryFS, Map<string, string | null>>()
 
 function stagedSnapshot(fs: MemoryFS): Map<string, string | null> {
@@ -176,14 +176,9 @@ export function diffLines(oldContent: string, newContent: string): string[] {
   const newLines = newContent.split('\n')
   const n = oldLines.length
   const m = newLines.length
-  if (n * m > MAX_DIFF_CELLS) {
+  const dp = lcsTable(oldLines, newLines)
+  if (!dp) {
     return [...oldLines.map((l) => `-${l}`), ...newLines.map((l) => `+${l}`)]
-  }
-  const dp: number[][] = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0))
-  for (let i = n - 1; i >= 0; i--) {
-    for (let j = m - 1; j >= 0; j--) {
-      dp[i][j] = oldLines[i] === newLines[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1])
-    }
   }
   const out: string[] = []
   let i = 0
@@ -231,7 +226,7 @@ async function runStatus(session: Session): Promise<CommandResult> {
   let branchLabel = branch
   if (branch === 'HEAD') {
     const oid = await git.resolveRef({ fs: session.fs as never, dir: session.dir, ref: 'HEAD' })
-    branchLabel = `HEAD detached at ${oid.slice(0, 7)}`
+    branchLabel = `HEAD detached at ${short(oid)}`
   }
   let merging: string[] | null = null
   let rebasing: string[] | null = null
@@ -410,7 +405,7 @@ async function runSwitch(session: Session, argv: string[]): Promise<CommandResul
   const name = argv.filter((a) => !a.startsWith('-') && a !== 'switch' && a !== 'checkout')[0]
   if (!name) return { out: ['fatal: missing branch name'], changed: false }
   const rows = (await git.statusMatrix({ fs: session.fs as never, dir: session.dir })) as MatrixRow[]
-  const dirty = rows.filter(([, h, w, s]) => !(h === 1 && w === 1 && s === 1))
+  const dirty = rows.filter(([, h, w, s]) => h !== 0 && !(w === 1 && s === 1))
   if (dirty.length) {
     return {
       out: [
@@ -442,6 +437,22 @@ async function runSwitch(session: Session, argv: string[]): Promise<CommandResul
       await git.resolveRef({ fs: session.fs as never, dir: session.dir, ref: `refs/tags/${name}` })
     } catch {
       return { out: [`fatal: invalid reference: ${name}`], changed: false }
+    }
+  }
+  if (isBranch) {
+    const targetOid = await git.resolveRef({ fs: session.fs as never, dir: session.dir, ref: `refs/heads/${name}` })
+    const targetTree = (await git.readCommit({ fs: session.fs as never, dir: session.dir, oid: targetOid })).commit.tree
+    const hit = await wouldBeOverwritten(session, new Map<string, string | null>(await readTreeFiles(session.fs, session.dir, targetTree)), 'untracked')
+    if (hit.length) {
+      return {
+        out: [
+          'error: The following untracked working tree files would be overwritten by checkout:',
+          ...hit.map((p) => '\t' + p),
+          'Please move or remove them before you switch branches.',
+          'Aborting'
+        ],
+        changed: false
+      }
     }
   }
   try {
@@ -514,13 +525,16 @@ export async function runMerge(session: Session, argv: string[]): Promise<Comman
     for (const path of oursFiles.keys()) {
       if (!theirsFiles.has(path)) changed.set(path, null)
     }
-    const blocked = await untrackedWouldBeHit(session, changed)
-    if (blocked.length) {
+    const blocked = await wouldBeOverwritten(session, changed, 'untracked')
+    const blockedTracked = await wouldBeOverwritten(session, changed, 'tracked')
+    if (blocked.length || blockedTracked.length) {
       return {
         out: [
-          'error: The following untracked working tree files would be overwritten by merge:',
+          'error: Your local changes to the following files would be overwritten by merge:',
+          ...blockedTracked.map((p) => `\t${p}`),
           ...blocked.map((p) => `\t${p}`),
-          'Please move or remove them before you merge.'
+          'Please commit your changes or stash them before you merge.',
+          'Aborting'
         ],
         changed: false
       }
@@ -543,13 +557,16 @@ export async function runMerge(session: Session, argv: string[]): Promise<Comman
   const merged = new Map<string, string | null>(await readTreeFiles(fs, dir, oursTree))
   const conflicts: string[] = []
   const affected = await affectedFiles(fs, dir, base, oursOid, theirsOid)
-  const blocked = await untrackedWouldBeHit(session, new Map(affected.map((p) => [p, null])))
-  if (blocked.length) {
+  const blocked = await wouldBeOverwritten(session, new Map(affected.map((p) => [p, null])), 'untracked')
+  const blockedTracked = await wouldBeOverwritten(session, new Map(affected.map((p) => [p, null])), 'tracked')
+  if (blocked.length || blockedTracked.length) {
     return {
       out: [
-        'error: The following untracked working tree files would be overwritten by merge:',
+        'error: Your local changes to the following files would be overwritten by merge:',
+        ...blockedTracked.map((p) => `\t${p}`),
         ...blocked.map((p) => `\t${p}`),
-        'Please move or remove them before you merge.'
+        'Please commit your changes or stash them before you merge.',
+        'Aborting'
       ],
       changed: false
     }
@@ -569,7 +586,7 @@ export async function runMerge(session: Session, argv: string[]): Promise<Comman
 
   if (!conflicts.length) {
     await applyMergedFiles(fs, dir, merged)
-    await createMergeCommit(fs, dir, merged, `Merge branch '${target}'`, theirsOid)
+    await createMergeCommit(fs, dir, merged, `Merge branch '${target}'`, theirsOid, `merge ${target}: Merge made by the 'ort' strategy`)
     await syncIndex(fs, dir)
     clearStagedSnapshot(session)
     return {
@@ -596,28 +613,6 @@ export async function runMerge(session: Session, argv: string[]): Promise<Comman
     ],
     changed: true
   }
-}
-
-async function untrackedWouldBeHit(session: Session, paths: Map<string, string | null>): Promise<string[]> {
-  const rows = (await git.statusMatrix({ fs: session.fs as never, dir: session.dir })) as MatrixRow[]
-  const untracked = new Set(rows.filter(([, h, , s]) => h === 0 && s === 0).map((r) => r[0]))
-  const out: string[] = []
-  for (const path of paths.keys()) {
-    if (!untracked.has(path)) continue
-    const exists = await session.fs
-      .stat(`${session.dir}/${path}`)
-      .then(() => true)
-      .catch(() => false)
-    if (!exists) continue
-    const content = paths.get(path)
-    if (content === null) {
-      out.push(path)
-      continue
-    }
-    const current = await session.fs.readFile(`${session.dir}/${path}`).catch(() => null)
-    if (current && current.toString() !== content) out.push(path)
-  }
-  return out.sort()
 }
 
 async function affectedFiles(
@@ -746,6 +741,7 @@ async function runRestore(session: Session, argv: string[]): Promise<CommandResu
     await session.fs.writeFile(`${session.dir}/${target}`, content)
     await git.resetIndex({ fs: session.fs as never, dir: session.dir, filepath: target })
   }
+  if (stagedOnly) clearStagedSnapshot(session)
   return { out: [], changed: true }
 }
 

@@ -145,6 +145,17 @@ describe('playground command engine', () => {
     expect(status).not.toContain('Changes to be committed:')
   })
 
+  it('diff after restore --staged compares against HEAD, not the old staged version', async () => {
+    const session = await Session.create('local')
+    await session.fs.writeFile('/repo/hello.txt', 'first edit\n')
+    await exec(session, 'git add hello.txt')
+    await session.fs.writeFile('/repo/hello.txt', 'second edit\n')
+    await exec(session, 'git restore --staged hello.txt')
+    const out = await exec(session, 'git diff')
+    expect(out).toContain('-hello world')
+    expect(out).toContain('+second edit')
+  })
+
   it('rm deletes the file and stages the deletion', async () => {
     const session = await Session.create('local')
     const out = await exec(session, 'git rm notes.txt')

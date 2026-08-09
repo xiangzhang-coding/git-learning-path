@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useData } from 'vitepress'
 import { labelsFor, langOfLocaleIndex } from '../lib/labels'
 import { usePlayback } from '../lib/usePlayback'
+import VisualControls from './VisualControls.vue'
 
 const { localeIndex } = useData()
 const labels = computed(() => labelsFor(langOfLocaleIndex(localeIndex.value)))
@@ -72,17 +73,17 @@ const fileRows = computed(() => {
         </div>
       </div>
     </div>
-    <div class="teach-visual-controls">
-      <button type="button" class="teach-visual-btn" @click="view.toggle">
-        {{ view.playing ? labels.visualPause : labels.visualPlay }}
-      </button>
-      <button type="button" class="teach-visual-btn" @click="view.replay">
-        {{ labels.visualReplay }}
-      </button>
-      <button v-if="view.reduced" type="button" class="teach-visual-btn" @click="view.next">
-        {{ labels.visualStep }}
-      </button>
-    </div>
+    <VisualControls
+      :play="labels.visualPlay"
+      :pause="labels.visualPause"
+      :replay="labels.visualReplay"
+      :step="labels.visualStep"
+      :playing="view.playing.value"
+      :reduced="view.reduced.value"
+      @toggle="view.toggle"
+      @replay="view.replay"
+      @next="view.next"
+    />
     <p class="teach-visual-desc">{{ mode === 'snapshot' ? t.snapDesc : t.diffDesc }}</p>
   </figure>
 </template>

@@ -3,6 +3,7 @@ import type { DefaultTheme } from 'vitepress'
 
 const BASE = '/git-learning-path/'
 import { LANGS, LOCALE_KEYS, stageLessons, type LocaleKey } from './theme/lib/stages'
+import { DARK_THEMES } from './theme/lib/themes'
 
 const stageTitles: Record<number, Record<LocaleKey, string>> = {
   0: {
@@ -221,7 +222,7 @@ const headScript = `(function () {
   var rootPath = base.replace(/\\/$/, '')
   try {
     var saved = localStorage.getItem('gitpath-theme')
-    var darkThemes = ['dark', 'terminal', 'retro']
+    var darkThemes = ${JSON.stringify(DARK_THEMES)}
     if (saved && darkThemes.indexOf(saved) > -1) {
       document.documentElement.dataset.theme = saved
       document.documentElement.classList.add('dark')

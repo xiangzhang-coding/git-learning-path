@@ -1,5 +1,5 @@
 import * as git from 'isomorphic-git'
-import type { MemoryFS } from './fs'
+import { short, type MemoryFS } from './fs'
 
 export interface GraphCommit {
   oid: string
@@ -203,7 +203,7 @@ export async function commitGraph(fs: MemoryFS, dir: string): Promise<GraphCommi
     if (detached === commit.oid) headBranches.push('HEAD')
     rows.push({
       oid: commit.oid,
-      short: commit.oid.slice(0, 7),
+      short: short(commit.oid),
       message: commit.message,
       parents: commit.parent,
       branches: [...(tipBranches.get(commit.oid) ?? []), ...headBranches],

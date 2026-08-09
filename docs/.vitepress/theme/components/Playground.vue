@@ -108,13 +108,7 @@ async function saveFile() {
   selectedFile.value = null
   fileDraft.value = ''
   await refresh()
-  if (props.checks && checkResult.value !== 'pass') {
-    const res = await runChecks(session, props.checks)
-    checkResult.value = res.pass ? 'pass' : 'fail'
-    checkDetail.value = res.detail
-    emit('checked', res.pass)
-    if (res.pass) emit('complete')
-  }
+  await runChecksWithFeedback()
 }
 
 function cancelFile() {
@@ -147,13 +141,7 @@ async function run(raw: string) {
       output.value.push({ text: line, kind: outputKind(line) })
     }
     if (result.changed) await refresh()
-    if (props.checks && checkResult.value !== 'pass') {
-      const res = await runChecks(session, props.checks)
-      checkResult.value = res.pass ? 'pass' : 'fail'
-      checkDetail.value = res.detail
-      emit('checked', res.pass)
-      if (res.pass) emit('complete')
-    }
+    await runChecksWithFeedback()
   }
   input.value = ''
   await nextTick()
@@ -197,6 +185,15 @@ async function checkNow() {
   emit('checked', res.pass)
   if (res.pass) emit('complete')
   checking.value = false
+}
+
+async function runChecksWithFeedback() {
+  if (!session || !props.checks || checkResult.value === 'pass') return
+  const res = await runChecks(session, props.checks)
+  checkResult.value = res.pass ? 'pass' : 'fail'
+  checkDetail.value = res.detail
+  emit('checked', res.pass)
+  if (res.pass) emit('complete')
 }
 
 onMounted(async () => {

@@ -77,6 +77,30 @@ describe('git switch', () => {
     expect(status).toContain('On branch main')
   })
 
+  it('switches freely with untracked files present', async () => {
+    const session = await Session.create('branching')
+    await session.fs.writeFile('/repo/new.txt', 'untracked\n')
+    await exec(session, 'git branch feature')
+    const out = await exec(session, 'git switch feature')
+    expect(out).toContain("Switched to branch 'feature'")
+    const status = await exec(session, 'git status')
+    expect(status).toContain('Untracked files:')
+    expect(status).toContain('new.txt')
+  })
+
+  it('blocks switching when an untracked file would be overwritten', async () => {
+    const session = await Session.create('branching')
+    await exec(session, 'git switch -c feature')
+    await session.fs.writeFile('/repo/feat.txt', 'feature work\n')
+    await commitAll(session, 'feat: feature work')
+    await exec(session, 'git switch main')
+    await session.fs.writeFile('/repo/feat.txt', 'stray untracked\n')
+    const out = await exec(session, 'git switch feature')
+    expect(out).toContain('untracked working tree files would be overwritten')
+    const status = await exec(session, 'git status')
+    expect(status).toContain('On branch main')
+  })
+
   it('commits land on the current branch only', async () => {
     const session = await Session.create('branching')
     await exec(session, 'git switch -c feature')
@@ -125,6 +149,23 @@ describe('git merge', () => {
     expect(mainContent.toString()).toContain('main work')
     const featureContent = await session.fs.readFile('/repo/feature.txt')
     expect(featureContent.toString()).toContain('feature work')
+  })
+
+  it('refuses to overwrite a locally modified tracked file', async () => {
+    const session = await Session.create('merge')
+    await session.fs.writeFile('/repo/feature.txt', 'local edit\n')
+    const out = await exec(session, 'git merge feature')
+    expect(out).toContain('would be overwritten')
+    expect(out).toContain('feature.txt')
+    const content = await session.fs.readFile('/repo/feature.txt')
+    expect(content.toString()).toContain('local edit')
+  })
+
+  it('a merge commit is recorded in the reflog', async () => {
+    const session = await Session.create('merge')
+    await exec(session, 'git merge feature')
+    const reflog = await exec(session, 'git reflog')
+    expect(reflog).toContain('merge feature:')
   })
 
   it('a completed merge commit has two parents', async () => {

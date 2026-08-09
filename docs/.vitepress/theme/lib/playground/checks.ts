@@ -1,6 +1,7 @@
 import * as git from 'isomorphic-git'
+import { short } from './fs'
 import type { Session } from './scenarios'
-import { isRepo, listWorkdirFiles, mergeInProgress, readBranchOid, readFileFromRef, readReflog, resolveAnyRef,
+import { isRepo, listWorkdirFiles, mergeInProgress, readBranchOid, readFileFromRef, readReflog, resolveAnyRef, dirtyRows,
   MatrixRow} from './scenarios'
 import type { GraphCommit } from './graph'
 import { commitGraph } from './graph'
@@ -120,7 +121,7 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
       }
       case 'statusClean': {
         const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
-        const dirty = rows.filter(([, h, w, s]) => !(h === 1 && w === 1 && s === 1))
+        const dirty = dirtyRows(rows)
         if (dirty.length) return { pass: false, detail: 'working tree is not clean' }
         break
       }
@@ -156,7 +157,7 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
           if (!merged) return { pass: false, detail: `branch "${check.branch}" is not merged into HEAD` }
         }
         const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
-        const dirty = rows.filter(([, h, w, s]) => !(h === 1 && w === 1 && s === 1))
+        const dirty = dirtyRows(rows)
         if (dirty.length) return { pass: false, detail: 'working tree is not clean' }
         break
       }
@@ -213,7 +214,7 @@ export async function runChecks(session: Session, checks: Check[]): Promise<Chec
       }
       case 'workdirClean': {
         const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
-        const leftover = rows.filter(([, h, w, s]) => !(h === 1 && w === 1 && s === 1))
+        const leftover = dirtyRows(rows)
         if (leftover.length) return { pass: false, detail: 'working tree still has untracked or modified files' }
         break
       }
@@ -275,11 +276,11 @@ export async function sessionSnapshot(session: Session): Promise<{
   return {
     branch,
     commits: commits.map((c) => ({
-      short: c.oid.slice(0, 7),
+      short: short(c.oid),
       message: c.commit.message.split('\n')[0]
     })),
     files,
-    dirty: rows.filter(([, h, w, s]) => !(h === 1 && w === 1 && s === 1)).length,
+    dirty: dirtyRows(rows).length,
     graph
   }
 }

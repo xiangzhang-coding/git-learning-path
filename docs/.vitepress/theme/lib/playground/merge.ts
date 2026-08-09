@@ -1,7 +1,7 @@
 import * as git from 'isomorphic-git'
 import type { MemoryFS } from './fs'
-import { AUTHOR, appendReflog, listWorkdirFiles,
-  MatrixRow} from './scenarios'
+import { lcsTable } from './lcs'
+import { AUTHOR, appendReflog, listWorkdirFiles, MatrixRow, trackedDirtyRows, untrackedRows } from './scenarios'
 
 export interface ThreeWayResult {
   text: string[]
@@ -15,19 +15,12 @@ interface Region {
   targetEnd: number
 }
 
-const MAX_DIFF_CELLS = 4_000_000
-
 function diffRegions(base: string[], target: string[]): Region[] {
   const n = base.length
   const m = target.length
-  if (n * m > MAX_DIFF_CELLS) {
+  const dp = lcsTable(base, target)
+  if (!dp) {
     return [{ baseStart: 0, baseEnd: n, targetStart: 0, targetEnd: m }]
-  }
-  const dp: number[][] = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0))
-  for (let i = n - 1; i >= 0; i--) {
-    for (let j = m - 1; j >= 0; j--) {
-      dp[i][j] = base[i] === target[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1])
-    }
   }
   const regions: Region[] = []
   let i = 0
@@ -245,6 +238,27 @@ export async function applyMergedFiles(
   await syncIndex(fs, dir)
 }
 
+export async function wouldBeOverwritten(
+  session: { fs: MemoryFS; dir: string },
+  paths: Map<string, string | null>,
+  kind: 'untracked' | 'tracked'
+): Promise<string[]> {
+  const rows = (await git.statusMatrix({ fs: session.fs as never, dir: session.dir })) as MatrixRow[]
+  const dirty = new Set((kind === 'untracked' ? untrackedRows(rows) : trackedDirtyRows(rows)).map((r) => r[0]))
+  const out: string[] = []
+  for (const path of paths.keys()) {
+    if (!dirty.has(path)) continue
+    const content = paths.get(path)
+    if (content === null) {
+      out.push(path)
+      continue
+    }
+    const current = await session.fs.readFile(`${session.dir}/${path}`).catch(() => null)
+    if (current && current.toString() !== content) out.push(path)
+  }
+  return out.sort()
+}
+
 export function fullIdentity(name: string, email: string): { name: string; email: string; timestamp: number; timezoneOffset: number } {
   return { name, email, timestamp: Math.floor(Date.now() / 1000), timezoneOffset: -new Date().getTimezoneOffset() }
 }
@@ -266,7 +280,8 @@ export async function createMergeCommit(
   dir: string,
   files: Map<string, string | null>,
   message: string,
-  mergeHeadOid: string
+  mergeHeadOid: string,
+  reflogMsg?: string
 ): Promise<string> {
   const ours = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
   const tree = await writeTreeFromFiles(fs, dir, files)
@@ -276,7 +291,7 @@ export async function createMergeCommit(
     dir,
     commit: { tree, parent: [ours, mergeHeadOid], author: identity, committer: identity, message }
   })
-  await updateHeadRef(fs, dir, oid)
+  await updateHeadRef(fs, dir, oid, reflogMsg)
   return oid
 }
 

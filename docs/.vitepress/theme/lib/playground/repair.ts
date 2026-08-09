@@ -16,6 +16,7 @@ import {
   rebaseInProgress,
   rebaseOnto,
   rebaseOrigHead,
+  trackedDirtyRows,
   rebaseQueue,
   resolveAnyRef,
   writeRebaseConflicts,
@@ -23,7 +24,7 @@ import {
   MatrixRow} from './scenarios'
 import { short } from './fs'
 import { clearStagedSnapshot, diffLines, type CommandResult } from './commands'
-import { applyMergedFiles, fullIdentity, mergeSnapshot, readTreeFiles, splitLines, syncIndex, threeWayMerge, updateHeadRef, writeTreeFromFiles } from './merge'
+import { applyMergedFiles, fullIdentity, mergeSnapshot, readTreeFiles, splitLines, syncIndex, threeWayMerge, updateHeadRef, wouldBeOverwritten, writeTreeFromFiles } from './merge'
 
 
 export async function runTag(session: Session, argv: string[]): Promise<CommandResult> {
@@ -83,7 +84,7 @@ export async function runStash(session: Session, argv: string[]): Promise<Comman
     return { out: [], changed: true }
   }
   const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
-  const dirty = rows.filter(([, h, w, s]) => h === 1 && !(w === 1 && s === 1))
+  const dirty = trackedDirtyRows(rows)
   if (!dirty.length) return { out: ['No local changes to save'], changed: false }
   const branch = ((await git.currentBranch({ fs: fs as never, dir })) as string | null) ?? 'HEAD'
   const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
@@ -149,14 +150,14 @@ interface DiffResult {
 
 async function applyDiffCommit(
   session: Session,
-  baseOid: string,
-  targetOid: string,
+  fromOid: string,
+  toOid: string,
   message: string,
   reflogMsg: string
 ): Promise<DiffResult | { conflicts: string[] }> {
   const { fs, dir } = session
-  const baseFiles = await readTreeFiles(fs, dir, (await git.readCommit({ fs: fs as never, dir, oid: baseOid })).commit.tree)
-  const targetFiles = await readTreeFiles(fs, dir, (await git.readCommit({ fs: fs as never, dir, oid: targetOid })).commit.tree)
+  const baseFiles = await readTreeFiles(fs, dir, (await git.readCommit({ fs: fs as never, dir, oid: fromOid })).commit.tree)
+  const targetFiles = await readTreeFiles(fs, dir, (await git.readCommit({ fs: fs as never, dir, oid: toOid })).commit.tree)
   const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
   const headFiles = await readTreeFiles(fs, dir, (await git.readCommit({ fs: fs as never, dir, oid: headOid })).commit.tree)
 
@@ -175,6 +176,22 @@ async function applyDiffCommit(
     const result = threeWayMerge(baseC, oursC, targetC, 'HEAD')
     if (result.conflicts) conflicts.push(path)
     merged.set(path, result.text.length ? result.text.join('\n') + '\n' : null)
+  }
+  const changed = new Map<string, string | null>()
+  for (const [path, content] of merged) {
+    if (headFiles.get(path) !== content) changed.set(path, content)
+  }
+  const hit = await wouldBeOverwritten(session, changed, 'tracked')
+  if (hit.length) {
+    return {
+      out: [
+        'error: Your local changes to the following files would be overwritten by merge:',
+        ...hit.map((p) => `\t${p}`),
+        'Please commit your changes or stash them before you merge.',
+        'Aborting'
+      ],
+      changed: false
+    }
   }
   if (conflicts.length) {
     for (const [path, content] of merged) {
@@ -269,7 +286,7 @@ export async function runRebase(session: Session, argv: string[]): Promise<Comma
   const target = argv.find((a) => !a.startsWith('-'))
   if (!target) return { out: ['fatal: no upstream specified'], changed: false }
   const rows = (await git.statusMatrix({ fs: fs as never, dir })) as MatrixRow[]
-  const dirty = rows.filter(([, h, w, s]) => h === 1 && !(w === 1 && s === 1))
+  const dirty = trackedDirtyRows(rows)
   if (dirty.length) {
     return {
       out: [
