@@ -52,6 +52,17 @@ const stageTitles: Record<number, Record<LocaleKey, string>> = {
     es: 'Etapa 3 — Colaboración remota',
     pt: 'Etapa 3 — Colaboração remota',
     ru: 'Этап 3 — Удалённая работа'
+  },
+  4: {
+    root: 'Stage 4 — Repair & Advanced',
+    zh: '阶段 4 — 修复与进阶',
+    ja: '段階 4 — 修復と応用',
+    ko: '단계 4 — 복구와 심화',
+    de: 'Stufe 4 — Reparieren & Fortgeschritten',
+    fr: 'Étape 4 — Réparation & avancé',
+    es: 'Etapa 4 — Reparación y avanzado',
+    pt: 'Etapa 4 — Reparo e avançado',
+    ru: 'Этап 4 — Восстановление и продвинутый'
   }
 }
 
@@ -99,6 +110,17 @@ const stageNavText: Record<number, Record<LocaleKey, string>> = {
     es: 'Etapa 3',
     pt: 'Etapa 3',
     ru: 'Этап 3'
+  },
+  4: {
+    root: 'Stage 4',
+    zh: '阶段 4',
+    ja: '段階 4',
+    ko: '단계 4',
+    de: 'Stufe 4',
+    fr: 'Étape 4',
+    es: 'Etapa 4',
+    pt: 'Etapa 4',
+    ru: 'Этап 4'
   }
 }
 
@@ -333,14 +355,72 @@ const stage3Lessons: Record<LocaleKey, { slug: string; title: string }[]> = {
   ]
 }
 
+const stage4Lessons: Record<LocaleKey, { slug: string; title: string }[]> = {
+  root: [
+    { slug: '4-1-stash-tag', title: '4-1 git stash and git tag' },
+    { slug: '4-2-reset-reflog', title: '4-2 git reset and git reflog' },
+    { slug: '4-3-revert-cherry-pick', title: '4-3 git revert and git cherry-pick' },
+    { slug: '4-4-rebase', title: '4-4 git rebase' }
+  ],
+  zh: [
+    { slug: '4-1-stash-tag', title: '4-1 git stash 与 git tag' },
+    { slug: '4-2-reset-reflog', title: '4-2 git reset 与 reflog' },
+    { slug: '4-3-revert-cherry-pick', title: '4-3 git revert 与 git cherry-pick' },
+    { slug: '4-4-rebase', title: '4-4 git rebase 重放提交' }
+  ],
+  ja: [
+    { slug: '4-1-stash-tag', title: '4-1 git stash と git tag' },
+    { slug: '4-2-reset-reflog', title: '4-2 git reset と git reflog' },
+    { slug: '4-3-revert-cherry-pick', title: '4-3 git revert と git cherry-pick' },
+    { slug: '4-4-rebase', title: '4-4 git rebase' }
+  ],
+  ko: [
+    { slug: '4-1-stash-tag', title: '4-1 git stash와 git tag' },
+    { slug: '4-2-reset-reflog', title: '4-2 git reset과 git reflog' },
+    { slug: '4-3-revert-cherry-pick', title: '4-3 git revert와 git cherry-pick' },
+    { slug: '4-4-rebase', title: '4-4 git rebase' }
+  ],
+  de: [
+    { slug: '4-1-stash-tag', title: '4-1 git stash und git tag' },
+    { slug: '4-2-reset-reflog', title: '4-2 git reset und git reflog' },
+    { slug: '4-3-revert-cherry-pick', title: '4-3 git revert und git cherry-pick' },
+    { slug: '4-4-rebase', title: '4-4 git rebase' }
+  ],
+  fr: [
+    { slug: '4-1-stash-tag', title: '4-1 git stash et git tag' },
+    { slug: '4-2-reset-reflog', title: '4-2 git reset et git reflog' },
+    { slug: '4-3-revert-cherry-pick', title: '4-3 git revert et git cherry-pick' },
+    { slug: '4-4-rebase', title: '4-4 git rebase' }
+  ],
+  es: [
+    { slug: '4-1-stash-tag', title: '4-1 git stash y git tag' },
+    { slug: '4-2-reset-reflog', title: '4-2 git reset y git reflog' },
+    { slug: '4-3-revert-cherry-pick', title: '4-3 git revert y git cherry-pick' },
+    { slug: '4-4-rebase', title: '4-4 git rebase' }
+  ],
+  pt: [
+    { slug: '4-1-stash-tag', title: '4-1 git stash e git tag' },
+    { slug: '4-2-reset-reflog', title: '4-2 git reset e git reflog' },
+    { slug: '4-3-revert-cherry-pick', title: '4-3 git revert e git cherry-pick' },
+    { slug: '4-4-rebase', title: '4-4 git rebase' }
+  ],
+  ru: [
+    { slug: '4-1-stash-tag', title: '4-1 git stash и git tag' },
+    { slug: '4-2-reset-reflog', title: '4-2 git reset и git reflog' },
+    { slug: '4-3-revert-cherry-pick', title: '4-3 git revert и git cherry-pick' },
+    { slug: '4-4-rebase', title: '4-4 git rebase' }
+  ]
+}
+
 const stageLessons: Record<number, Record<LocaleKey, { slug: string; title: string }[]>> = {
   0: stage0Lessons,
   1: stage1Lessons,
   2: stage2Lessons,
-  3: stage3Lessons
+  3: stage3Lessons,
+  4: stage4Lessons
 }
 
-const stageOrder = [0, 1, 2, 3]
+const stageOrder = [0, 1, 2, 3, 4]
 
 function localePrefix(key: LocaleKey): string {
   return key === 'root' ? '' : `/${key}`
