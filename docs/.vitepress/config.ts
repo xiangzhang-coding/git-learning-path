@@ -63,6 +63,17 @@ const stageTitles: Record<number, Record<LocaleKey, string>> = {
     es: 'Etapa 4 — Reparación y avanzado',
     pt: 'Etapa 4 — Reparo e avançado',
     ru: 'Этап 4 — Восстановление и продвинутый'
+  },
+  5: {
+    root: 'Stage 5 — GitHub Ecosystem',
+    zh: '阶段 5 — GitHub 生态',
+    ja: '段階 5 — GitHub エコシステム',
+    ko: '단계 5 — GitHub 생태계',
+    de: 'Stufe 5 — GitHub-Ökosystem',
+    fr: 'Étape 5 — Écosystème GitHub',
+    es: 'Etapa 5 — Ecosistema GitHub',
+    pt: 'Etapa 5 — Ecossistema GitHub',
+    ru: 'Этап 5 — Экосистема GitHub'
   }
 }
 
@@ -121,6 +132,17 @@ const stageNavText: Record<number, Record<LocaleKey, string>> = {
     es: 'Etapa 4',
     pt: 'Etapa 4',
     ru: 'Этап 4'
+  },
+  5: {
+    root: 'Stage 5',
+    zh: '阶段 5',
+    ja: '段階 5',
+    ko: '단계 5',
+    de: 'Stufe 5',
+    fr: 'Étape 5',
+    es: 'Etapa 5',
+    pt: 'Etapa 5',
+    ru: 'Этап 5'
   }
 }
 
@@ -412,15 +434,82 @@ const stage4Lessons: Record<LocaleKey, { slug: string; title: string }[]> = {
   ]
 }
 
+const stage5Lessons: Record<LocaleKey, { slug: string; title: string }[]> = {
+  root: [
+    { slug: '5-1-fork-upstream', title: '5-1 fork and upstream sync' },
+    { slug: '5-2-pull-request', title: '5-2 Pull Request workflow' },
+    { slug: '5-3-issues', title: '5-3 Issues and collaboration' },
+    { slug: '5-4-releases', title: '5-4 Releases and versioning' },
+    { slug: '5-5-actions-pages', title: '5-5 GitHub Actions and Pages' }
+  ],
+  zh: [
+    { slug: '5-1-fork-upstream', title: '5-1 fork 与 upstream 同步' },
+    { slug: '5-2-pull-request', title: '5-2 Pull Request 工作流' },
+    { slug: '5-3-issues', title: '5-3 Issues 与协作' },
+    { slug: '5-4-releases', title: '5-4 Releases 与版本发布' },
+    { slug: '5-5-actions-pages', title: '5-5 GitHub Actions 与 Pages' }
+  ],
+  ja: [
+    { slug: '5-1-fork-upstream', title: '5-1 fork と upstream の同期' },
+    { slug: '5-2-pull-request', title: '5-2 Pull Request の流れ' },
+    { slug: '5-3-issues', title: '5-3 Issues と協働' },
+    { slug: '5-4-releases', title: '5-4 Releases とバージョン公開' },
+    { slug: '5-5-actions-pages', title: '5-5 GitHub Actions と Pages' }
+  ],
+  ko: [
+    { slug: '5-1-fork-upstream', title: '5-1 fork와 upstream 동기화' },
+    { slug: '5-2-pull-request', title: '5-2 Pull Request 워크플로' },
+    { slug: '5-3-issues', title: '5-3 Issues와 협업' },
+    { slug: '5-4-releases', title: '5-4 Releases와 버전 출시' },
+    { slug: '5-5-actions-pages', title: '5-5 GitHub Actions와 Pages' }
+  ],
+  de: [
+    { slug: '5-1-fork-upstream', title: '5-1 fork und upstream synchronisieren' },
+    { slug: '5-2-pull-request', title: '5-2 Pull-Request-Workflow' },
+    { slug: '5-3-issues', title: '5-3 Issues und Zusammenarbeit' },
+    { slug: '5-4-releases', title: '5-4 Releases und Versionierung' },
+    { slug: '5-5-actions-pages', title: '5-5 GitHub Actions und Pages' }
+  ],
+  fr: [
+    { slug: '5-1-fork-upstream', title: '5-1 fork et synchronisation upstream' },
+    { slug: '5-2-pull-request', title: '5-2 Flux de travail Pull Request' },
+    { slug: '5-3-issues', title: '5-3 Issues et collaboration' },
+    { slug: '5-4-releases', title: '5-4 Releases et versions' },
+    { slug: '5-5-actions-pages', title: '5-5 GitHub Actions et Pages' }
+  ],
+  es: [
+    { slug: '5-1-fork-upstream', title: '5-1 fork y sincronización con upstream' },
+    { slug: '5-2-pull-request', title: '5-2 Flujo de trabajo de Pull Request' },
+    { slug: '5-3-issues', title: '5-3 Issues y colaboración' },
+    { slug: '5-4-releases', title: '5-4 Releases y versionado' },
+    { slug: '5-5-actions-pages', title: '5-5 GitHub Actions y Pages' }
+  ],
+  pt: [
+    { slug: '5-1-fork-upstream', title: '5-1 fork e sincronização com upstream' },
+    { slug: '5-2-pull-request', title: '5-2 Fluxo de trabalho de Pull Request' },
+    { slug: '5-3-issues', title: '5-3 Issues e colaboração' },
+    { slug: '5-4-releases', title: '5-4 Releases e versionamento' },
+    { slug: '5-5-actions-pages', title: '5-5 GitHub Actions e Pages' }
+  ],
+  ru: [
+    { slug: '5-1-fork-upstream', title: '5-1 fork и синхронизация с upstream' },
+    { slug: '5-2-pull-request', title: '5-2 Рабочий процесс Pull Request' },
+    { slug: '5-3-issues', title: '5-3 Issues и совместная работа' },
+    { slug: '5-4-releases', title: '5-4 Releases и выпуск версий' },
+    { slug: '5-5-actions-pages', title: '5-5 GitHub Actions и Pages' }
+  ]
+}
+
 const stageLessons: Record<number, Record<LocaleKey, { slug: string; title: string }[]>> = {
   0: stage0Lessons,
   1: stage1Lessons,
   2: stage2Lessons,
   3: stage3Lessons,
-  4: stage4Lessons
+  4: stage4Lessons,
+  5: stage5Lessons
 }
 
-const stageOrder = [0, 1, 2, 3, 4]
+const stageOrder = [0, 1, 2, 3, 4, 5]
 
 function localePrefix(key: LocaleKey): string {
   return key === 'root' ? '' : `/${key}`

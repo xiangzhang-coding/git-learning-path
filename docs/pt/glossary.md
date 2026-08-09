@@ -40,3 +40,7 @@ Os termos mantêm sempre o nome em inglês; esta tabela dá uma breve explicaç�
 | DAG | Grafo acíclico dirigido; a topologia do histórico | Etapa 2 |
 | fork | Copiar o repositório de outra pessoa para sua conta | Etapa 5 |
 | pull request | Pedido para mesclar seu ramo (PR) | Etapa 5 |
+| issue | Tópico de discussão sobre bug, funcionalidade ou tarefa no repositório | Etapa 5 |
+| milestone | Reúne um grupo de issues sob um objetivo de versão | Etapa 5 |
+| release | Versão oficial baseada em um tag, com notas e artefatos | Etapa 5 |
+| workflow | Fluxo de automação do GitHub Actions | Etapa 5 |
