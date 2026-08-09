@@ -38,6 +38,16 @@ exercises:
         path: hello.txt
     explanation: O pop devolve as alterações de stash@{0} para a área de trabalho e apaga essa entrada do stash.
     anchor: "#git-stash-list-e-git-stash-pop"
+  - id: 4-1-e5
+    question: Na zona de prática abaixo, coloque uma tag no commit atual.
+    type: task
+    scenario: tag
+    goal: Execute o git tag v1.0 e depois o git tag para confirmar que a tag existe.
+    checks:
+      - type: tagExists
+        name: v1.0
+    explanation: A tag fica fixada no HEAD atual; não importa quantos commits venham depois, ela não se move.
+    anchor: "#git-tag-marcar-versoes"
 ---
 
 # git stash e git tag
@@ -83,6 +93,7 @@ git tag                   # lista todas as tags
 ```
 
 Ao publicar uma versão, você precisa de um nome que "aponte para sempre para este commit" — a **tag** é uma marca fixada no commit. Diferente do branch, a tag não se move com os commits novos. Depois você pode voltar àquela versão com `git switch <tag>` (nesse momento o HEAD fica em estado detached, assunto das próximas lições da etapa 4).
+**Alternar para uma tag e o detached HEAD**: `git switch <tag>` faz o HEAD apontar para o commit da tag — mas nesse momento o HEAD não está pendurado em nenhum branch; isso é o detached HEAD (cabeça desanexada). Ao commitar nesse estado, o novo commit não pertence a nenhum branch e, depois de trocar de branch, você pode não conseguir recuperá-lo. Então, só para olhar não há problema; se quiser commitar, crie antes um branch novo com `git switch -c <nome do novo branch>`.
 
 ## Exercícios
 

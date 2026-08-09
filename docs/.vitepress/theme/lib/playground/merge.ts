@@ -238,7 +238,7 @@ export async function applyMergedFiles(
   await syncIndex(fs, dir)
 }
 
-function fullIdentity(name: string, email: string): { name: string; email: string; timestamp: number; timezoneOffset: number } {
+export function fullIdentity(name: string, email: string): { name: string; email: string; timestamp: number; timezoneOffset: number } {
   return { name, email, timestamp: Math.floor(Date.now() / 1000), timezoneOffset: -new Date().getTimezoneOffset() }
 }
 

@@ -38,6 +38,16 @@ exercises:
         path: hello.txt
     explanation: pop は stash@{0} の変更をワークツリーに戻し、その stash の記録を削除します。
     anchor: "#git-stash-list-と-git-stash-pop"
+  - id: 4-1-e5
+    question: 下の練手区で、現在のコミットにタグを付けましょう。
+    type: task
+    scenario: tag
+    goal: git tag v1.0 を実行し、それから git tag でタグが存在することを確認しましょう。
+    checks:
+      - type: tagExists
+        name: v1.0
+    explanation: タグは現在の HEAD に釘付けされ、その後のコミットがどれだけ増えても動きません。
+    anchor: "#git-tag-でバージョンをマーク"
 ---
 
 # git stash と git tag
@@ -83,6 +93,7 @@ git tag                   # すべてのタグを一覧表示
 ```
 
 バージョンをリリースするとき、「この commit を永遠に指し続ける名前」が必要になります——**tag** は commit に釘付けするマークです。branch と違って、tag は新しいコミットが来ても動きません。あとでいつでも `git switch <tag>` でそのバージョンに戻れます（このとき HEAD は detached 状態になります。段階 4 の後半で説明します）。
+**タグへの切り替えと detached HEAD**：`git switch <tag>` を実行すると、HEAD はタグの指す commit を指します——しかしこのとき HEAD はどのブランチにもぶら下がっていません。これが detached HEAD（分離ヘッド）です。この状態でコミットすると、新しいコミットはどのブランチにも属さず、一度切り替えて離れるともう見つけられないかもしれません。だから、見るだけなら問題ありません。コミットしたいときは、先に `git switch -c <新ブランチ名>` で新しいブランチを作りましょう。
 
 ## 練習
 

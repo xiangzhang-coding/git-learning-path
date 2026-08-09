@@ -38,6 +38,16 @@ exercises:
         path: hello.txt
     explanation: pop devuelve los cambios de stash@{0} al working tree y borra esa entrada de la lista de stashes.
     anchor: "#git-stash-list-y-git-stash-pop"
+  - id: 4-1-e5
+    question: En la zona de práctica de abajo, pon una etiqueta al commit actual.
+    type: task
+    scenario: tag
+    goal: Ejecuta git tag v1.0 y luego git tag para confirmar que la etiqueta existe.
+    checks:
+      - type: tagExists
+        name: v1.0
+    explanation: La etiqueta queda clavada en el HEAD actual; por muchos commits que vengan después, no se mueve.
+    anchor: "#git-tag-marca-versiones"
 ---
 
 # git stash y git tag
@@ -83,6 +93,7 @@ git tag                   # lista todas las etiquetas
 ```
 
 Cuando lanzas una versión necesitas un nombre que «apunte siempre a este commit» — **tag** es la marca clavada en el commit. Al contrario que branch, tag no se mueve con los commits nuevos. Después puedes volver a esa versión cuando quieras con `git switch <tag>` (en ese momento HEAD queda en estado detached — lo verás más adelante en esta etapa).
+**Cambiar a una etiqueta y el detached HEAD**: `git switch <tag>` lleva HEAD al commit de la etiqueta, pero en ese momento HEAD no cuelga de ninguna rama: eso es el detached HEAD (cabeza separada). Si commiteas en este estado, el commit nuevo no pertenece a ninguna rama y, una vez que cambies, puede que no lo encuentres. Así que con solo mirar no hay problema; si quieres commitear, crea primero una rama nueva con `git switch -c <nombre de la rama nueva>`.
 
 ## Ejercicios
 

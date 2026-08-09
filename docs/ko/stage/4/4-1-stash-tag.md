@@ -38,6 +38,16 @@ exercises:
         path: hello.txt
     explanation: pop은 stash@{0}의 변경사항을 작업 영역에 되돌리고 그 stash 기록을 삭제합니다.
     anchor: "#git-stash-list와-git-stash-pop"
+  - id: 4-1-e5
+    question: 아래 연습장에서 현재 커밋에 태그를 붙이세요.
+    type: task
+    scenario: tag
+    goal: git tag v1.0을 실행한 다음, git tag로 태그가 존재하는지 확인하세요.
+    checks:
+      - type: tagExists
+        name: v1.0
+    explanation: 태그는 현재 HEAD에 고정되며, 그 뒤 커밋이 아무리 많아져도 움직이지 않습니다.
+    anchor: "#git-tag로-버전-표시"
 ---
 
 # git stash와 git tag
@@ -83,6 +93,7 @@ git tag                   # 모든 태그 나열
 ```
 
 버전을 배포할 때「이 commit을 영원히 가리키는 이름」이 필요합니다 — **tag**는 commit에 박아 두는 표시입니다. branch와 달리 tag는 새 커밋에 따라 움직이지 않습니다. 나중에 언제든 `git switch <tag>`로 그 버전으로 돌아갈 수 있습니다(이때 HEAD는 detached 상태가 되며, 단계 4 뒤에서 다룹니다).
+**태그로 전환과 detached HEAD**：`git switch <tag>`를 실행하면 HEAD가 태그가 가리키는 commit을 가리키지만, 이때 HEAD는 어떤 브랜치에도 걸려 있지 않습니다. 이것이 detached HEAD（분리된 HEAD）입니다. 이 상태에서 커밋하면 새 커밋은 어떤 브랜치에도 속하지 않아, 한번 다른 곳으로 전환하면 되찾지 못할 수도 있습니다. 그래서 보기만 하면 괜찮지만, 커밋하려면 먼저 `git switch -c <새 브랜치 이름>`으로 새 브랜치를 만드세요.
 
 ## 연습
 

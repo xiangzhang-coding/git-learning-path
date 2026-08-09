@@ -38,6 +38,16 @@ exercises:
         path: hello.txt
     explanation: pop legt die Änderungen von stash@{0} zurück ins Arbeitsverzeichnis und löscht diesen stash-Eintrag.
     anchor: "#git-stash-list-und-git-stash-pop"
+  - id: 4-1-e5
+    question: Versehen Sie den aktuellen Commit im untenstehenden Übungsbereich mit einem Tag.
+    type: task
+    scenario: tag
+    goal: Führen Sie git tag v1.0 aus und prüfen Sie dann mit git tag, dass der Tag existiert.
+    checks:
+      - type: tagExists
+        name: v1.0
+    explanation: Der Tag ist auf dem aktuellen HEAD festgenagelt; egal wie viele Commits danach kommen, er bewegt sich nicht.
+    anchor: "#git-tag-versionen-markieren"
 ---
 
 # git stash und git tag
@@ -83,6 +93,7 @@ git tag                     # alle Tags auflisten
 ```
 
 Für eine Veröffentlichung brauchen Sie einen Namen, der **dauerhaft auf diesen Commit zeigt** — das ist **tag**: eine Markierung, die an einem Commit festgenagelt ist. Anders als ein branch bewegt sich ein tag nicht mit neuen Commits mit. Später kommen Sie jederzeit mit `git switch <tag>` zu dieser Version zurück (HEAD befindet sich dann im detached-Zustand; dazu mehr in dieser Stufe).
+**Zu einem Tag wechseln und detached HEAD**: Mit `git switch <tag>` zeigt HEAD auf den Commit des Tags — aber dann hängt HEAD an keiner Branche mehr; das ist der detached HEAD (abgetrennter HEAD). Committen Sie in diesem Zustand, gehört der neue Commit zu keiner Branche und kann unauffindbar sein, sobald Sie wieder wechseln. Zum Ansehen ist das also kein Problem; wollen Sie committen, legen Sie zuerst mit `git switch -c <neuer Branchname>` eine neue Branche an.
 
 ## Übungen
 

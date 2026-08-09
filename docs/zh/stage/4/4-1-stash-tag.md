@@ -38,6 +38,16 @@ exercises:
         path: hello.txt
     explanation: pop 把 stash@{0} 的改动放回工作区并删除这条 stash 记录。
     anchor: "#git-stash-list-与-git-stash-pop"
+  - id: 4-1-e5
+    question: 在下面的练手区中，给当前提交打一个标签。
+    type: task
+    scenario: tag
+    goal: 执行 git tag v1.0，然后 git tag 确认标签存在。
+    checks:
+      - type: tagExists
+        name: v1.0
+    explanation: 标签钉在当前 HEAD 上，之后的提交再多也不会移动它。
+    anchor: "#git-tag-标记版本"
 ---
 
 # git stash 与 git tag
@@ -82,7 +92,9 @@ git tag -a v1.0 -m "说明" # 附注标签：带说明文字
 git tag                   # 列出所有标签
 ```
 
-发布版本时，你需要一个「永远指向这个 commit」的名字——**tag** 就是钉在 commit 上的标记。与 branch 不同，tag 不会随新提交移动。之后随时可以 `git switch <tag>` 回到那个版本（此时 HEAD 会处于 detached 状态，阶段 4 后面会讲）。
+发布版本时，你需要一个「永远指向这个 commit」的名字——**tag** 就是钉在 commit 上的标记。与 branch 不同，tag 不会随新提交移动。
+
+**切到标签与 detached HEAD**：`git switch <tag>` 会把 HEAD 指向标签对应的提交——但此时 HEAD 不挂在任何分支上，这就是 **detached HEAD（分离头指针）**。在这个状态下提交，新提交不属于任何分支，一旦切换走就可能找不回来；所以只看看没问题，要提交就先 `git switch -c <新分支名>` 新建一个分支。
 
 ## 练习
 

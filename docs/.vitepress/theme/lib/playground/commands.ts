@@ -210,6 +210,11 @@ async function runStatus(session: Session): Promise<CommandResult> {
   }
   const rows = await fileStatuses(session.fs, session.dir)
   const branch = await branchName(session.fs, session.dir)
+  let branchLabel = branch
+  if (branch === 'HEAD') {
+    const oid = await git.resolveRef({ fs: session.fs as never, dir: session.dir, ref: 'HEAD' })
+    branchLabel = `HEAD detached at ${oid.slice(0, 7)}`
+  }
   let merging: string[] | null = null
   let rebasing: string[] | null = null
   let rebasingOnto = ''
@@ -221,7 +226,7 @@ async function runStatus(session: Session): Promise<CommandResult> {
     rebasing = await unresolvedConflicts(session.fs, session.dir, listed)
     rebasingOnto = (await rebaseOnto(session.fs, session.dir)) ?? ''
   }
-  return { out: formatStatus(rows, branch, merging, rebasing, rebasingOnto), changed: false }
+  return { out: formatStatus(rows, branchLabel, merging, rebasing, rebasingOnto), changed: false }
 }
 
 async function runAdd(session: Session, paths: string[]): Promise<CommandResult> {
@@ -412,10 +417,16 @@ async function runSwitch(session: Session, argv: string[]): Promise<CommandResul
     await appendReflog(session.fs, session.dir, `checkout: moving from HEAD to ${name}`)
     return { out: [`Switched to a new branch '${name}'`], changed: true }
   }
+  let isBranch = false
   try {
     await git.resolveRef({ fs: session.fs as never, dir: session.dir, ref: `refs/heads/${name}` })
+    isBranch = true
   } catch {
-    return { out: [`fatal: invalid reference: ${name}`], changed: false }
+    try {
+      await git.resolveRef({ fs: session.fs as never, dir: session.dir, ref: `refs/tags/${name}` })
+    } catch {
+      return { out: [`fatal: invalid reference: ${name}`], changed: false }
+    }
   }
   try {
     await git.checkout({ fs: session.fs as never, dir: session.dir, ref: name })
@@ -425,6 +436,18 @@ async function runSwitch(session: Session, argv: string[]): Promise<CommandResul
   }
   await syncIndex(session.fs, session.dir)
   await appendReflog(session.fs, session.dir, `checkout: moving to ${name}`)
+  if (!isBranch) {
+    const oid = await git.resolveRef({ fs: session.fs as never, dir: session.dir, ref: 'HEAD' })
+    const commit = await git.readCommit({ fs: session.fs as never, dir: session.dir, oid })
+    return {
+      out: [
+        `Note: switching to '${name}'.`,
+        `HEAD is now at ${short(oid)} ${commit.commit.message.split('\n')[0]}`,
+        "You are in 'detached HEAD' state."
+      ],
+      changed: true
+    }
+  }
   return { out: [`Switched to branch '${name}'`], changed: true }
 }
 

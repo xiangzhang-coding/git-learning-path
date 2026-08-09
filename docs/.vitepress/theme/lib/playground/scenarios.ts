@@ -123,6 +123,7 @@ async function commitAll(fs: MemoryFS, dir: string, message: string): Promise<vo
     await git.add({ fs: fs as never, dir, filepath: file })
   }
   await git.commit({ fs: fs as never, dir, author: AUTHOR, message })
+  await appendReflog(fs, dir, `commit: ${message}`)
 }
 
 export async function listWorkdirFiles(fs: MemoryFS, dir: string): Promise<string[]> {
@@ -238,7 +239,7 @@ export async function initReflog(fs: MemoryFS, dir: string): Promise<void> {
     await fs.readFile(REFLOG_PATH(dir))
     return
   } catch {
-    // no reflog yet
+    void dir
   }
   try {
     const headOid = await git.resolveRef({ fs: fs as never, dir, ref: 'HEAD' })
@@ -251,7 +252,7 @@ export async function initReflog(fs: MemoryFS, dir: string): Promise<void> {
       `${'0'.repeat(40)} ${headOid} ${AUTHOR.name} <${AUTHOR.email}> ${ts} ${tz}\tcommit (initial): ${headMsg}\n`
     )
   } catch {
-    // unborn HEAD
+    void dir
   }
 }
 
@@ -316,13 +317,17 @@ export async function rebaseInProgress(fs: MemoryFS, dir: string): Promise<boole
     .catch(() => false)
 }
 
-export async function rebaseHeadOid(fs: MemoryFS, dir: string): Promise<string | null> {
+async function rebaseField(fs: MemoryFS, dir: string, name: string): Promise<string | null> {
   try {
-    const raw = await fs.readFile(`${dir}/.git/REBASE_HEAD`)
+    const raw = await fs.readFile(`${dir}/.git/${name}`)
     return raw.toString().trim() || null
   } catch {
     return null
   }
+}
+
+export async function rebaseHeadOid(fs: MemoryFS, dir: string): Promise<string | null> {
+  return rebaseField(fs, dir, 'REBASE_HEAD')
 }
 
 export async function rebaseQueue(fs: MemoryFS, dir: string): Promise<string[]> {
@@ -351,21 +356,11 @@ export async function writeRebaseState(
 }
 
 export async function rebaseOnto(fs: MemoryFS, dir: string): Promise<string | null> {
-  try {
-    const raw = await fs.readFile(`${dir}/.git/REBASE_ONTO`)
-    return raw.toString().trim() || null
-  } catch {
-    return null
-  }
+  return rebaseField(fs, dir, 'REBASE_ONTO')
 }
 
 export async function rebaseOrigHead(fs: MemoryFS, dir: string): Promise<string | null> {
-  try {
-    const raw = await fs.readFile(`${dir}/.git/REBASE_ORIG_HEAD`)
-    return raw.toString().trim() || null
-  } catch {
-    return null
-  }
+  return rebaseField(fs, dir, 'REBASE_ORIG_HEAD')
 }
 
 export async function endRebase(fs: MemoryFS, dir: string): Promise<void> {

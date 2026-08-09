@@ -36,6 +36,42 @@ describe('git tag', () => {
     const out = await exec(session, 'git tag v1.0')
     expect(out).toContain('fatal: tag \'v1.0\' already exists')
   })
+
+  it('tag -m without -a creates an annotated tag', async () => {
+    const session = await Session.create('tag')
+    await exec(session, 'git tag v1.1 -m "release notes"')
+    const listed = await exec(session, 'git tag')
+    expect(listed).toContain('v1.1')
+    const git = (await import('isomorphic-git')) as typeof import('isomorphic-git')
+    const annotated = await session.fs.readFile('/repo/.git/refs/tags/v1.1')
+    const oid = annotated.toString().trim()
+    const obj = await git.readTag({ fs: session.fs as never, dir: session.dir, oid })
+    expect(obj.tag.message).toContain('release notes')
+  })
+
+  it('switch to a tag enters detached HEAD', async () => {
+    const session = await Session.create('tag')
+    await exec(session, 'git tag v1.0')
+    await exec(session, 'git switch -c feature')
+    await session.fs.writeFile('/repo/feature.txt', 'x\n')
+    await commitAll(session, 'feat: more work')
+    await exec(session, 'git switch main')
+    const out = await exec(session, 'git switch v1.0')
+    expect(out).toContain('detached HEAD')
+    const status = await exec(session, 'git status')
+    expect(status).toContain('HEAD detached at')
+  })
+
+  it('rebase refuses to run with unstaged changes', async () => {
+    const session = await Session.create('rebase')
+    await exec(session, 'git switch feature')
+    await session.fs.writeFile('/repo/feature.txt', 'dirty\n')
+    const out = await exec(session, 'git rebase main')
+    expect(out).toContain('cannot rebase')
+    expect(out).toContain('unstaged changes')
+    const content = await session.fs.readFile('/repo/feature.txt')
+    expect(content.toString()).toBe('dirty\n')
+  })
 })
 
 describe('git stash', () => {
