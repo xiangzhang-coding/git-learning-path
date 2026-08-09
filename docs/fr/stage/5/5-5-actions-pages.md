@@ -73,8 +73,9 @@ Structure : `on` déclare les événements déclencheurs ; `jobs` définit les t
 
 Deux voies pour le déploiement Pages : activer Pages dans les réglages du dépôt et publier directement la branche, ou utiliser Actions pour publier les artefacts construits. La seconde est plus courante (on exécute d'abord les tests et le build, puis on publie les artefacts sur Pages) :
 
-```
-push ──▶ déclenchement du workflow ──▶ installation des dépendances → build → publication des artefacts sur Pages
+```mermaid
+flowchart LR
+    A["push"] --> B["déclenchement du workflow"] --> C["installation des dépendances"] --> D["build"] --> E["publication des artefacts sur Pages"]
 ```
 
 L'état du déploiement, les journaux et les causes d'échec sont dans l'onglet Actions du dépôt. La petite coche verte (✓/✗) à côté des commits est l'entrée vers le résultat des vérifications.

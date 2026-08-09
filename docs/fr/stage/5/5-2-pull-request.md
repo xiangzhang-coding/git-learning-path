@@ -42,11 +42,10 @@ exercises:
 
 Une Pull Request (PR) est une demande formelle « fusionnez mes commits dans votre dépôt ». Vous n'avez pas le droit d'écrire directement dans le dépôt de quelqu'un d'autre, mais vous pouvez soumettre un PR, et le mainteneur décide après review de fusionner ou non :
 
-```
-branche de votre fork ──push──▶ votre fork
-                                 │ ouvrir un PR
-                                 ▼
-              main du dépôt de l'auteur (en attente de review et de merge)
+```mermaid
+flowchart TD
+    A["branche de votre fork"] -->|push| B["votre fork"]
+    B -->|ouvrir un PR| C["main du dépôt de l'auteur (en attente de review et de merge)"]
 ```
 
 Le PR n'est pas qu'un commit : il contient la comparaison de code (diff), la discussion et les résultats des vérifications automatiques (CI) — c'est l'unité centrale de la collaboration open source.

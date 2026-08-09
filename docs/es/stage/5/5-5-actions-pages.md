@@ -73,8 +73,9 @@ Estructura: `on` declara los eventos que lo disparan; `jobs` define las tareas (
 
 Para desplegar en Pages hay dos caminos: activar Pages en los ajustes del repositorio y publicar directamente una rama, o usar Actions para publicar el artefacto del build. El segundo es el más usado (primero se ejecutan las pruebas y el build, después se publica el resultado en Pages):
 
-```
-push ──▶ se dispara el workflow ──▶ instalar dependencias → build → publicar el artefacto en Pages
+```mermaid
+flowchart LR
+    A[push] --> B[se dispara el workflow] --> C[instalar dependencias] --> D[build] --> E[publicar el artefacto en Pages]
 ```
 
 El estado del despliegue, los logs y los fallos están en la pestaña Actions del repositorio. La pequeña marca verde al lado del commit (✓/✗) es la puerta de entrada al resultado de las comprobaciones.

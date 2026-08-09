@@ -42,11 +42,9 @@ exercises:
 
 fork(포크)는 GitHub에서 남의 저장소를 내 계정 아래로 복사하는 기능입니다:
 
-```
-원작자: github.com/author/project
-    │ fork
-    ▼
-나: github.com/you/project   ← 마음대로 수정 가능
+```mermaid
+flowchart TD
+    A["원작자: github.com/author/project"] -->|fork| B["나: github.com/you/project 마음대로 수정 가능"]
 ```
 
 fork는 GitHub의 기능입니다(git 명령어가 아님). clone과의 차이: fork는 GitHub 서버에 사본을 만들고, clone은 저장소를 로컬 컴퓨터로 복사합니다. 전형적인 오픈소스 흐름은「먼저 fork, 그다음 내 fork를 clone」입니다 — 원작자 저장소에는 쓰기 권한이 없으므로 내 사본에서만 작업할 수 있습니다.

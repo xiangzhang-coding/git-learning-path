@@ -42,11 +42,9 @@ exercises:
 
 fork（派生）是在 GitHub 上把别人的仓库复制到你自己账号下：
 
-```
-原作者：github.com/author/project
-    │ fork
-    ▼
-你自己：github.com/you/project   ← 你可以随意改
+```mermaid
+flowchart TD
+  A["原作者：github.com/author/project"] -->|fork| B["你自己：github.com/you/project<br/>（你可以随意改）"]
 ```
 
 fork 是 GitHub 的功能（不是 git 命令）。它与 clone 的区别：fork 在 GitHub 服务器上创建副本，clone 把仓库复制到本地电脑。典型开源流程是「先 fork，再 clone 自己的 fork」——你没有原作者仓库的写权限，只能在自己的副本上工作。

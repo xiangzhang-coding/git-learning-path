@@ -73,8 +73,9 @@ Die Struktur: `on` deklariert die auslösenden Ereignisse; `jobs` definiert die 
 
 Für das Pages-Deployment gibt es zwei Wege: Nach dem Aktivieren von Pages in den Repository-Einstellungen direkt einen Branch veröffentlichen, oder mit Actions ein Build-Ergebnis veröffentlichen. Letzteres ist häufiger (erst Tests und Build ausführen, dann das Ergebnis auf Pages veröffentlichen):
 
-```
-push ──▶ workflow wird ausgelöst ──▶ Abhängigkeiten installieren → bauen → Ergebnis auf Pages veröffentlichen
+```mermaid
+flowchart LR
+  A["push"] --> B["workflow wird ausgelöst"] --> C["Abhängigkeiten installieren"] --> D["bauen"] --> E["Ergebnis auf Pages veröffentlichen"]
 ```
 
 Deployment-Status, Logs und Fehlerursachen finden Sie im Tab Actions des Repositorys. Das kleine grüne Häkchen (✓/✗) neben Commits ist der Einstieg zur Prüfung.

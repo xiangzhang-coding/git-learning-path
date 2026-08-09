@@ -42,11 +42,10 @@ exercises:
 
 Pull Request（PR）は「私のコミットをあなたのリポジトリに統合してください」という正式な依頼です。他人のリポジトリには直接書き込めませんが、PR を送ればメンテナーが review して統合するかどうかを決められます：
 
-```
-自分の fork のブランチ ──push──▶ 自分の fork
-                                   │ PR を開く
-                                   ▼
-                        原作者リポジトリの main（review と merge を待つ）
+```mermaid
+flowchart TD
+    A[自分の fork のブランチ] -->|push| B[自分の fork]
+    B -->|PR を開く| C[原作者リポジトリの main（review と merge を待つ）]
 ```
 
 PR はコミットだけではありません：コード差分（diff）・議論・自動チェック（CI）の結果を含み、オープンソース協働の中心となる単位です。

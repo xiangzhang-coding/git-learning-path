@@ -42,11 +42,9 @@ exercises:
 
 Ein fork (Abspaltung) kopiert das Repository eines anderen auf GitHub in Ihr eigenes Konto:
 
-```
-Original-Autor: github.com/author/project
-    │ fork
-    ▼
-Sie: github.com/you/project   ← Sie dürfen nach Belieben ändern
+```mermaid
+flowchart TD
+  A["Original-Autor:<br/>github.com/author/project"] -->|fork| B["Sie:<br/>github.com/you/project<br/>(Sie dürfen nach Belieben ändern)"]
 ```
 
 fork ist eine Funktion von GitHub (kein git-Befehl). Der Unterschied zu clone: fork erstellt eine Kopie auf den GitHub-Servern, clone kopiert das Repository auf Ihren Rechner. Der typische Open-Source-Ablauf ist „erst forken, dann den eigenen fork klonen" — Sie haben keine Schreibrechte am Repository des Original-Autors und arbeiten daher nur in Ihrer Kopie.

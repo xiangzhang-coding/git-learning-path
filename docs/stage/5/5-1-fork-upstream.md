@@ -42,11 +42,9 @@ exercises:
 
 A fork copies someone else's repository into your own GitHub account:
 
-```
-original author: github.com/author/project
-        │ fork
-        ▼
-you:              github.com/you/project   ← you can change anything
+```mermaid
+flowchart TD
+  A["original author<br/>github.com/author/project"] -->|fork| B["you<br/>github.com/you/project<br/>(you can change anything)"]
 ```
 
 fork is a GitHub feature (not a git command). The difference from clone: a fork creates a copy on GitHub's servers, a clone copies the repository to your local computer. The typical open-source flow is "fork first, then clone your own fork" — you have no write access to the original author's repository, so you work on your own copy.

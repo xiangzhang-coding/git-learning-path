@@ -42,11 +42,10 @@ exercises:
 
 Un Pull Request (PR) es la solicitud formal «funde mis commits en tu repositorio». No tienes permiso para escribir directamente en el repositorio de otro, pero sí puedes abrir un PR y que el mantenedor decida tras el review si se fusiona:
 
-```
-Rama de tu fork ──push──▶ tu fork
-                            │ abrir PR
-                            ▼
-             main del repositorio del autor (a la espera de review y merge)
+```mermaid
+flowchart TD
+    A["Rama de tu fork"] -- push --> B["tu fork"]
+    B -- abrir PR --> C["main del repositorio del autor<br/>(a la espera de review y merge)"]
 ```
 
 El PR no son solo commits: incluye la comparación de código (diff), la discusión y el resultado de las comprobaciones automáticas (CI) — es la unidad central de la colaboración open source.

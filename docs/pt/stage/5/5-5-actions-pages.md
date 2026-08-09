@@ -73,8 +73,9 @@ Estrutura: `on` declara os eventos que disparam; `jobs` define as tarefas (podem
 
 Há dois caminhos para o Pages: publicar o branch direto depois de ativar o Pages nas configurações do repositório, ou usar Actions para publicar o build. O segundo é mais comum (primeiro roda os testes e o build, depois publica o resultado no Pages):
 
-```
-push ──▶ workflow disparado ──▶ instalar dependências → build → publicar no Pages
+```mermaid
+flowchart LR
+    A["push"] --> B["workflow disparado"] --> C["instalar dependências"] --> D["build"] --> E["publicar no Pages"]
 ```
 
 O status do deploy, os logs e o motivo de falha ficam na aba Actions do repositório. O sinalzinho verde ao lado dos commits (✓/✗) é a porta de entrada para ver o resultado das verificações.

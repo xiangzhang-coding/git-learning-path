@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitepress'
 import type { DefaultTheme } from 'vitepress'
+import { withMermaid } from 'vitepress-plugin-mermaid'
 
 const BASE = '/git-learning-path/'
 import { LANGS, LOCALE_KEYS, stageLessons, type LocaleKey } from './theme/lib/stages'
@@ -260,7 +261,7 @@ const headScript = `(function () {
 
 const sidebar = buildSidebar()
 
-export default defineConfig({
+export default withMermaid(defineConfig({
   lang: 'en',
   title: 'Git Learning Path',
   description:
@@ -277,4 +278,4 @@ export default defineConfig({
     outline: { level: [2, 3] },
     sidebar
   }
-})
+}))

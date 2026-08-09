@@ -73,8 +73,9 @@ jobs:
 
 Pages 部署有两条路：在仓库设置里开启 Pages 后直接发布分支，或用 Actions 构建产物。后者更常用（先跑测试与构建，再把产物发布到 Pages）：
 
-```
-push ──▶ workflow 触发 ──▶ 安装依赖 → 构建 → 发布产物到 Pages
+```mermaid
+flowchart LR
+  A["push"] --> B["workflow 触发"] --> C["安装依赖"] --> D["构建"] --> E["发布产物到 Pages"]
 ```
 
 部署状态、日志与失败原因都在仓库的 Actions 标签页里。提交旁边的小绿勾（✓/✗）是检查运行结果的入口。

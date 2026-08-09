@@ -42,11 +42,10 @@ exercises:
 
 Pull Request(PR)는「내 커밋을 당신의 저장소에 병합해 주세요」라는 공식 요청입니다. 남의 저장소에 직접 쓸 권한은 없지만, PR을 제출하면 유지보수자(maintainer)가 review 후 병합 여부를 결정합니다:
 
-```
-내 fork의 브랜치 ──push──▶ 내 fork
-                               │ PR 열기
-                               ▼
-                     원작자 저장소의 main(review와 merge 대기)
+```mermaid
+flowchart TD
+    A["내 fork의 브랜치"] -->|push| B["내 fork"]
+    B -->|PR 열기| C["원작자 저장소의 main(review와 merge 대기)"]
 ```
 
 PR은 커밋만 있는 게 아닙니다: 코드 비교(diff), 토론, 자동 검사(CI) 결과까지 포함하며, 오픈소스 협업의 핵심 단위입니다.

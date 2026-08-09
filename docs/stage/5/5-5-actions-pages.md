@@ -73,8 +73,9 @@ Structure: `on` declares the triggering events; `jobs` defines tasks (they run i
 
 There are two ways to deploy Pages: publish a branch directly from repository settings, or publish build artifacts via Actions. The latter is more common (tests and build first, then publish the artifact to Pages):
 
-```
-push ──▶ workflow triggers ──▶ install deps → build → publish artifact to Pages
+```mermaid
+flowchart LR
+  A["push"] --> B["workflow triggers"] --> C["install deps"] --> D["build"] --> E["publish artifact to Pages"]
 ```
 
 Deployment status, logs, and failures live in the Actions tab of the repository. The little green check (✓/✗) next to commits is the entry point to check results.

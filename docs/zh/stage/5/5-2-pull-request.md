@@ -42,11 +42,10 @@ exercises:
 
 Pull Request（PR）是「请把我的提交合入你的仓库」的正式请求。你无权限直接往别人仓库写，但可以提交 PR，由维护者 review 后决定是否合并：
 
-```
-你的 fork 上的分支 ──push──▶ 你的 fork
-                               │ 开 PR
-                               ▼
-                    原作者仓库的 main（等待 review 与 merge）
+```mermaid
+flowchart TD
+  A["你的 fork 上的分支"] -->|push| B["你的 fork"]
+  B -->|开 PR| C["原作者仓库的 main（等待 review 与 merge）"]
 ```
 
 PR 不止是提交：它包含代码对比（diff）、讨论、自动检查（CI）结果，是开源协作的核心环节。

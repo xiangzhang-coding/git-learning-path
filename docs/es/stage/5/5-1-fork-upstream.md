@@ -42,11 +42,9 @@ exercises:
 
 fork (derivación) es copiar el repositorio de otra persona a tu propia cuenta de GitHub:
 
-```
-Autor original: github.com/author/project
-    │ fork
-    ▼
-Tú: github.com/you/project   ← puedes modificarlo a tu gusto
+```mermaid
+flowchart TD
+    A["Autor original: github.com/author/project"] -- fork --> B["Tú: github.com/you/project<br/>puedes modificarlo a tu gusto"]
 ```
 
 fork es una función de GitHub (no un comando de git). La diferencia con clone: fork crea una copia en los servidores de GitHub, clone copia el repositorio a tu ordenador. El flujo típico de open source es «primero fork y después clone de tu fork»: no tienes permiso de escritura sobre el repositorio del autor original, así que solo puedes trabajar en tu propia copia.
