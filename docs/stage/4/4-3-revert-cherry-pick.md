@@ -45,6 +45,24 @@ exercises:
         contentContains: feature work
     explanation: after cherry-pick, the feature branch stays exactly as it was, and main now has its own commit with the same content.
     anchor: "#git-cherry-pick-copies-a-commit"
+  - id: 4-3-e5
+    question: What is git bisect for?
+    options:
+      - Binary-searching the first commit that introduced a bug
+      - Merging the history of two branches
+      - Undoing the most recent commit
+    correct: 0
+    explanation: bisect marks a bad and a good commit, then repeatedly checks out the midpoint for you to test — halving the range each time until the first bad commit is found.
+    anchor: "#git-bisect-homes-in-on-the-bad-commit"
+  - id: 4-3-e6
+    question: In the playground below, use bisect to locate the commit that introduced the bug.
+    type: task
+    scenario: bisect
+    goal: Run git bisect start, git bisect bad, git bisect good HEAD~3; at each midpoint check calc.js — if the add function is correct run git bisect good, if it is buggy run git bisect bad, until bisect finishes.
+    checks:
+      - type: bisectDone
+    explanation: 'bisect will pinpoint "fix: typo in add" — the commit where add started failing; use git bisect reset afterwards to return to your branch.'
+    anchor: "#git-bisect-homes-in-on-the-bad-commit"
 ---
 
 # git revert and git cherry-pick
@@ -53,7 +71,8 @@ exercises:
 
 - Undo an existing commit with git revert
 - Copy commits with git cherry-pick
-- Understand that neither rewrites history
+- Use git bisect to home in on the commit that broke things
+- Understand that none of these rewrite history
 
 ## git revert undoes a commit
 
@@ -92,6 +111,19 @@ o  A ---- B (main) ---- B' (cherry-picked fix)
 | Result | A new commit cancelling out an old one | A new commit replicating an old one |
 
 Neither rewrites existing history, and both stop and wait for you to resolve conflicts.
+
+
+## git bisect homes in on the bad commit
+
+```bash
+git bisect start          # begin
+git bisect bad            # current HEAD is broken
+git bisect good <commit>   # mark a known-good commit
+# loop: checkout a midpoint → test → git bisect good / git bisect bad
+git bisect reset          # finish, back to the original branch
+```
+
+"Something broke, but I don't know which commit did it" — going through history by hand is painfully slow. bisect uses **binary search**: after you mark one bad and one good commit, git checks out the midpoint between them; you test and say good or bad, and the range halves. A few rounds pin down the first commit that introduced the bug.
 
 ## Exercises
 

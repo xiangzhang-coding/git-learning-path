@@ -163,7 +163,7 @@ describe('playground command engine', () => {
 
   it('unknown commands and bad flags produce git-style errors', async () => {
     const session = await Session.create('init')
-    const out = await exec(session, 'git blame main')
+    const out = await exec(session, 'git squash main')
     expect(out).toContain("is not a git command")
     const bad = await exec(session, 'git commit -m')
     expect(bad).toContain('fatal')

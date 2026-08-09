@@ -2,6 +2,23 @@
 
 Le fil conducteur de ce chapitre : **la boucle de collaboration autour de GitHub**. fork crée votre copie, upstream relie le dépôt de l'auteur ; le PR est la porte d'entrée des commits vers la branche principale, l'issue porte la discussion, la release publie les versions, Actions et Pages automatisent les tests et le déploiement. Ce chapitre s'entraîne sur le vrai GitHub — chaque concept s'accompagne d'une tâche pratique.
 
+## Liste de pratique
+
+Parcours l'enchaînement complet ci-dessous sur le vrai GitHub, en cochant pour suivre votre progression :
+
+<Checklist :tasks="[
+  { text: 'fork un dépôt open source que vous utilisez souvent', link: '/fr/stage/5/5-1-fork-upstream' },
+  { text: 'Clone votre fork, ajoutez upstream, effectuez une synchronisation complète', link: '/fr/stage/5/5-1-fork-upstream' },
+  { text: 'Poussez une branche de fonctionnalité et ouvrez un vrai PR', link: '/fr/stage/5/5-2-pull-request' },
+  { text: 'Vivez une discussion de review dans un PR', link: '/fr/stage/5/5-2-pull-request' },
+  { text: 'Ouvrez une issue, créez un label et un milestone', link: '/fr/stage/5/5-3-issues' },
+  { text: 'Soumettez un PR lié à une issue (fixes #numéro)', link: '/fr/stage/5/5-3-issues' },
+  { text: 'Créez le tag v0.1.0 et publiez le premier Release', link: '/fr/stage/5/5-4-releases' },
+  { text: 'Publiez une version de correctif avec des notes en trois sections', link: '/fr/stage/5/5-4-releases' },
+  { text: 'Écrivez un workflow qui déploie une page statique sur Pages', link: '/fr/stage/5/5-5-actions-pages' },
+  { text: 'Cassez volontairement l\'étape de build et observez le journal d\'échec', link: '/fr/stage/5/5-5-actions-pages' }
+]" />
+
 ## Cours
 
 - 5-1 [fork et synchronisation upstream](/fr/stage/5/5-1-fork-upstream) : fork crée la copie, upstream reçoit les mises à jour de l'amont

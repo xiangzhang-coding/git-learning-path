@@ -45,6 +45,24 @@ exercises:
         contentContains: feature work
     explanation: cherry-pick 复制提交后，feature 分支原样保留，main 上也多了一个内容相同的提交。
     anchor: "#git-cherry-pick-复制提交"
+  - id: 4-3-e5
+    question: git bisect 用来做什么？
+    options:
+      - 通过二分搜索定位第一个引入 bug 的提交
+      - 把两个分支的历史合并
+      - 撤销最近一次提交
+    correct: 0
+    explanation: bisect 标记「坏」与「好」提交后，反复 checkout 中间点让你确认，用二分法快速锁定「从哪个提交开始变坏」。
+    anchor: "#git-bisect-二分定位坏提交"
+  - id: 4-3-e6
+    question: 在下面的练手区中，用 bisect 定位引入 bug 的提交。
+    type: task
+    scenario: bisect
+    goal: 执行 git bisect start、git bisect bad、git bisect good HEAD~3；每次被切到中间提交后查看 calc.js 的 add 函数——正确就 git bisect good，有 bug 就 git bisect bad，直到定位完成。
+    checks:
+      - type: bisectDone
+    explanation: 'bisect 会定位到「fix: typo in add」——add 函数从它开始出错；结束后可用 git bisect reset 返回原分支。'
+    anchor: "#git-bisect-二分定位坏提交"
 ---
 
 # git revert 与 git cherry-pick
@@ -53,7 +71,8 @@ exercises:
 
 - 用 git revert 撤销已存在的提交
 - 用 git cherry-pick 复制提交
-- 理解两者都不改写历史
+- 用 git bisect 二分定位坏提交
+- 理解它们都不改写历史
 
 ## git revert 撤销提交
 
@@ -92,6 +111,18 @@ o  A ---- B (main) ---- B' (cherry-picked fix)
 | 结果 | 一个新提交抵消旧提交 | 一个新提交复刻旧提交 |
 
 两者都不改写已有历史，冲突时都会停下等你解决。
+
+## git bisect 二分定位坏提交
+
+```bash
+git bisect start          # 开始
+git bisect bad            # 当前 HEAD 是坏的
+git bisect good <提交>     # 标记一个已知的好提交
+# 循环：checkout 到中间点 → 测试 → git bisect good / git bisect bad
+git bisect reset          # 结束，回到原分支
+```
+
+「某个功能坏了，但不知道从哪个提交开始坏」——人工逐个翻历史太低效。bisect 用**二分法**：标记一个「坏」提交和一个「好」提交后，git 自动 checkout 两者中间的那个提交，你测试后说 good 或 bad，范围就缩小一半。反复几次就能锁定第一个引入 bug 的提交。
 
 ## 练习
 

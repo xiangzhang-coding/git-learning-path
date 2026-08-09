@@ -32,6 +32,24 @@ exercises:
         contentContains: "const a = 3"
     explanation: Après le commit, l'historique passe à 5 commits ; la première ligne de git log --oneline est ton nouveau commit.
     anchor: "#git-log-affiche-l-historique"
+  - id: 1-3-e4
+    question: Que montre git show <commit> ?
+    options:
+      - "Les détails complets du commit : auteur, date, message, diff des modifications"
+      - La liste de tous les fichiers du dépôt
+      - Le graphe de commits de la branche courante
+    correct: 0
+    explanation: "git show déplie un commit : l'en-tête contient l'auteur et la date, en dessous le diff par rapport au commit parent — la façon standard de voir « ce que ce commit a vraiment changé »."
+    anchor: "#git-show-inspecte-un-commit"
+  - id: 1-3-e5
+    question: À quoi sert git blame <fichier> ?
+    options:
+      - "Annote chaque ligne avec le commit et l'auteur qui l'ont modifiée en dernier"
+      - Supprimer les lignes vides d'un fichier
+      - Comparer les différences entre deux fichiers
+    correct: 0
+    explanation: "blame rend compte ligne par ligne : le préfixe de chaque ligne est « hash court du dernier commit l'ayant modifiée + auteur » — très utile pour savoir « qui a modifié cette ligne et pourquoi »."
+    anchor: "#git-blame-retrace-l-origine-des-lignes"
 ---
 
 # git log et git diff
@@ -40,6 +58,8 @@ exercises:
 
 - consulter l'historique des commits avec git log
 - consulter le contenu des modifications avec git diff
+- consulter le détail d'un commit précis avec git show
+- retracer l'origine de chaque ligne avec git blame
 - connaître le hash court et le modèle des snapshots
 
 ## git log affiche l'historique
@@ -59,6 +79,23 @@ git diff --staged    # zone de staging vs HEAD (modifications staged mais non co
 ```
 
 Dans la sortie, les lignes commençant par `-` ont été supprimées, celles commençant par `+` ont été ajoutées. Vérifier avec diff ce que l'on a changé avant de committer est une habitude standard.
+
+## git show inspecte un commit
+
+```bash
+git show <commit>    # consulter le détail d'un commit
+git show HEAD        # le commit le plus récent
+```
+
+`git show` déplie un commit : l'en-tête contient le hash du commit, l'auteur, la date et le message ; en dessous, le diff par rapport à son commit parent — ce qui répond exactement à « qu'est-ce que ce commit a réellement changé ». Combiné aux hash fournis par git log, vous pouvez remonter n'importe quelle modification.
+
+## git blame retrace l'origine des lignes
+
+```bash
+git blame <fichier>   # annoter l'origine de chaque ligne
+```
+
+blame ajoute un préfixe à chaque ligne du fichier : **le hash court du dernier commit ayant modifié cette ligne + l'auteur**. Quand vous voulez savoir « qui a modifié cette ligne, par quel commit a-t-elle été introduite », blame répond en un coup d'œil — un point de départ courant pour traquer un bug en production.
 
 ## Le modèle des snapshots
 

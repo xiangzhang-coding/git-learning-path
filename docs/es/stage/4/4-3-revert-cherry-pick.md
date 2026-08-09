@@ -45,6 +45,24 @@ exercises:
         contentContains: feature work
     explanation: tras el cherry-pick, la rama feature queda intacta y main gana un commit con el mismo contenido.
     anchor: "#git-cherry-pick-copia-un-commit"
+  - id: 4-3-e5
+    question: ¿Para qué sirve git bisect?
+    options:
+      - Localiza con búsqueda binaria el primer commit que introdujo un bug
+      - Fusiona el historial de dos ramas
+      - Deshace el último commit
+    correct: 0
+    explanation: bisect marca un commit «bad» y uno «good»; luego hace checkout repetido del punto intermedio para que lo pruebes y, con búsqueda binaria, acota en pocas pasadas «desde qué commit empezó a ir mal».
+    anchor: "#git-bisect-localiza-el-commit-defectuoso"
+  - id: 4-3-e6
+    question: En la zona de práctica de abajo, localiza con bisect el commit que introdujo el bug.
+    type: task
+    scenario: bisect
+    goal: Ejecuta git bisect start, git bisect bad y git bisect good HEAD~3; cada vez que pase a un commit intermedio, revisa la función add de calc.js — si está bien, haz git bisect good; si tiene el bug, haz git bisect bad, hasta que quede localizado.
+    checks:
+      - type: bisectDone
+    explanation: 'bisect localizará «fix: typo in add» — la función add empieza a fallar en él; al terminar, usa git bisect reset para volver a la rama original.'
+    anchor: "#git-bisect-localiza-el-commit-defectuoso"
 ---
 
 # git revert y git cherry-pick
@@ -53,6 +71,7 @@ exercises:
 
 - Deshacer un commit existente con git revert
 - Copiar commits con git cherry-pick
+- Localizar el commit defectuoso con git bisect
 - Entender que ninguno de los dos reescribe la historia
 
 ## git revert deshace un commit
@@ -92,6 +111,18 @@ o  A ---- B (main) ---- B' (arreglo cherry-pickado)
 | Resultado | Un commit nuevo que anula al anterior | Un commit nuevo que replica al anterior |
 
 Ninguno de los dos reescribe la historia existente, y ambos se detienen ante un conflicto esperando a que lo resuelvas.
+
+## git bisect localiza el commit defectuoso
+
+```bash
+git bisect start          # iniciar
+git bisect bad            # el HEAD actual es bad
+git bisect good <commit>   # marca un commit bueno conocido
+# bucle: checkout al punto intermedio → prueba → git bisect good / git bisect bad
+git bisect reset          # terminar y volver a la rama original
+```
+
+«Una función está rota, pero no sé en qué commit empezó a romperse» — revisar la historia a mano commit a commit es demasiado lento. bisect usa **búsqueda binaria**: tras marcar un commit «bad» y uno «good», git hace checkout automático del commit intermedio; tú lo pruebas y dices good o bad, y el rango se reduce a la mitad. Con unas pocas pasadas queda localizado el primer commit que introdujo el bug.
 
 ## Ejercicios
 

@@ -45,6 +45,24 @@ exercises:
         contentContains: feature work
     explanation: cherry-pick으로 커밋을 복사해도 feature 브랜치는 그대로이고, main에도 내용이 같은 커밋이 하나 더 생깁니다.
     anchor: "#git-cherry-pick으로-커밋-복사"
+  - id: 4-3-e5
+    question: git bisect는 무엇을 할 때 쓰나요?
+    options:
+      - 이분 탐색으로 첫 번째 버그가 도입된 커밋을 찾아냄
+      - 두 브랜치의 역사를 병합
+      - 가장 최근 커밋을 취소
+    correct: 0
+    explanation: bisect는 "bad"와 "good" 커밋을 표시한 뒤 중간 지점을 반복적으로 checkout하게 하고, 이분법으로 「어느 커밋부터 나빠졌는지」를 빠르게 잡아냅니다.
+    anchor: "#git-bisect로-원인-커밋-이분-탐색"
+  - id: 4-3-e6
+    question: 아래 연습장에서 bisect로 버그가 도입된 커밋을 찾으세요.
+    type: task
+    scenario: bisect
+    goal: git bisect start, git bisect bad, git bisect good HEAD~3을 실행하세요. 중간 커밋으로 이동할 때마다 calc.js의 add 함수를 확인해서 올바르면 git bisect good, 버그가 있으면 git bisect bad를 실행해 탐색이 끝날 때까지 반복하세요.
+    checks:
+      - type: bisectDone
+    explanation: 'bisect는 「fix: typo in add」를 찾아냅니다 — add 함수가 그 커밋부터 잘못되기 시작했습니다. 끝난 뒤에는 git bisect reset으로 원래 브랜치로 돌아갈 수 있습니다.'
+    anchor: "#git-bisect로-원인-커밋-이분-탐색"
 ---
 
 # git revert와 git cherry-pick
@@ -53,6 +71,7 @@ exercises:
 
 - git revert로 이미 있는 커밋 취소하기
 - git cherry-pick으로 커밋 복사하기
+- git bisect로 나쁜 커밋 이분 탐색하기
 - 둘 다 역사를 다시 쓰지 않는다는 점 이해하기
 
 ## git revert로 커밋 되돌리기
@@ -92,6 +111,18 @@ o  A ---- B (main) ---- B' (cherry-pick된 수정)
 | 결과 | 새 커밋이 옛 커밋을 상쇄 | 새 커밋이 옛 커밋을 복제 |
 
 둘 다 기존 역사를 다시 쓰지 않으며, 충돌이 나면 멈추고 해결을 기다립니다.
+
+## git bisect로 원인 커밋 이분 탐색
+
+```bash
+git bisect start          # 시작
+git bisect bad            # 현재 HEAD는 bad
+git bisect good <커밋>     # 좋은 커밋 하나를 표시
+# 반복: 중간 지점으로 checkout → 테스트 → git bisect good / git bisect bad
+git bisect reset          # 종료, 원래 브랜치로 복귀
+```
+
+「어떤 기능이 고장났는데 어느 커밋부터 고장났는지 모르겠다」 — 일일이 역사를 뒤지는 것은 너무 비효율적입니다. bisect는 **이분법**을 씁니다: 하나의 bad 커밋과 하나의 good 커밋을 표시하면 git이 자동으로 그 중간에 있는 커밋을 checkout하고, 여러분이 good/bad를 말하면 범위가 절반으로 줄어듭니다. 몇 번 반복하면 버그가 처음 도입된 커밋을 정확히 잡아낼 수 있습니다.
 
 ## 연습
 

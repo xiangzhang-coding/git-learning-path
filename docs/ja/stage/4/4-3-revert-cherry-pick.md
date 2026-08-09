@@ -45,6 +45,24 @@ exercises:
         contentContains: feature work
     explanation: cherry-pick でコミットをコピーしても feature ブランチはそのまま残り、main にも中身の同じコミットが 1 つ増えます。
     anchor: "#git-cherry-pick-でコミットをコピーする"
+  - id: 4-3-e5
+    question: git bisect は何に使いますか？
+    options:
+      - 二分探索でバグを最初に導入したコミットを特定する
+      - 2 つのブランチの履歴を統合する
+      - 直近のコミットを取り消す
+    correct: 0
+    explanation: bisect は「悪い」コミットと「良い」コミットをマークすると、中間のコミットを繰り返し checkout して確認させ、二分法で「どのコミットから悪くなったか」を素早く特定します。
+    anchor: "#git-bisect-で原因コミットを二分探索"
+  - id: 4-3-e6
+    question: 下の練手区で、bisect を使ってバグを導入したコミットを特定しましょう。
+    type: task
+    scenario: bisect
+    goal: git bisect start、git bisect bad、git bisect good HEAD~3 を実行しましょう。中間のコミットに切り替わるたびに calc.js の add 関数を確認してください——正しければ git bisect good、バグがあれば git bisect bad を実行し、特定が完了するまで続けましょう。
+    checks:
+      - type: bisectDone
+    explanation: 'bisect は「fix: typo in add」のコミットを特定します——add 関数はこのコミットから壊れ始めます。終了後は git bisect reset で元のブランチに戻れます。'
+    anchor: "#git-bisect-で原因コミットを二分探索"
 ---
 
 # git revert と git cherry-pick
@@ -53,6 +71,7 @@ exercises:
 
 - git revert で既存のコミットを取り消す
 - git cherry-pick でコミットをコピーする
+- git bisect で原因コミットを二分探索する
 - どちらも履歴を書き換えないことを理解する
 
 ## git revert でコミットを取り消す
@@ -92,6 +111,18 @@ o  A ---- B (main) ---- B' (cherry-picked fix)
 | 結果 | 古いコミットを打ち消す新コミット | 古いコミットを複製する新コミット |
 
 どちらも既存の履歴を書き換えず、コンフリクト時は止まって解決を待ちます。
+
+## git bisect で原因コミットを二分探索
+
+```bash
+git bisect start          # 開始
+git bisect bad            # 現在の HEAD は悪い
+git bisect good <コミット>  # 良いとわかっているコミットをマーク
+# 繰り返し：中間のコミットを checkout → テスト → git bisect good / git bisect bad
+git bisect reset          # 終了して元のブランチに戻る
+```
+
+「ある機能が壊れたが、どのコミットから壊れたのかわからない」——手で履歴を 1 つずつ調べるのは非効率です。bisect は**二分法**を使います：「悪い」コミットと「良い」コミットをマークすると、git はその中間のコミットを自動で checkout します。テストして good か bad かを伝えると、範囲が半分に絞られます。これを繰り返せば、バグを最初に導入したコミットを特定できます。
 
 ## 練習
 

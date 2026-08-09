@@ -14,7 +14,7 @@ export function hasConflictMarkers(content: string): boolean {
 }
 
 export const STAGE3_SCENARIOS = ['remote', 'clone', 'push', 'pull-ff', 'pull'] as const
-export const STAGE4_SCENARIOS = ['stash', 'tag', 'reset', 'revert', 'cherry-pick', 'rebase', 'rebase-conflict'] as const
+export const STAGE4_SCENARIOS = ['stash', 'tag', 'reset', 'revert', 'cherry-pick', 'rebase', 'rebase-conflict', 'clean', 'bisect'] as const
 
 export type ScenarioName =
   | 'init'
@@ -37,6 +37,8 @@ export type ScenarioName =
   | 'cherry-pick'
   | 'rebase'
   | 'rebase-conflict'
+  | 'clean'
+  | 'bisect'
 
 export async function mergeInProgress(fs: MemoryFS, dir: string): Promise<boolean> {
   return fs
@@ -103,14 +105,26 @@ export async function readFileFromRef(
   try {
     const oid = await git.resolveRef({ fs: fs as never, dir, ref })
     const commit = await git.readCommit({ fs: fs as never, dir, oid })
-    const tree = await git.readTree({ fs: fs as never, dir, oid: commit.commit.tree })
-    const entry = tree.tree.find((e: { path: string }) => e.path === filepath)
-    if (!entry) return null
-    const blob = await git.readBlob({ fs: fs as never, dir, oid: entry.oid })
+    const entryOid = await resolvePathInTree(fs, dir, commit.commit.tree, filepath)
+    if (!entryOid) return null
+    const blob = await git.readBlob({ fs: fs as never, dir, oid: entryOid })
     return new TextDecoder().decode(blob.blob)
   } catch {
     return null
   }
+}
+
+async function resolvePathInTree(fs: MemoryFS, dir: string, treeOid: string, path: string): Promise<string | null> {
+  const parts = path.split('/')
+  let current = treeOid
+  for (let i = 0; i < parts.length; i++) {
+    const tree = await git.readTree({ fs: fs as never, dir, oid: current })
+    const entry = tree.tree.find((e: { path: string }) => e.path === parts[i])
+    if (!entry) return null
+    if (i === parts.length - 1) return entry.type === 'blob' ? entry.oid : null
+    current = entry.oid
+  }
+  return null
 }
 
 async function write(fs: MemoryFS, dir: string, path: string, content: string): Promise<void> {
@@ -584,10 +598,35 @@ export async function buildRepairScenario(fs: MemoryFS, name: ScenarioName): Pro
     return
   }
 
+  if (name === 'clean') {
+    await write(fs, dir, 'README.md', '# Project\n')
+    await commitAll(fs, dir, 'docs: init readme')
+    await write(fs, dir, 'hello.txt', 'hello world\n')
+    await commitAll(fs, dir, 'feat: add hello')
+    await write(fs, dir, 'scratch.txt', 'temporary notes\n')
+    await write(fs, dir, 'todo.tmp', 'leftover file\n')
+    return
+  }
+
+  if (name === 'bisect') {
+    await write(fs, dir, 'calc.js', 'function add(a, b) { return a + b; }\n')
+    await commitAll(fs, dir, 'feat: add function')
+    await write(fs, dir, 'calc.js', 'function add(a, b) { return a + b; }\nfunction sub(a, b) { return a - b; }\n')
+    await commitAll(fs, dir, 'feat: add subtract')
+    await write(fs, dir, 'calc.js', 'function add(a, b) { return a - b; }\nfunction sub(a, b) { return a - b; }\n')
+    await commitAll(fs, dir, 'fix: typo in add')  // 引入 bug 的提交
+    await write(fs, dir, 'calc.js', 'function add(a, b) { return a - b; }\nfunction sub(a, b) { return a - b; }\nfunction mul(a, b) { return a * b; }\n')
+    await commitAll(fs, dir, 'feat: add multiply')
+    await write(fs, dir, 'calc.js', 'function add(a, b) { return a - b; }\nfunction sub(a, b) { return a - b; }\nfunction mul(a, b) { return a * b; }\nfunction div(a, b) { return a / b; }\n')
+    await commitAll(fs, dir, 'feat: add divide')
+    return
+  }
+
   await write(fs, dir, 'README.md', '# Project\n')
   await commitAll(fs, dir, 'docs: init readme')
   await git.branch({ fs: fs as never, dir, ref: 'feature', checkout: true })
   await write(fs, dir, 'hello.txt', 'hello feature\n')
+  await write(fs, dir, 'notes.txt', 'notes from feature\n')
   await commitAll(fs, dir, 'feat: feature version')
   await git.checkout({ fs: fs as never, dir, ref: 'main' })
   await write(fs, dir, 'hello.txt', 'hello main\n')

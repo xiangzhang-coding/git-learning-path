@@ -5,3 +5,5 @@ docs/.vitepress/dist
 *.log
 
 .playwright-mcp
+test-results
+playwright-report

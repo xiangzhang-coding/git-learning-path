@@ -39,6 +39,24 @@ exercises:
         messageContains: break hello
     explanation: reflog shows HEAD's complete history; find the hash of the commit from before the reset and reset --hard back to it — everything is recovered.
     anchor: "#git-reflog-finds-lost-commits"
+  - id: 4-2-e5
+    question: What does git clean do?
+    options:
+      - Removes untracked files (needs -f to actually delete; -n previews)
+      - Clears all commit history
+      - Restores changes to tracked files
+    correct: 0
+    explanation: clean only touches untracked files; by default it refuses to delete (clean.requireForce), -n previews and -f executes — files it removes cannot be recovered through git.
+    anchor: "#git-clean-removes-untracked-files"
+  - id: 4-2-e6
+    question: In the playground below, remove all untracked files.
+    type: task
+    scenario: clean
+    goal: Preview with git clean -n, then delete the untracked files (scratch.txt and todo.tmp) with git clean -f.
+    checks:
+      - type: workdirClean
+    explanation: clean -f removes the untracked files; the task passes once the working tree only contains committed files.
+    anchor: "#git-clean-removes-untracked-files"
 ---
 
 # git reset and reflog
@@ -48,6 +66,7 @@ exercises:
 - Move HEAD and repository state with git reset
 - Tell apart --hard / mixed / --soft
 - Recover reset-away commits with git reflog
+- Remove untracked files with git clean
 
 ## git reset moves HEAD
 
@@ -81,6 +100,18 @@ git reflog
 ```
 
 Commits discarded by a reset are **not deleted** — they just have no branch pointing at them. Find its hash in the reflog and `git reset --hard <hash>` brings it back completely. That's git's "regret pill": as long as the operation happened on your machine, almost everything can be recovered.
+
+## git clean removes untracked files
+
+```bash
+git clean -n       # preview: list files that would be deleted
+git clean -f       # execute: delete untracked files
+```
+
+The Untracked files section of `git status` lists untracked files — local, unmanaged files (scratch notes, build artifacts). `git clean` removes them. Two things to note:
+
+- It refuses to run by default (`clean.requireForce`); you must pass `-f`, and `-n` previews what would be removed
+- **Files removed by clean cannot be recovered through git** (they were never committed, so even the reflog cannot help) — double-check before running
 
 ## Exercises
 

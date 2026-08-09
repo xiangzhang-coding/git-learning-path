@@ -39,6 +39,24 @@ exercises:
         messageContains: break hello
     explanation: "reflog affiche l'historique complet de HEAD ; trouvez le hash du commit d'avant le reset, faites reset --hard dessus, et tout revient."
     anchor: "#git-reflog-retrouver-les-commits-perdus"
+  - id: 4-2-e5
+    question: Quel est le rôle de git clean ?
+    options:
+      - "Supprimer les fichiers non suivis (il faut -f pour vraiment supprimer, -n est un aperçu)"
+      - Vider tout l'historique des commits
+      - Annuler les modifications des fichiers suivis
+    correct: 0
+    explanation: "clean ne traite que les fichiers non suivis ; par défaut il refuse de supprimer directement (clean.requireForce), -n donne l'aperçu, -f exécute — les fichiers qu'il supprime ne peuvent pas être retrouvés par git."
+    anchor: "#git-clean-supprime-les-fichiers-non-suivis"
+  - id: 4-2-e6
+    question: Dans la zone d'entraînement ci-dessous, supprime tous les fichiers non suivis.
+    type: task
+    scenario: clean
+    goal: "Utilise d'abord git clean -n pour l'aperçu, puis git clean -f pour supprimer les fichiers non suivis (scratch.txt et todo.tmp)."
+    checks:
+      - type: workdirClean
+    explanation: "clean -f élimine les fichiers non suivis ; la tâche réussit quand le working tree ne contient plus que les fichiers commités."
+    anchor: "#git-clean-supprime-les-fichiers-non-suivis"
 ---
 
 # git reset et reflog
@@ -48,6 +66,7 @@ exercises:
 - déplacer HEAD et l'état du dépôt avec git reset
 - distinguer --hard / mixed / --soft
 - retrouver les commits écartés par reset avec git reflog
+- nettoyer les fichiers non suivis avec git clean
 
 ## git reset : déplacer HEAD
 
@@ -81,6 +100,18 @@ git reflog
 ```
 
 Les commits écartés par reset **ne sont pas supprimés** : aucune branche ne pointe simplement plus vers eux. Trouvez leur hash dans le reflog, et `git reset --hard <hash>` les restaure intégralement. C'est le « remède au regret » de git : tant que l'opération a eu lieu sur votre machine, presque tout se récupère.
+
+## git clean supprime les fichiers non suivis
+
+```bash
+git clean -n       # aperçu : liste les fichiers qui seront supprimés
+git clean -f       # exécution : supprime les fichiers non suivis
+```
+
+Les fichiers listés sous Untracked files dans `git status` sont des fichiers non suivis — des fichiers produits localement et dont git ne s'occupe pas (fichiers temporaires, artefacts de build). `git clean` s'en charge. Deux points d'attention :
+
+- Par défaut, il refuse d'exécuter (`clean.requireForce`) : il faut `-f` ; utilisez d'abord `-n` pour prévisualiser ce qui sera supprimé
+- **Les fichiers supprimés par clean ne peuvent pas être retrouvés par git** (ils n'ont jamais été commités, reflog ne peut rien y faire) — vérifiez bien avant d'exécuter
 
 ## Exercices
 

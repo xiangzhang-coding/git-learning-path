@@ -39,6 +39,24 @@ exercises:
         messageContains: break hello
     explanation: reflog muestra la historia completa de HEAD; encuentra el hash del commit anterior al reset y haz git reset --hard para recuperarlo todo.
     anchor: "#git-reflog-recupera-commits-perdidos"
+  - id: 4-2-e5
+    question: ¿Cuál es la función de git clean?
+    options:
+      - Borra archivos no rastreados (necesita -f para borrar de verdad; -n es la vista previa)
+      - Vacía todo el historial de commits
+      - Restaura los cambios de los archivos rastreados
+    correct: 0
+    explanation: "clean solo toca archivos no rastreados; por defecto se niega a borrarlos (clean.requireForce): -n previsualiza y -f ejecuta — los archivos que borra no se pueden recuperar con git."
+    anchor: "#git-clean-elimina-archivos-no-rastreados"
+  - id: 4-2-e6
+    question: En la zona de práctica de abajo, borra todos los archivos no rastreados.
+    type: task
+    scenario: clean
+    goal: Previsualiza primero con git clean -n y borra luego con git clean -f los archivos no rastreados (scratch.txt y todo.tmp).
+    checks:
+      - type: workdirClean
+    explanation: clean -f elimina los archivos no rastreados; la tarea se supera cuando el working tree solo contiene los archivos ya commiteados.
+    anchor: "#git-clean-elimina-archivos-no-rastreados"
 ---
 
 # git reset y reflog
@@ -48,6 +66,7 @@ exercises:
 - Mover HEAD y el estado del repositorio con git reset
 - Distinguir entre --hard, mixed y --soft
 - Recuperar commits descartados con git reflog
+- Limpiar archivos no rastreados con git clean
 
 ## git reset mueve HEAD
 
@@ -81,6 +100,18 @@ git reflog
 ```
 
 Los commits descartados con reset **no se borran**: solo se quedan sin ninguna rama que apunte a ellos. Busca su hash en el reflog y `git reset --hard <hash>` los recupera por completo. Es el «antídoto del arrepentimiento» de git: si la operación pasó en tu máquina, casi siempre se puede recuperar.
+
+## git clean elimina archivos no rastreados
+
+```bash
+git clean -n       # vista previa: lista los archivos que se borrarían
+git clean -f       # ejecuta: borra los archivos no rastreados
+```
+
+Los que `git status` enumera en Untracked files son archivos no rastreados — se generan en local y git no los controla (archivos temporales, artefactos de build). `git clean` se encarga de eliminarlos. Dos apuntes:
+
+- Por defecto se niega a ejecutarse (`clean.requireForce`); hace falta `-f`; usa antes `-n` para previsualizar qué se va a borrar
+- **los archivos que borra clean no los recupera git** (nunca se commiteearon, ni el reflog los salva) — confírmalo antes de ejecutar
 
 ## Ejercicios
 

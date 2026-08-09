@@ -45,6 +45,24 @@ exercises:
         contentContains: feature work
     explanation: Depois do cherry-pick, a branch feature continua exatamente como estava e a main ganha um commit novo com o mesmo conteúdo.
     anchor: "#git-cherry-pick-copiar-um-commit"
+  - id: 4-3-e5
+    question: Para que serve o git bisect?
+    options:
+      - Localizar, por busca binária, o primeiro commit que introduziu o bug
+      - Mesclar o histórico de dois branches
+      - Desfazer o commit mais recente
+    correct: 0
+    explanation: O bisect marca os commits "bad" e "good" e, em seguida, faz checkout dos pontos intermediários para você confirmar — a busca binária localiza rápido "a partir de qual commit começou a quebrar".
+    anchor: "#git-bisect-localiza-o-commit-problematico"
+  - id: 4-3-e6
+    question: Na zona de prática abaixo, use o bisect para localizar o commit que introduziu o bug.
+    type: task
+    scenario: bisect
+    goal: 'Execute o git bisect start, o git bisect bad e o git bisect good HEAD~3; a cada vez que o checkout for para um commit intermediário, veja a função add do calc.js — correta, use o git bisect good; com bug, use o git bisect bad, até localizar.'
+    checks:
+      - type: bisectDone
+    explanation: 'O bisect localiza "fix: typo in add" — a função add começa a errar a partir dele; ao terminar, você pode usar o git bisect reset para voltar ao branch original.'
+    anchor: "#git-bisect-localiza-o-commit-problematico"
 ---
 
 # git revert e git cherry-pick
@@ -53,6 +71,7 @@ exercises:
 
 - Usar o git revert para desfazer um commit existente
 - Usar o git cherry-pick para copiar commits
+- Usar o git bisect para localizar o commit problemático com busca binária
 - Entender que nenhum dos dois reescreve o histórico
 
 ## git revert: desfazer um commit
@@ -92,6 +111,18 @@ o  A ---- B (main) ---- B' (cherry-picked fix)
 | Resultado | um commit novo que anula o antigo | um commit novo que reproduz o antigo |
 
 Nenhum dos dois reescreve o histórico existente; em caso de conflito, os dois param até você resolver.
+
+## git bisect localiza o commit problemático
+
+```bash
+git bisect start          # iniciar
+git bisect bad            # o HEAD atual está ruim
+git bisect good <commit>  # marcar um commit conhecido como bom
+# ciclo: checkout no ponto intermediário → testar → git bisect good / git bisect bad
+git bisect reset          # terminar, voltar ao branch original
+```
+
+"Uma funcionalidade quebrou, mas não sei a partir de qual commit" — revisar o histórico commit por commit é ineficiente. O bisect usa a **busca binária**: marque um commit "bad" e um "good"; o git faz checkout do commit intermediário entre os dois; você testa e diz good ou bad, e o intervalo cai pela metade. Depois de algumas rodadas, você localiza o primeiro commit que introduziu o bug.
 
 ## Exercícios
 

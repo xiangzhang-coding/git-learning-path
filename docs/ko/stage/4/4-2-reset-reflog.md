@@ -39,6 +39,24 @@ exercises:
         messageContains: break hello
     explanation: reflog는 HEAD의 전체 역사를 보여줍니다. reset 전의 커밋 해시를 찾아 reset --hard로 돌아가면 모든 것이 복원됩니다.
     anchor: "#git-reflog로-잃어버린-커밋-찾기"
+  - id: 4-2-e5
+    question: git clean의 역할은 무엇인가요?
+    options:
+      - 추적되지 않는 파일 삭제(-f를 붙여야 실제 삭제, -n은 미리 보기)
+      - 모든 커밋 기록을 비움
+      - 추적되는 파일의 변경을 되돌림
+    correct: 0
+    explanation: clean은 추적되지 않는 파일만 다룹니다. 기본적으로 바로 삭제를 거부하고(clean.requireForce), -n으로 미리 보고 -f로 실행합니다 — 지워진 파일은 git으로 되찾을 수 없습니다.
+    anchor: "#git-clean으로-추적되지-않는-파일-삭제"
+  - id: 4-2-e6
+    question: 아래 연습장에서 추적되지 않는 파일을 모두 삭제하세요.
+    type: task
+    scenario: clean
+    goal: 먼저 git clean -n으로 미리 보고, git clean -f로 추적되지 않는 파일(scratch.txt와 todo.tmp)을 삭제하세요.
+    checks:
+      - type: workdirClean
+    explanation: clean -f는 추적되지 않는 파일을 지웁니다. 작업 영역에 커밋된 파일만 남으면 통과합니다.
+    anchor: "#git-clean으로-추적되지-않는-파일-삭제"
 ---
 
 # git reset과 reflog
@@ -48,6 +66,7 @@ exercises:
 - git reset으로 HEAD와 상태 이동하기
 - --hard / 기본(mixed) / --soft 구분하기
 - git reflog로 reset된 커밋 되찾기
+- git clean으로 추적되지 않는 파일 정리하기
 
 ## git reset으로 HEAD 이동
 
@@ -81,6 +100,18 @@ git reflog
 ```
 
 reset으로 버려진 커밋은 **삭제되지 않습니다**. 단지 어떤 브랜치도 가리키지 않을 뿐입니다. reflog에서 그 해시를 찾아 `git reset --hard <해시>`를 실행하면 완전히 되찾을 수 있습니다. 이것이 git의「후회 약」입니다: 본인 컴퓨터에서 일어난 일이라면 거의 무엇이든 복원할 수 있습니다.
+
+## git clean으로 추적되지 않는 파일 삭제
+
+```bash
+git clean -n       # 미리 보기: 삭제될 파일 목록
+git clean -f       # 실행: 추적되지 않는 파일 삭제
+```
+
+`git status`의 Untracked files에 나열된 파일은 모두 추적되지 않는 파일입니다 — 로컬에서 생긴, git이 관리하지 않는 파일(임시 파일, 빌드 산출물)이죠. `git clean`이 이들을 정리합니다. 두 가지를 기억하세요:
+
+- 기본적으로 실행을 거부합니다(`clean.requireForce`), 반드시 `-f`; 먼저 `-n`으로 무엇이 지워질지 확인하세요
+- **clean이 지운 파일은 git으로 되찾을 수 없습니다**(한 번도 커밋된 적이 없어 reflog도 구할 수 없습니다) — 실행 전에 반드시 확인하세요
 
 ## 연습
 

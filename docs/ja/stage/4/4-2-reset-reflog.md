@@ -39,6 +39,24 @@ exercises:
         messageContains: break hello
     explanation: reflog は HEAD の完全な履歴を表示します。reset する前のコミットハッシュを見つけて reset --hard すれば、すべてが元通りになります。
     anchor: "#git-reflog-で失ったコミットを取り戻す"
+  - id: 4-2-e5
+    question: git clean の役割は何ですか？
+    options:
+      - 未追跡ファイルを削除する（実際に削除するには -f が必要、-n はプレビュー）
+      - すべてのコミット履歴を空にする
+      - 追跡済みファイルの変更を元に戻す
+    correct: 0
+    explanation: clean は未追跡ファイルだけを扱います。デフォルトでは直接削除を拒否し（clean.requireForce）、-n でプレビュー、-f で実行します——削除したファイルは git では取り戻せません。
+    anchor: "#git-clean-で未追跡ファイルを削除"
+  - id: 4-2-e6
+    question: 下の練手区で、未追跡ファイルをすべて削除しましょう。
+    type: task
+    scenario: clean
+    goal: まず git clean -n でプレビューし、次に git clean -f で未追跡ファイル（scratch.txt と todo.tmp）を削除しましょう。
+    checks:
+      - type: workdirClean
+    explanation: clean -f は未追跡ファイルを削除します。ワークツリーにコミット済みのファイルだけが残ればタスクはクリアです。
+    anchor: "#git-clean-で未追跡ファイルを削除"
 ---
 
 # git reset と reflog
@@ -48,6 +66,7 @@ exercises:
 - git reset で HEAD と状態を移動する
 - --hard / 混合（mixed）/ --soft の違いを理解する
 - git reflog で reset されたコミットを取り戻す
+- git clean で未追跡ファイルを削除する
 
 ## git reset で HEAD を移動する
 
@@ -81,6 +100,18 @@ git reflog
 ```
 
 reset で捨てられたコミットは**削除されていません**。どのブランチからも指されていないだけです。reflog でハッシュを見つけて `git reset --hard <ハッシュ>` すれば完全に取り戻せます。これが git の「後悔薬」です：このマシンで行われた操作なら、ほとんどすべて復元できます。
+
+## git clean で未追跡ファイルを削除
+
+```bash
+git clean -n       # プレビュー：削除されるファイルを一覧表示
+git clean -f       # 実行：未追跡ファイルを削除
+```
+
+`git status` の Untracked files に並ぶのはすべて未追跡ファイルです——ローカルで生まれた、git の管理外のファイル（一時ファイル、ビルド成果物）です。`git clean` はこれらを掃除します。2 点に注意：
+
+- デフォルトでは実行が拒否される（`clean.requireForce`）。`-f` が必須です。まず `-n` で削除対象をプレビューしましょう
+- **clean で削除したファイルは git では取り戻せません**（一度もコミットされていないので、reflog でも救えません）——実行前に必ず確認しましょう
 
 ## 練習
 

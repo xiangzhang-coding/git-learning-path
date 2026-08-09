@@ -2,6 +2,23 @@
 
 この章の原理の主線：**GitHub をめぐる協働のループ**。fork は自分のコピーを作り、upstream は原作者とつなぎます。PR は変更が本流に入る門、issue は議論を担い、release はバージョンを公開し、Actions と Pages はテストとデプロイを自動化します。この章では実際の GitHub で練習します——どの概念にも実践タスクが付いています。
 
+## 実践チェックリスト
+
+実際の GitHub で以下の一連の流れをこなして、チェックで進捗を追いましょう：
+
+<Checklist :tasks="[
+  { text: 'よく使うオープンソースのリポジトリを fork する', link: '/ja/stage/5/5-1-fork-upstream' },
+  { text: '自分の fork を clone し、upstream を追加して 1 回同期する', link: '/ja/stage/5/5-1-fork-upstream' },
+  { text: '機能ブランチを push して本物の PR を 1 つ開く', link: '/ja/stage/5/5-2-pull-request' },
+  { text: 'PR の中で review の議論を 1 回体験する', link: '/ja/stage/5/5-2-pull-request' },
+  { text: 'issue を開き、label と milestone を作る', link: '/ja/stage/5/5-3-issues' },
+  { text: 'issue に紐づく PR を提出する（fixes #番号）', link: '/ja/stage/5/5-3-issues' },
+  { text: 'v0.1.0 タグを打って最初の Release を作る', link: '/ja/stage/5/5-4-releases' },
+  { text: 'パッチバージョンを公開し、3 部構成の説明を書く', link: '/ja/stage/5/5-4-releases' },
+  { text: 'workflow を書いて静的ページを Pages にデプロイする', link: '/ja/stage/5/5-5-actions-pages' },
+  { text: 'わざとビルド手順を間違えて、Actions の失敗ログを観察する', link: '/ja/stage/5/5-5-actions-pages' }
+]" />
+
 ## コース
 
 - 5-1 [fork と upstream の同期](/ja/stage/5/5-1-fork-upstream)：fork でコピーを作り、upstream で上流の更新を受け取る

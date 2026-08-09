@@ -9,10 +9,12 @@
     "build": "vitepress build docs && pagefind --site docs/.vitepress/dist",
     "preview": "vitepress preview docs",
     "typecheck": "vue-tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "e2e": "playwright test"
   },
   "devDependencies": {
     "@pagefind/default-ui": "^1.5.2",
+    "@playwright/test": "^1.62.1",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^26.2.0",
     "js-yaml": "^5.2.3",

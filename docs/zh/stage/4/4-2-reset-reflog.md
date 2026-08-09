@@ -39,6 +39,24 @@ exercises:
         messageContains: break hello
     explanation: reflog 显示 HEAD 的完整历史；找到那条 reset 前的提交哈希，reset --hard 回去，一切恢复。
     anchor: "#git-reflog-找回丢失的提交"
+  - id: 4-2-e5
+    question: git clean 的作用是什么？
+    options:
+      - 删除未跟踪文件（需 -f 才会真正删除，-n 是预览）
+      - 清空所有提交历史
+      - 还原已跟踪文件的改动
+    correct: 0
+    explanation: clean 只处理未跟踪文件；默认拒绝直接删除（clean.requireForce），-n 预览、-f 执行——它删掉的文件无法用 git 找回。
+    anchor: "#git-clean-清理未跟踪文件"
+  - id: 4-2-e6
+    question: 在下面的练手区中，删除所有未跟踪文件。
+    type: task
+    scenario: clean
+    goal: 先 git clean -n 预览，再 git clean -f 删除未跟踪文件（scratch.txt 与 todo.tmp）。
+    checks:
+      - type: workdirClean
+    explanation: clean -f 清掉未跟踪文件；工作区只剩已提交的文件时任务通过。
+    anchor: "#git-clean-清理未跟踪文件"
 ---
 
 # git reset 与 reflog
@@ -48,6 +66,7 @@ exercises:
 - 用 git reset 移动 HEAD 和状态
 - 区分 --hard / 混合 / --soft
 - 用 git reflog 找回被 reset 的提交
+- 用 git clean 清理未跟踪文件
 
 ## git reset 移动 HEAD
 
@@ -81,6 +100,18 @@ git reflog
 ```
 
 被 reset 丢掉的提交**并没有被删除**，只是没有任何分支指向它。在 reflog 里找到它的哈希，`git reset --hard <哈希>` 就能完整找回。这就是 git 的「后悔药」：只要操作在本机发生，几乎都能恢复。
+
+## git clean 清理未跟踪文件
+
+```bash
+git clean -n       # 预览：列出会被删除的文件
+git clean -f       # 执行：删除未跟踪文件
+```
+
+`git status` 里 Untracked files 列出的都是未跟踪文件——它们是本地产生的、git 管不到的文件（临时文件、构建产物）。`git clean` 负责清掉它们。注意两点：
+
+- 默认拒绝执行（`clean.requireForce`），必须 `-f`；先用 `-n` 预览要删什么
+- **clean 删除的文件 git 找不回来**（它们从未被提交过，reflog 也救不了）——执行前务必确认
 
 ## 练习
 

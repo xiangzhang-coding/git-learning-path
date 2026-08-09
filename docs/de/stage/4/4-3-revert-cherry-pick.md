@@ -45,6 +45,24 @@ exercises:
         contentContains: feature work
     explanation: Nach dem cherry-pick bleibt der feature-Branch unverändert; auch auf main liegt nun ein inhaltlich identischer Commit.
     anchor: "#git-cherry-pick-commits-kopieren"
+  - id: 4-3-e5
+    question: Wofür verwendet man git bisect?
+    options:
+      - Per binärer Suche den ersten Commit lokalisieren, der einen Bug eingeführt hat
+      - Die Historien zweier Branches zusammenführen
+      - Den letzten Commit rückgängig machen
+    correct: 0
+    explanation: Nachdem Sie Commits als „bad" und „good" markiert haben, checkoutet git wiederholt den Mittelpunkt, den Sie testen — die binäre Suche spürt so schnell auf, ab welchem Commit es „schlecht" wurde.
+    anchor: "#git-bisect-spurt-den-schlechten-commit-auf"
+  - id: 4-3-e6
+    question: Lokalisieren Sie im untenstehenden Übungsbereich mit bisect den Commit, der den Bug eingeführt hat.
+    type: task
+    scenario: bisect
+    goal: Führen Sie git bisect start, git bisect bad und git bisect good HEAD~3 aus; prüfen Sie nach jedem Wechsel zu einem Zwischen-Commit die add-Funktion in calc.js — ist sie korrekt, git bisect good, enthält sie einen Bug, git bisect bad, bis die Suche abgeschlossen ist.
+    checks:
+      - type: bisectDone
+    explanation: 'bisect lokalisiert den Commit „fix: typo in add" — die add-Funktion ist ab ihm fehlerhaft; anschließend können Sie mit git bisect reset zum ursprünglichen Branch zurückkehren.'
+    anchor: "#git-bisect-spurt-den-schlechten-commit-auf"
 ---
 
 # git revert und git cherry-pick
@@ -53,6 +71,7 @@ exercises:
 
 - Mit git revert vorhandene Commits rückgängig machen
 - Mit git cherry-pick Commits kopieren
+- Mit git bisect per binärer Suche den schlechten Commit finden
 - Verstehen, dass beide die Historie nicht umschreiben
 
 ## git revert: Commits rückgängig machen
@@ -92,6 +111,18 @@ o  A ---- B (main) ---- B' (gecherrypickter Fix)
 | Ergebnis | ein neuer Commit gleicht den alten aus | ein neuer Commit ahmt den alten nach |
 
 Beide schreiben die vorhandene Historie nicht um; bei Konflikten stoppen beide, bis Sie sie lösen.
+
+## git bisect spürt den schlechten Commit auf
+
+```bash
+git bisect start          # beginnen
+git bisect bad            # der aktuelle HEAD ist schlecht (bad)
+git bisect good <Commit>  # einen bekannten guten Commit markieren
+# Schleife: checkout zum Mittelpunkt → testen → git bisect good / git bisect bad
+git bisect reset          # beenden, zurück zum ursprünglichen Branch
+```
+
+„Eine Funktion ist kaputt, aber niemand weiß, ab welchem Commit" — die Historie manuell Commit für Commit zu durchsuchen ist zu langsam. bisect nutzt die **binäre Suche**: Sie markieren einen „schlechten" (bad) und einen „guten" (good) Commit, git checkoutet automatisch den Commit dazwischen, Sie testen und sagen good oder bad — damit halbiert sich der Suchraum. Nach wenigen Runden ist der erste Commit lokalisiert, der den Bug eingeführt hat.
 
 ## Übungen
 
